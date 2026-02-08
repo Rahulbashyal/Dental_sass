@@ -1,0 +1,231 @@
+/**
+ * Nepali Datepicker Custom Styles
+ * Tailwind CSS compatible styling for Nepali calendar
+ */
+
+/* Container */
+.nepali-datepicker-container {
+    @apply relative inline-block w-full;
+}
+
+/* Input field styling */
+.nepali-datepicker-input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+    @apply text-gray-900 placeholder-gray-400;
+    @apply cursor-pointer;
+}
+
+.nepali-datepicker-input:disabled {
+    @apply bg-gray-100 cursor-not-allowed;
+}
+
+/* Calendar popup */
+.nepali-date-picker {
+    @apply absolute z-50 bg-white rounded-lg shadow-xl border border-gray-200;
+    @apply mt-1;
+    min-width: 320px;
+}
+
+/* Calendar header */
+.nepali-date-picker .calendar-header {
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg;
+    @apply px-4 py-3 flex items-center justify-between;
+}
+
+.nepali-date-picker .calendar-header button {
+    @apply text-white hover:bg-blue-800 rounded-full p-1;
+    @apply transition-colors duration-200;
+}
+
+.nepali-date-picker .calendar-header .month-year {
+    @apply text-lg font-bold text-center flex-1;
+}
+
+/* Calendar body */
+.nepali-date-picker .calendar-body {
+    @apply p-4;
+}
+
+/* Day names row */
+.nepali-date-picker .day-names {
+    @apply grid grid-cols-7 gap-1 mb-2;
+}
+
+.nepali-date-picker .day-name {
+    @apply text-center text-xs font-semibold text-gray-600 py-2;
+}
+
+/* Dates grid */
+.nepali-date-picker .dates-grid {
+    @apply grid grid-cols-7 gap-1;
+}
+
+/* Individual date cell */
+.nepali-date-picker .date-cell {
+    @apply aspect-square flex items-center justify-center;
+    @apply text-sm rounded-md cursor-pointer;
+    @apply transition-all duration-150;
+    @apply hover:bg-blue-50 hover:text-blue-700;
+}
+
+.nepali-date-picker .date-cell.today {
+    @apply bg-blue-100 text-blue-700 font-bold;
+}
+
+.nepali-date-picker .date-cell.selected {
+    @apply bg-blue-600 text-white font-bold;
+    @apply hover:bg-blue-700;
+}
+
+.nepali-date-picker .date-cell.disabled {
+    @apply text-gray-300 cursor-not-allowed;
+    @apply hover:bg-transparent hover:text-gray-300;
+}
+
+.nepali-date-picker .date-cell.other-month {
+    @apply text-gray-400;
+}
+
+/* Month/Year selector */
+.nepali-date-picker .selector-container {
+    @apply bg-gray-50 rounded-lg p-3 mb-3;
+}
+
+.nepali-date-picker .selector-grid {
+    @apply grid grid-cols-3 gap-2;
+}
+
+.nepali-date-picker .selector-item {
+    @apply px-3 py-2 text-center rounded-md cursor-pointer;
+    @apply text-sm font-medium text-gray-700;
+    @apply transition-colors duration-150;
+    @apply hover:bg-blue-100 hover:text-blue-700;
+}
+
+.nepali-date-picker .selector-item.selected {
+    @apply bg-blue-600 text-white;
+    @apply hover:bg-blue-700;
+}
+
+/* Action buttons */
+.nepali-date-picker .actions {
+    @apply border-t border-gray-200 px-4 py-3;
+    @apply flex items-center justify-between;
+}
+
+.nepali-date-picker .btn-today {
+    @apply px-3 py-1.5 text-sm font-medium;
+    @apply text-blue-600 hover:text-blue-700;
+    @apply hover:bg-blue-50 rounded-md;
+    @apply transition-colors duration-150;
+}
+
+.nepali-date-picker .btn-clear {
+    @apply px-3 py-1.5 text-sm font-medium;
+    @apply text-red-600 hover:text-red-700;
+    @apply hover:bg-red-50 rounded-md;
+    @apply transition-colors duration-150;
+}
+
+/* Input icon */
+.nepali-datepicker-icon {
+    @apply absolute right-3 top-1/2 transform -translate-y-1/2;
+    @apply text-gray-400 pointer-events-none;
+}
+
+/* Dual display (BS + AD) */
+.nepali-date-display {
+    @apply mt-1 text-xs text-gray-500;
+}
+
+.nepali-date-display .bs-date {
+    @apply font-medium text-blue-600;
+}
+
+.nepali-date-display .ad-date {
+    @apply text-gray-500 ml-2;
+}
+
+/* Error state */
+.nepali-datepicker-input.error {
+    @apply border-red-500 focus:ring-red-500;
+}
+
+.nepali-datepicker-error {
+    @apply text-red-500 text-sm mt-1;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+    .nepali-date-picker {
+        @apply fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2;
+        @apply w-11/12 max-w-sm;
+    }
+    
+    .nepali-date-picker .calendar-header .month-year {
+        @apply text-base;
+    }
+    
+    .nepali-date-picker .date-cell {
+        @apply text-xs;
+    }
+}
+
+/* Dark mode support (future) */
+@media (prefers-color-scheme: dark) {
+    .nepali-date-picker {
+        @apply bg-gray-800 border-gray-700;
+    }
+    
+    .nepali-date-picker .calendar-body {
+        @apply text-gray-200;
+    }
+    
+    .nepali-date-picker .day-name {
+        @apply text-gray-400;
+    }
+    
+    .nepali-date-picker .date-cell {
+        @apply hover:bg-gray-700 hover:text-blue-400;
+    }
+    
+    .nepali-date-picker .date-cell.today {
+        @apply bg-gray-700 text-blue-400;
+    }
+    
+    .nepali-date-picker .selector-container {
+        @apply bg-gray-700;
+    }
+    
+    .nepali-date-picker .selector-item {
+        @apply text-gray-300 hover:bg-gray-600;
+    }
+}
+
+/* Animations */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nepali-date-picker {
+    animation: slideDown 0.2s ease-out;
+}
+
+/* Loading state */
+.nepali-datepicker-loading {
+    @apply relative;
+}
+
+.nepali-datepicker-loading::after {
+    content: '';
+    @apply absolute inset-0 bg-white bg-opacity-75 rounded-md;
+    @apply flex items-center justify-center;
+}

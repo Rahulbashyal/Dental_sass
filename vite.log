@@ -1,0 +1,63 @@
+
+> dev
+> vite
+
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+Port 5175 is in use, trying another one...
+
+  VITE v7.2.2  ready in 166 ms
+
+  ➜  Local:   http://localhost:5176/
+  ➜  Network: use --host to expose
+
+  LARAVEL v11.46.1  plugin v1.3.0
+
+  ➜  APP_URL: http://localhost
+3:38:37 PM [vite] full reload resources/views/layouts/sidebar.blade.php
+3:38:37 PM [vite] (client) hmr update /resources/css/app.css?direct
+3:38:46 PM [vite] full reload resources/views/layouts/sidebar.blade.php
+3:38:46 PM [vite] (client) hmr update /resources/css/app.css?direct
+3:42:09 PM [vite] full reload resources/views/layouts/sidebar.blade.php
+3:42:09 PM [vite] (client) hmr update /resources/css/app.css?direct
+3:42:16 PM [vite] full reload resources/views/layouts/sidebar.blade.php
+3:42:16 PM [vite] (client) hmr update /resources/css/app.css?direct
+3:42:23 PM [vite] full reload resources/views/layouts/sidebar.blade.php
+3:42:23 PM [vite] (client) hmr update /resources/css/app.css?direct
+3:42:31 PM [vite] full reload resources/views/layouts/sidebar.blade.php
+3:42:31 PM [vite] (client) hmr update /resources/css/app.css?direct
+3:48:31 PM [vite] full reload resources/views/layouts/sidebar.blade.php
+3:48:31 PM [vite] (client) hmr update /resources/css/app.css?direct
+3:48:53 PM [vite] full reload resources/views/layouts/sidebar.blade.php
+3:48:53 PM [vite] (client) hmr update /resources/css/app.css?direct
+3:49:13 PM [vite] full reload resources/views/layouts/sidebar.blade.php
+3:49:13 PM [vite] (client) hmr update /resources/css/app.css?direct
+4:04:13 PM [vite] full reload routes/web.php
+4:07:12 PM [vite] full reload routes/web.php
+4:07:34 PM [vite] full reload routes/web.php
+4:10:58 PM [vite] full reload resources/views/layouts/app.blade.php
+4:10:58 PM [vite] (client) hmr update /resources/css/app.css?direct
+4:11:28 PM [vite] full reload resources/views/layouts/app.blade.php
+4:11:28 PM [vite] (client) hmr update /resources/css/app.css?direct
+4:13:49 PM [vite] full reload resources/views/emails/index.blade.php
+4:13:49 PM [vite] (client) hmr update /resources/css/app.css?direct
+4:13:54 PM [vite] full reload resources/views/emails/compose.blade.php
+4:13:54 PM [vite] (client) hmr update /resources/css/app.css?direct
+4:14:00 PM [vite] full reload resources/views/emails/index.blade.php
+4:14:00 PM [vite] (client) hmr update /resources/css/app.css?direct
+4:14:06 PM [vite] full reload resources/views/emails/compose.blade.php
+4:14:06 PM [vite] (client) hmr update /resources/css/app.css?direct
+4:16:07 PM [vite] full reload resources/views/layouts/sidebar.blade.php
+4:16:07 PM [vite] (client) hmr update /resources/css/app.css?direct
+4:23:05 PM [vite] .env changed, restarting server...
+4:23:05 PM [vite] server restarted.
+
+  LARAVEL v11.46.1  plugin v1.3.0
+
+  ➜  APP_URL: http://localhost
+4:24:31 PM [vite] full reload routes/web.php
+4:34:41 PM [vite] full reload routes/console.php
+4:39:23 PM [vite] full reload routes/console.php
+4:39:32 PM [vite] full reload routes/web.php
+4:44:44 PM [vite] full reload routes/web.php
+4:44:50 PM [vite] full reload routes/console.php

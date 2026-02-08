@@ -1,0 +1,35 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-Dupm7tec.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/css/nepali-datepicker.css": {
+    "file": "assets/nepali-datepicker-DCRx386X.css",
+    "src": "resources/css/nepali-datepicker.css",
+    "isEntry": true,
+    "name": "nepali-datepicker",
+    "names": [
+      "nepali-datepicker.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-C8UCGuCe.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "resources/js/nepali-datepicker.js"
+    ]
+  },
+  "resources/js/nepali-datepicker.js": {
+    "file": "assets/nepali-datepicker-wzbVjF9e.js",
+    "name": "nepali-datepicker",
+    "src": "resources/js/nepali-datepicker.js",
+    "isEntry": true
+  }
+}
