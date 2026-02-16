@@ -395,7 +395,7 @@
                 </div>
             </div>
 
-            <form id="website-form" action="{{ route('landing-page-manager.update') }}" method="POST" enctype="multipart/form-data">
+            <form id="website-form" action="{{ route('clinic.landing-page-manager.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 

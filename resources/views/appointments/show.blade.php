@@ -24,7 +24,7 @@
                     <div>
                         <label class="form-label">Patient</label>
                         <p class="text-gray-900">
-                            <a href="{{ route('patients.show', $appointment->patient) }}" class="text-blue-600 hover:text-blue-800">
+                            <a href="{{ route('clinic.patients.show', $appointment->patient) }}" class="text-blue-600 hover:text-blue-800">
                                 {{ $appointment->patient->first_name }} {{ $appointment->patient->last_name }}
                             </a>
                         </p>
@@ -35,7 +35,7 @@
                     </div>
                     <div>
                         <label class="form-label">Status</label>
-                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                        <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
                             {{ ucfirst($appointment->status) }}
                         </span>
                     </div>
@@ -50,7 +50,7 @@
                     </div>
                     <div>
                         <label class="form-label">Payment Status</label>
-                        <span class="px-2 py-1 text-xs rounded-full {{ $appointment->payment_status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                        <span class="px-2 py-1 text-xs rounded-full {{ $appointment->payment_status === 'paid' ? 'bg-blue-100 text-blue-800' : 'bg-cyan-100 text-cyan-800' }}">
                             {{ ucfirst($appointment->payment_status) }}
                         </span>
                     </div>
@@ -84,7 +84,7 @@
                         </form>
                     @endif
                     <a href="{{ route('clinic.appointments.edit', $appointment) }}" class="block w-full btn-secondary text-center">Edit Appointment</a>
-                    <a href="{{ route('patients.show', $appointment->patient) }}" class="block w-full btn-secondary text-center">View Patient</a>
+                    <a href="{{ route('clinic.patients.show', $appointment->patient) }}" class="block w-full btn-secondary text-center">View Patient</a>
                 </div>
             </div>
 

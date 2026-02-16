@@ -1,50 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Appointment Reminder</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #2563eb; color: white; padding: 20px; text-align: center; }
-        .content { padding: 20px; background: #f9fafb; }
-        .appointment-details { background: white; padding: 15px; border-radius: 8px; margin: 15px 0; }
-        .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-        .btn { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin: 10px 0; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>{{ $clinic->name }}</h1>
-            <p>Appointment Reminder</p>
+@extends('emails.layouts.base')
+
+@section('title', 'Appointment Reminder')
+
+@section('content')
+    <div class="badge">Session Reminder</div>
+    <div class="greeting">Hello, {{ $patient->first_name ?? $patient->name }}</div>
+    
+    <div class="message">
+        This is a friendly reminder from <strong>{{ $clinic->name }}</strong> regarding your upcoming clinical scheduled session. We look forward to seeing you.
+    </div>
+    
+    <div class="info-card">
+        <div class="info-item">
+            <div class="info-label">Scheduled Date</div>
+            <div class="info-value">{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('l, F j, Y') }}</div>
+            <div class="info-value" style="font-size: 13px; color: #64748b; margin-top: 2px;">{{ $nepaliDate['formatted'] ?? '' }}</div>
         </div>
         
-        <div class="content">
-            <h2>Dear {{ $patient->name }},</h2>
-            
-            <p>This is a friendly reminder about your upcoming appointment:</p>
-            
-            <div class="appointment-details">
-                <h3>Appointment Details</h3>
-                <p><strong>Date:</strong> {{ $appointment->appointment_date }} ({{ $nepaliDate['formatted'] }})</p>
-                <p><strong>Time:</strong> {{ $appointment->appointment_time }}</p>
-                <p><strong>Type:</strong> {{ $appointment->type }}</p>
-                <p><strong>Doctor:</strong> {{ $appointment->dentist->name }}</p>
-                <p><strong>Clinic:</strong> {{ $clinic->name }}</p>
-                <p><strong>Address:</strong> {{ $clinic->address }}</p>
-            </div>
-            
-            <p><strong>Important:</strong> Please arrive 15 minutes early for your appointment.</p>
-            
-            <p>If you need to reschedule or cancel, please contact us as soon as possible.</p>
+        <div class="info-item">
+            <div class="info-label">Access Time</div>
+            <div class="info-value">{{ $appointment->appointment_time }}</div>
         </div>
         
-        <div class="footer">
-            <p>Best regards,<br>{{ $clinic->name }}</p>
-            <p>{{ $clinic->phone ?? '' }} | {{ $clinic->email ?? '' }}</p>
+        <div class="info-item">
+            <div class="info-label">Clinical Provider</div>
+            <div class="info-value">Dr. {{ $appointment->dentist->name }}</div>
+        </div>
+        
+        <div class="info-item">
+            <div class="info-label">Service Node</div>
+            <div class="info-value">{{ ucfirst($appointment->type) }}</div>
         </div>
     </div>
-</body>
-</html>
+    
+    <div style="text-align: center;">
+        <a href="{{ route('patient.login') }}" class="cta-button">
+            Manage Appointment
+        </a>
+    </div>
+    
+    <div class="message" style="margin-top: 32px; font-size: 14px; border-top: 1px solid #f1f5f9; pt: 24px;">
+        <p><strong>Note:</strong> Please arrive at least 10 minutes prior to your scheduled time for processing.</p>
+        <p style="color: #94a3b8;">If you need to adjust this session, please contact the clinic node at {{ $clinic->phone }}.</p>
+    </div>
+@endsection

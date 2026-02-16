@@ -9,7 +9,7 @@ class Waitlist extends Model
 {
     protected $fillable = [
         'clinic_id', 'patient_id', 'dentist_id', 'preferred_date', 
-        'preferred_time', 'appointment_type', 'notes', 'status'
+        'preferred_time', 'appointment_type', 'notes', 'status', 'priority'
     ];
 
     protected $casts = [

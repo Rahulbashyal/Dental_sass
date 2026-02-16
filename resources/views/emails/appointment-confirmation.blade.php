@@ -1,50 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Appointment Confirmed</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #059669; color: white; padding: 20px; text-align: center; }
-        .content { padding: 20px; background: #f9fafb; }
-        .appointment-details { background: white; padding: 15px; border-radius: 8px; margin: 15px 0; }
-        .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-        .success-badge { background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; display: inline-block; margin: 10px 0; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>{{ $clinic->name }}</h1>
-            <div class="success-badge">✓ Appointment Confirmed</div>
+@extends('emails.layouts.base')
+
+@section('title', 'Appointment Confirmed')
+
+@section('content')
+    <div class="badge" style="background-color: #ecfdf5; color: #059669;">✓ Session Confirmed</div>
+    <div class="greeting">Excellent News, {{ $patient->first_name ?? $patient->name }}!</div>
+    
+    <div class="message">
+        Your clinical session at <strong>{{ $clinic->name }}</strong> has been successfully verified and locked into our schedule.
+    </div>
+    
+    <div class="info-card">
+        <div class="info-item">
+            <div class="info-label">Scheduled Date</div>
+            <div class="info-value">{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('l, F j, Y') }}</div>
+            <div class="info-value" style="font-size: 13px; color: #64748b; margin-top: 2px;">{{ $nepaliDate['formatted'] ?? '' }}</div>
         </div>
         
-        <div class="content">
-            <h2>Dear {{ $patient->name }},</h2>
-            
-            <p>Great news! Your appointment has been confirmed.</p>
-            
-            <div class="appointment-details">
-                <h3>Confirmed Appointment Details</h3>
-                <p><strong>Date:</strong> {{ $appointment->appointment_date }} ({{ $nepaliDate['formatted'] }})</p>
-                <p><strong>Time:</strong> {{ $appointment->appointment_time }}</p>
-                <p><strong>Type:</strong> {{ $appointment->type }}</p>
-                <p><strong>Doctor:</strong> {{ $appointment->dentist->name }}</p>
-                <p><strong>Clinic:</strong> {{ $clinic->name }}</p>
-                <p><strong>Address:</strong> {{ $clinic->address }}</p>
-            </div>
-            
-            <p>We look forward to seeing you. Please arrive 15 minutes early.</p>
-            
-            <p>Thank you for choosing {{ $clinic->name }} for your dental care needs.</p>
+        <div class="info-item">
+            <div class="info-label">Access Time</div>
+            <div class="info-value">{{ $appointment->appointment_time }}</div>
         </div>
         
-        <div class="footer">
-            <p>Best regards,<br>{{ $clinic->name }}</p>
-            <p>{{ $clinic->phone ?? '' }} | {{ $clinic->email ?? '' }}</p>
+        <div class="info-item">
+            <div class="info-label">Clinical Provider</div>
+            <div class="info-value">Dr. {{ $appointment->dentist->name }}</div>
+        </div>
+        
+        <div class="info-item">
+            <div class="info-label">Diagnostic Type</div>
+            <div class="info-value">{{ ucfirst($appointment->type) }}</div>
         </div>
     </div>
-</body>
-</html>
+    
+    <div style="text-align: center;">
+        <a href="{{ route('patient.login') }}" class="cta-button">
+            View Journey Dashboard
+        </a>
+    </div>
+    
+    <div class="message" style="margin-top: 32px; font-size: 14px; border-top: 1px solid #f1f5f9; pt: 24px;">
+        <p>Your oral health journey is our priority. We have prepared the necessary clinical nodes for your arrival.</p>
+        <p style="color: #94a3b8;">Need assistance? Contact us at {{ $clinic->phone }}.</p>
+    </div>
+@endsection

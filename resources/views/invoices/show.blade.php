@@ -11,7 +11,7 @@
         </div>
         <div class="flex space-x-4">
             @if($invoice->status !== 'paid')
-                <form action="{{ route('invoices.mark-paid', $invoice) }}" method="POST" class="inline">
+                <form action="{{ route('clinic.invoices.mark-paid', $invoice) }}" method="POST" class="inline">
                     @csrf
                     @method('PATCH')
                     <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
@@ -19,7 +19,7 @@
                     </button>
                 </form>
             @endif
-            <a href="{{ route('invoices.index') }}" class="border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50">
+            <a href="{{ route('clinic.invoices.index') }}" class="border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50">
                 Back to Invoices
             </a>
         </div>

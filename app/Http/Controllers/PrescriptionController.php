@@ -138,7 +138,7 @@ class PrescriptionController extends Controller
             ]);
         }
 
-        return redirect()->route('prescriptions.show', $prescription)
+        return redirect()->route('clinic.prescriptions.show', $prescription)
             ->with('success', 'Prescription created successfully! Email sent to patient.')
             ->after(function () use ($prescription) {
                 // Send email notification to patient
@@ -199,7 +199,7 @@ class PrescriptionController extends Controller
 
         $prescription->update($validated);
 
-        return redirect()->route('prescriptions.show', $prescription)
+        return redirect()->route('clinic.prescriptions.show', $prescription)
             ->with('success', 'Prescription updated successfully!');
     }
 
@@ -215,7 +215,7 @@ class PrescriptionController extends Controller
 
         $prescription->delete();
 
-        return redirect()->route('prescriptions.index')
+        return redirect()->route('clinic.prescriptions.index')
             ->with('success', 'Prescription deleted successfully!');
     }
 
@@ -250,5 +250,32 @@ class PrescriptionController extends Controller
         $prescription->load(['patient', 'dentist', 'clinic', 'items.medication']);
 
         return view('prescriptions.print', compact('prescription'));
+    }
+
+    /**
+     * Dispense prescription items and decrement stock
+     */
+    public function dispense(Request $request, Prescription $prescription)
+    {
+        if ($prescription->clinic_id !== Auth::user()->clinic_id) {
+            abort(403);
+        }
+
+        $prescription->load('items.medication');
+
+        foreach ($prescription->items as $item) {
+            if ($item->status === 'prescribed' && $item->medication) {
+                // Check stock
+                if ($item->medication->current_stock >= $item->quantity) {
+                    $item->medication->decrement('current_stock', $item->quantity);
+                    $item->update([
+                        'status' => 'dispensed',
+                        'dispensed_at' => now()
+                    ]);
+                }
+            }
+        }
+
+        return back()->with('success', 'Medications dispensed and inventory updated.');
     }
 }

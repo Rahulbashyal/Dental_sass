@@ -11,9 +11,12 @@ class Payment extends Model
         'invoice_id',
         'patient_id', 
         'clinic_id',
+        'branch_id',
         'amount',
         'payment_method',
         'status',
+        'is_refund',
+        'related_payment_id',
         'transaction_id',
         'paid_at'
     ];

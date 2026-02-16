@@ -6,7 +6,7 @@
 <div class="space-y-6">
     <div class="flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-900">Treatment Plans</h1>
-        <a href="{{ route('treatment-plans.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+        <a href="{{ route('clinic.treatment-plans.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
             Create Treatment Plan
         </a>
     </div>
@@ -49,9 +49,9 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                <a href="{{ route('treatment-plans.show', $plan) }}" class="text-blue-600 hover:text-blue-900">View</a>
-                                <a href="{{ route('treatment-plans.edit', $plan) }}" class="text-green-600 hover:text-green-900">Edit</a>
-                                <form action="{{ route('treatment-plans.destroy', $plan) }}" method="POST" class="inline">
+                                <a href="{{ route('clinic.treatment-plans.show', $plan) }}" class="text-blue-600 hover:text-blue-900">View</a>
+                                <a href="{{ route('clinic.treatment-plans.edit', $plan) }}" class="text-green-600 hover:text-green-900">Edit</a>
+                                <form action="{{ route('clinic.treatment-plans.destroy', $plan) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure?')">Delete</button>
@@ -61,7 +61,7 @@
                     @empty
                         <tr>
                             <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                No treatment plans found. <a href="{{ route('treatment-plans.create') }}" class="text-blue-600">Create the first one</a>
+                                No treatment plans found. <a href="{{ route('clinic.treatment-plans.create') }}" class="text-blue-600">Create the first one</a>
                             </td>
                         </tr>
                     @endforelse

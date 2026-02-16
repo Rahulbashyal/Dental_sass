@@ -19,6 +19,8 @@ class Medication extends Model
         'contraindications',
         'manufacturer',
         'is_active',
+        'current_stock',
+        'min_stock_level',
     ];
 
     protected $casts = [

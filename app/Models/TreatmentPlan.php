@@ -12,8 +12,10 @@ class TreatmentPlan extends Model
     protected $fillable = [
         'clinic_id',
         'patient_id',
+        'dentist_id',
         'title',
         'description',
+        'treatments',
         'estimated_cost',
         'estimated_duration',
         'priority',
@@ -21,7 +23,8 @@ class TreatmentPlan extends Model
     ];
 
     protected $casts = [
-        'estimated_cost' => 'decimal:2'
+        'estimated_cost' => 'decimal:2',
+        'treatments' => 'json'
     ];
 
     public function clinic()
@@ -32,5 +35,10 @@ class TreatmentPlan extends Model
     public function patient()
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function dentist()
+    {
+        return $this->belongsTo(User::class, 'dentist_id');
     }
 }

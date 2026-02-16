@@ -35,6 +35,9 @@
     31 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
     32 => 'Spatie\\Permission\\PermissionServiceProvider',
     33 => 'Stancl\\Tenancy\\TenancyServiceProvider',
+    34 => 'App\\Providers\\HelperServiceProvider',
+    35 => 'App\\Providers\\TenancyServiceProvider',
+    36 => 'App\\Providers\\ModuleServiceProvider',
   ),
   'eager' => 
   array (
@@ -57,6 +60,9 @@
     16 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
     17 => 'Spatie\\Permission\\PermissionServiceProvider',
     18 => 'Stancl\\Tenancy\\TenancyServiceProvider',
+    19 => 'App\\Providers\\HelperServiceProvider',
+    20 => 'App\\Providers\\TenancyServiceProvider',
+    21 => 'App\\Providers\\ModuleServiceProvider',
   ),
   'deferred' => 
   array (

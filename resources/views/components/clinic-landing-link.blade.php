@@ -7,7 +7,7 @@
         <p class="text-muted mb-3">Customize your clinic's public landing page</p>
         <div class="row">
             <div class="col-md-6">
-                <a href="{{ route('landing-page-manager') }}" class="btn btn-primary btn-block">
+                <a href="{{ route('clinic.landing-page-manager') }}" class="btn btn-primary btn-block">
                     <i class="fas fa-edit"></i> Customize Landing Page
                 </a>
             </div>

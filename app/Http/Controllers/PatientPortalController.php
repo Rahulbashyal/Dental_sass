@@ -6,10 +6,11 @@ use App\Models\Patient;
 use App\Models\Appointment;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
 
 class PatientPortalController extends Controller
 {
@@ -22,41 +23,53 @@ class PatientPortalController extends Controller
         $this->ensureIsNotRateLimited($request);
 
         $credentials = $request->validate([
-            'email' => 'required|email:rfc,dns|max:255',
-            'patient_id' => 'required|string|max:20|regex:/^P[0-9]{6}$/'
-        ], [
-            'patient_id.regex' => 'Patient ID must be in format P000000'
+            'email' => 'required|string|max:255',
+            'patient_id' => 'required|string|max:20'
         ]);
 
         // Sanitize input
-        $credentials['email'] = strtolower(trim($credentials['email']));
-        $credentials['patient_id'] = strtoupper(trim($credentials['patient_id']));
+        $email = strtolower(trim($credentials['email']));
+        $patientId = strtoupper(trim($credentials['patient_id']));
 
-        $patient = Patient::where('email', $credentials['email'])
-            ->where('patient_id', $credentials['patient_id'])
-            ->where('is_active', true)
+        $patient = Patient::where('email', $email)
+            ->where('patient_id', $patientId)
             ->first();
 
         if (!$patient) {
+            // Try case-insensitive search if direct match fails
+            $patient = Patient::whereRaw('LOWER(email) = ?', [$email])
+                ->whereRaw('UPPER(patient_id) = ?', [$patientId])
+                ->first();
+        }
+
+        if (!$patient) {
             RateLimiter::hit($this->throttleKey($request));
-            return back()->withErrors(['email' => 'Invalid credentials'])
-                ->withInput($request->only('email'));
+            throw ValidationException::withMessages([
+                'email' => 'Authentication failed. Please check your credentials.',
+            ]);
+        }
+
+        if (!$patient->is_active) {
+            RateLimiter::hit($this->throttleKey($request));
+            throw ValidationException::withMessages([
+                'email' => 'Your portal access is currently inactive.',
+            ]);
         }
 
         RateLimiter::clear($this->throttleKey($request));
-        session(['patient_id' => $patient->id, 'patient_login_time' => now()]);
+        
+        Auth::guard('patient')->login($patient);
+        
         return redirect()->route('patient.dashboard');
     }
 
     public function dashboard()
     {
-        $patientId = session('patient_id');
-        if (!$patientId) {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient) {
             return redirect()->route('patient.login');
         }
 
-        $patient = Patient::findOrFail($patientId);
-        
         $stats = [
             'upcoming_appointments' => $patient->appointments()
                 ->where('appointment_date', '>=', now())
@@ -68,7 +81,13 @@ class PatientPortalController extends Controller
                 ->count(),
             'total_amount_due' => $patient->invoices()
                 ->where('status', 'pending')
-                ->sum('total_amount')
+                ->sum('total_amount'),
+            'active_payment_plans' => $patient->paymentPlans()
+                ->where('status', 'active')
+                ->count(),
+            'pending_consents' => $patient->consents()
+                ->where('status', 'pending')
+                ->count()
         ];
 
         $recentAppointments = $patient->appointments()
@@ -82,12 +101,11 @@ class PatientPortalController extends Controller
 
     public function appointments()
     {
-        $patientId = session('patient_id');
-        if (!$patientId) {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient) {
             return redirect()->route('patient.login');
         }
 
-        $patient = Patient::findOrFail($patientId);
         $appointments = $patient->appointments()
             ->with('clinic')
             ->latest()
@@ -96,14 +114,96 @@ class PatientPortalController extends Controller
         return view('patient-portal.appointments', compact('appointments'));
     }
 
-    public function invoices()
+    public function recurringAppointments()
     {
-        $patientId = session('patient_id');
-        if (!$patientId) {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient) {
             return redirect()->route('patient.login');
         }
 
-        $patient = Patient::findOrFail($patientId);
+        $recurringAppointments = $patient->recurringAppointments()
+            ->with(['dentist', 'clinic'])
+            ->latest()
+            ->paginate(10);
+
+        return view('patient-portal.recurring-appointments', compact('recurringAppointments'));
+    }
+
+    public function paymentPlans()
+    {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient) {
+            return redirect()->route('patient.login');
+        }
+
+        $paymentPlans = $patient->paymentPlans()
+            ->with(['invoice', 'clinic', 'paymentInstallments'])
+            ->latest()
+            ->paginate(10);
+
+        return view('patient-portal.payment-plans.index', compact('paymentPlans'));
+    }
+
+    public function paymentPlan(\App\Models\PaymentPlan $paymentPlan)
+    {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient || $paymentPlan->patient_id !== $patient->id) {
+            return redirect()->route('patient.login');
+        }
+
+        $paymentPlan->load(['paymentInstallments', 'invoice', 'clinic']);
+        
+        return view('patient-portal.payment-plans.show', compact('paymentPlan'));
+    }
+
+    public function consents()
+    {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient) {
+            return redirect()->route('patient.login');
+        }
+
+        $consents = $patient->consents()
+            ->with(['template', 'clinic'])
+            ->latest()
+            ->paginate(10);
+
+        return view('patient-portal.consents.index', compact('consents'));
+    }
+
+    public function signConsent(\App\Models\PatientConsent $consent, Request $request)
+    {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient || $consent->patient_id !== $patient->id) {
+            return redirect()->route('patient.login');
+        }
+
+        if ($request->isMethod('get')) {
+            $consent->load(['template', 'clinic']);
+            return view('patient-portal.consents.sign', compact('consent'));
+        }
+
+        $validated = $request->validate([
+            'signature_data' => 'required|string', // Base64 signature image
+        ]);
+
+        $consent->update([
+            'signature_data' => $validated['signature_data'],
+            'status' => 'signed',
+            'signed_at' => now(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
+        return redirect()->route('patient.consents')->with('success', 'Document signed successfully.');
+    }
+
+    public function invoices()
+    {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient) {
+            return redirect()->route('patient.login');
+        }
         $invoices = $patient->invoices()
             ->with('clinic')
             ->latest()
@@ -114,23 +214,19 @@ class PatientPortalController extends Controller
 
     public function profile()
     {
-        $patientId = session('patient_id');
-        if (!$patientId) {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient) {
             return redirect()->route('patient.login');
         }
-
-        $patient = Patient::findOrFail($patientId);
         return view('patient-portal.profile', compact('patient'));
     }
 
     public function updateProfile(Request $request)
     {
-        $patientId = session('patient_id');
-        if (!$patientId) {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient) {
             return redirect()->route('patient.login');
         }
-
-        $patient = Patient::findOrFail($patientId);
         
         $validated = $request->validate([
             'phone' => 'nullable|string|max:20',
@@ -144,15 +240,38 @@ class PatientPortalController extends Controller
         return back()->with('success', 'Profile updated successfully.');
     }
 
+    public function updatePhoto(Request $request)
+    {
+        $patient = Auth::guard('patient')->user();
+        if (!$patient) {
+            return redirect()->route('patient.login');
+        }
+        
+        $validated = $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,gif|max:2048',
+        ]);
+
+        // Delete old photo if exists
+        if ($patient->photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($patient->photo)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($patient->photo);
+        }
+
+        // Store new photo
+        $path = $request->file('photo')->store('patient-photos', 'public');
+        $patient->update(['photo' => $path]);
+
+        return back()->with('success', 'Profile photo updated successfully.');
+    }
+
     public function logout()
     {
-        session()->forget(['patient_id', 'patient_login_time']);
+        Auth::guard('patient')->logout();
         return redirect()->route('patient.login')->with('success', 'Logged out successfully.');
     }
     
     protected function ensureIsNotRateLimited(Request $request): void
     {
-        if (RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
+        if (RateLimiter::tooManyAttempts($this->throttleKey($request), 20)) {
             $seconds = RateLimiter::availableIn($this->throttleKey($request));
             
             throw ValidationException::withMessages([
@@ -164,32 +283,5 @@ class PatientPortalController extends Controller
     protected function throttleKey(Request $request): string
     {
         return 'patient_login:'.Str::transliterate(Str::lower($request->input('email')).'|'.$request->ip());
-    }
-    
-    protected function validatePatientSession(): ?Patient
-    {
-        $patientId = session('patient_id');
-        $loginTime = session('patient_login_time');
-        
-        if (!$patientId || !$loginTime) {
-            return null;
-        }
-        
-        // Session expires after 2 hours
-        if (now()->diffInHours($loginTime) > 2) {
-            session()->forget(['patient_id', 'patient_login_time']);
-            return null;
-        }
-        
-        $patient = Patient::where('id', $patientId)
-            ->where('is_active', true)
-            ->first();
-            
-        if (!$patient) {
-            session()->forget(['patient_id', 'patient_login_time']);
-            return null;
-        }
-        
-        return $patient;
     }
 }

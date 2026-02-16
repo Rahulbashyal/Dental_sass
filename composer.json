@@ -2,7 +2,12 @@
     "name": "dental-care/saas-platform",
     "type": "project",
     "description": "Multi-tenant Dental Care SaaS Platform",
-    "keywords": ["laravel", "dental", "saas", "multi-tenant"],
+    "keywords": [
+        "laravel",
+        "dental",
+        "saas",
+        "multi-tenant"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
@@ -26,6 +31,7 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+            "Modules\\": "Modules/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }

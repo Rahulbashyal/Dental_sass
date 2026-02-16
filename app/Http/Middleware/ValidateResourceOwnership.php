@@ -13,8 +13,13 @@ class ValidateResourceOwnership
     {
         $user = Auth::user();
         
+        // Require authentication for this middleware
+        if (!$user) {
+            abort(401, 'Unauthenticated');
+        }
+        
         // Skip for superadmin
-        if ($user && $user->hasRole('superadmin')) {
+        if ($user->hasRole('superadmin')) {
             return $next($request);
         }
         

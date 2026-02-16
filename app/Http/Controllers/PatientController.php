@@ -11,13 +11,7 @@ class PatientController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware(function ($request, $next) {
-            if (!Auth::user()->clinic_id) {
-                abort(403, 'No clinic assigned to your account.');
-            }
-            return $next($request);
-        });
+        $this->middleware(['auth', 'clinic.access', 'resource.owner']);
     }
     public function index()
     {
@@ -46,54 +40,55 @@ class PatientController extends Controller
             $patient->notify(new \App\Notifications\WelcomePatient($patient));
         }
 
-        return redirect()->route('patients.index')->with('success', 'Patient registered successfully! Welcome email sent.');
+        return redirect()->route('clinic.patients.index')->with('success', 'Patient registered successfully! Welcome email sent.');
     }
 
     public function show(Patient $patient)
     {
-        if ($patient->clinic_id !== Auth::user()->clinic_id) {
-            abort(403, 'Unauthorized access to patient record.');
-        }
+        $patient->load(['clinicalNotes.dentist', 'appointments', 'treatmentPlans', 'consents.template']);
         
-        return view('patients.show', compact('patient'));
+        // Group notes by tooth number for the chart
+        $toothNotes = $patient->clinicalNotes->groupBy('tooth_number')->map(function ($notes) {
+            return $notes->map(function ($note) {
+                return [
+                    'id' => $note->id,
+                    'condition' => $note->condition,
+                    'note' => $note->note,
+                    'date' => $note->created_at->format('M d, Y'),
+                    'dentist' => $note->dentist->name
+                ];
+            });
+        });
+
+        return view('patients.show', compact('patient', 'toothNotes'));
     }
 
     public function edit(Patient $patient)
     {
-        if ($patient->clinic_id !== Auth::user()->clinic_id) {
-            abort(403, 'Unauthorized access to patient record.');
-        }
-        
         return view('patients.edit', compact('patient'));
     }
 
     public function update(StorePatientRequest $request, Patient $patient)
     {
-        if ($patient->clinic_id !== Auth::user()->clinic_id) {
-            abort(403, 'Unauthorized access to patient record.');
-        }
         
         $validated = $request->validated();
         unset($validated['clinic_id']); // Don't allow clinic_id changes
         
         $patient->update($validated);
 
-        return redirect()->route('patients.index')->with('success', 'Patient updated successfully.');
+        return redirect()->route('clinic.patients.index')->with('success', 'Patient updated successfully.');
     }
 
     public function destroy(Patient $patient)
     {
-        if ($patient->clinic_id !== Auth::user()->clinic_id) {
-            abort(403, 'Unauthorized access to patient record.');
-        }
         
         // Check if patient has appointments before deletion
         if ($patient->appointments()->count() > 0) {
-            return redirect()->route('patients.index')
+            return redirect()->route('clinic.patients.index')
                 ->with('error', 'Cannot delete patient with existing appointments.');
         }
         
         $patient->delete();
-        return redirect()->route('patients.index')->with('success', 'Patient deleted successfully.');
+        return redirect()->route('clinic.patients.index')->with('success', 'Patient deleted successfully.');
     }
 }

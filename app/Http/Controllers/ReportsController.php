@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ReportsController extends Controller
 {
+    protected $reportsService;
+
+    public function __construct(\App\Services\ReportsService $reportsService)
+    {
+        $this->reportsService = $reportsService;
+    }
+
     public function index()
     {
         $user = Auth::user();
@@ -50,6 +57,9 @@ class ReportsController extends Controller
             ? round(($completed / $stats['total_appointments']) * 100) 
             : 0;
 
+        // Executive Intelligence Data
+        $executiveStats = $this->reportsService->getExecutiveStats($user->clinic_id);
+
         $recent_appointments = (clone $appointmentQuery)
             ->with('patient')
             ->latest('appointment_date')
@@ -62,6 +72,6 @@ class ReportsController extends Controller
             ->orderBy('count', 'desc')
             ->get();
 
-        return view('reports.index', compact('stats', 'recent_appointments', 'treatment_stats'));
+        return view('reports.index', compact('stats', 'recent_appointments', 'treatment_stats', 'executiveStats'));
     }
 }

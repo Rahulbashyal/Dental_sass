@@ -18,9 +18,25 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'clinic_id',
+        'branch_id',
         'phone',
+        'photo',
+        'specialization',
+        'bio',
+        'address',
+        'city',
+        'state',
+        'postal_code',
+        'country',
+        'website',
+        'social_links',
         'is_active',
     ];
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 
     protected $hidden = [
         'password',
@@ -33,12 +49,18 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'social_links' => 'json',
         ];
     }
 
     public function clinic()
     {
         return $this->belongsTo(Clinic::class);
+    }
+
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
     }
 
     public function isSuperAdmin()
@@ -51,10 +73,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasRole('clinic_admin');
     }
 
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class);
-    }
 
     public function sentEmails()
     {

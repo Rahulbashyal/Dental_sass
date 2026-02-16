@@ -79,7 +79,7 @@ class DashboardController extends Controller
         $clinic = $user->clinic;
         
         if (!$clinic) {
-            return redirect()->route('login')->with('error', 'No clinic assigned.');
+            return $this->clinicDashboard();
         }
         
         $today = today();
@@ -109,7 +109,7 @@ class DashboardController extends Controller
         $clinic = $user->clinic;
         
         if (!$clinic) {
-            return redirect()->route('login')->with('error', 'No clinic assigned.');
+            return $this->clinicDashboard();
         }
         
         $currentMonth = now()->month;
@@ -145,9 +145,21 @@ class DashboardController extends Controller
         $user = Auth::user();
         $clinic = $user->clinic;
         
+        $aiService = new \App\Services\AiInsightService();
+        $aiInsights = $aiService->generateClinicInsights();
+
         if (!$clinic) {
-            $stats = ['total_patients' => 0, 'todays_appointments' => 0, 'pending_appointments' => 0, 'monthly_revenue' => 0];
-            return view('dashboard.clinic', compact('clinic', 'stats'))
+            $stats = [
+                'total_patients' => 0, 
+                'todays_appointments' => 0, 
+                'pending_appointments' => 0, 
+                'monthly_revenue' => 0,
+                'total_staff' => 0
+            ];
+            $recentAppointments = collect();
+            $recentPatients = collect();
+            
+            return view('dashboard.clinic', compact('clinic', 'stats', 'aiInsights', 'recentAppointments', 'recentPatients'))
                 ->with('warning', 'No clinic assigned to your account. Contact administrator.');
         }
         
@@ -164,7 +176,7 @@ class DashboardController extends Controller
                 ->sum('treatment_cost') ?? 0,
         ];
         
-        return view('dashboard.clinic', compact('clinic', 'stats'));
+        return view('dashboard.clinic', compact('clinic', 'stats', 'aiInsights'));
     }
     
     private function dentistDashboard()
@@ -173,33 +185,39 @@ class DashboardController extends Controller
         $clinic = $user->clinic;
         
         if (!$clinic) {
-            return redirect()->route('login')->with('error', 'No clinic assigned.');
+            return $this->clinicDashboard();
         }
         
         $today = today();
         
         $stats = [
             'todays_appointments' => $clinic->appointments()
-                ->whereDate('appointment_date', $today)
                 ->where('dentist_id', $user->id)
+                ->whereDate('appointment_date', $today)
                 ->count(),
             'upcoming_appointments' => $clinic->appointments()
                 ->where('dentist_id', $user->id)
                 ->where('appointment_date', '>', $today)
                 ->count(),
-            'total_patients' => $clinic->appointments()
-                ->where('dentist_id', $user->id)
-                ->distinct('patient_id')
-                ->count('patient_id'),
+            'total_patients' => $clinic->patients()
+                ->whereHas('appointments', function ($query) use ($user) {
+                    $query->where('dentist_id', $user->id);
+                })
+                ->count(),
             'completed_treatments' => $clinic->appointments()
                 ->where('dentist_id', $user->id)
                 ->where('status', 'completed')
-                ->whereMonth('appointment_date', now()->month)
+                ->whereMonth('appointment_date', $today->month)
+                ->whereYear('appointment_date', $today->year)
+                ->count(),
+            'active_treatment_plans' => $clinic->treatmentPlans()
+                ->where('dentist_id', $user->id)
+                ->where('status', 'active')
                 ->count(),
         ];
         
         $todaysAppointments = $clinic->appointments()
-            ->with(['patient'])
+            ->with('patient')
             ->where('dentist_id', $user->id)
             ->whereDate('appointment_date', $today)
             ->orderBy('appointment_time')
@@ -213,8 +231,11 @@ class DashboardController extends Controller
         $user = Auth::user();
         $clinic = $user->clinic;
         
+        $aiService = new \App\Services\AiInsightService();
+        $aiInsights = $aiService->generateClinicInsights();
+
         if (!$clinic) {
-            return redirect()->route('login')->with('error', 'No clinic assigned.');
+            return $this->clinicDashboard();
         }
         
         $today = today();
@@ -246,7 +267,7 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
             
-        return view('dashboard.clinic', compact('stats', 'recentAppointments', 'recentPatients', 'clinic'));
+        return view('dashboard.clinic', compact('stats', 'recentAppointments', 'recentPatients', 'clinic', 'aiInsights'));
     }
 
     public function clinic()

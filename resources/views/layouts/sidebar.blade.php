@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nepali-date-picker@2.0.5/dist/nepaliDatePicker.min.css">
     <script src="https://cdn.jsdelivr.net/npm/nepali-date-picker@2.0.5/dist/nepaliDatePicker.min.js"></script>
     
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/animations.css'])
     <style>
         .nav-link {
             @apply flex items-center px-4 py-3 text-sm font-medium rounded-xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all duration-200 group;
@@ -178,7 +178,7 @@
                                 </a>
                             </div>
                         </div>
-                    @elseif(auth()->user()->hasRole('dentist'))
+                    @elseif(auth()->check() && auth()->user()->hasRole('dentist'))
                         <!-- Dentist Menu -->
                         <div class="space-y-2">
                             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -192,7 +192,7 @@
                         <div class="pt-4">
                             <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Patient Care</h3>
                             <div class="mt-3 space-y-2">
-                                <a href="{{ route('patients.index') }}" class="nav-link {{ request()->routeIs('patients.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.patients.index') }}" class="nav-link {{ request()->routeIs('clinic.patients.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                     </svg>
@@ -204,13 +204,13 @@
                                     </svg>
                                     <span class="truncate">My Schedule</span>
                                 </a>
-                                <a href="{{ route('treatment-plans.index') }}" class="nav-link {{ request()->routeIs('treatment-plans.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.treatment-plans.index') }}" class="nav-link {{ request()->routeIs('clinic.treatment-plans.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                     </svg>
                                     <span class="truncate">Treatment Plans</span>
                                 </a>
-                                <a href="{{ route('prescriptions.index') }}" class="nav-link {{ request()->routeIs('prescriptions.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.prescriptions.index') }}" class="nav-link {{ request()->routeIs('clinic.prescriptions.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                     </svg>
@@ -237,19 +237,9 @@
                             </div>
                         </div>
 
-                        <div class="pt-4">
-                            <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Settings</h3>
-                            <div class="mt-3 space-y-2">
-                                <a href="{{ route('settings.index') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
-                                    <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                    <span class="truncate">Settings</span>
-                                </a>
-                            </div>
-                        </div>
 
-                    @elseif(auth()->user()->hasRole('receptionist'))
+
+                    @elseif(auth()->check() && auth()->user()->hasRole('receptionist'))
                         <!-- Receptionist Menu -->
                         <div class="space-y-2">
                             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -263,7 +253,7 @@
                         <div class="pt-4">
                             <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Patient Management</h3>
                             <div class="mt-3 space-y-2">
-                                <a href="{{ route('patients.index') }}" class="nav-link {{ request()->routeIs('patients.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.patients.index') }}" class="nav-link {{ request()->routeIs('clinic.patients.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                     </svg>
@@ -275,7 +265,7 @@
                                     </svg>
                                     <span class="truncate">Appointments</span>
                                 </a>
-                                <a href="{{ route('waitlist.index') }}" class="nav-link {{ request()->routeIs('waitlist.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.waitlist.index') }}" class="nav-link {{ request()->routeIs('clinic.waitlist.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
@@ -302,19 +292,9 @@
                             </div>
                         </div>
 
-                        <div class="pt-4">
-                            <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Settings</h3>
-                            <div class="mt-3 space-y-2">
-                                <a href="{{ route('settings.index') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
-                                    <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                    <span class="truncate">Settings</span>
-                                </a>
-                            </div>
-                        </div>
 
-                    @elseif(auth()->user()->hasRole('accountant'))
+
+                    @elseif(auth()->check() && auth()->user()->hasRole('accountant'))
                         <!-- Accountant Menu -->
                         <div class="space-y-2">
                             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -328,19 +308,19 @@
                         <div class="pt-4">
                             <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Financial Management</h3>
                             <div class="mt-3 space-y-2">
-                                <a href="{{ route('invoices.index') }}" class="nav-link {{ request()->routeIs('invoices.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.invoices.index') }}" class="nav-link {{ request()->routeIs('clinic.invoices.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                     </svg>
                                     <span class="truncate">Invoices</span>
                                 </a>
-                                <a href="{{ route('reports.index') }}" class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.reports.index') }}" class="nav-link {{ request()->routeIs('clinic.reports.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                     </svg>
                                     <span class="truncate">Financial Reports</span>
                                 </a>
-                                <a href="{{ route('analytics.dashboard') }}" class="nav-link {{ request()->routeIs('analytics.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.analytics.dashboard') }}" class="nav-link {{ request()->routeIs('clinic.analytics.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                     </svg>
@@ -352,19 +332,19 @@
                         <div class="pt-4">
                             <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Accounting</h3>
                             <div class="mt-3 space-y-2">
-                                <a href="{{ route('journal-entries') }}" class="nav-link {{ request()->routeIs('journal-entries*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.journal-entries') }}" class="nav-link {{ request()->routeIs('clinic.journal-entries*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                     </svg>
                                     <span class="truncate">Journal Entries</span>
                                 </a>
-                                <a href="{{ route('ledger') }}" class="nav-link {{ request()->routeIs('ledger') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.ledger') }}" class="nav-link {{ request()->routeIs('clinic.ledger') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                                     </svg>
                                     <span class="truncate">General Ledger</span>
                                 </a>
-                                <a href="{{ route('chart-of-accounts') }}" class="nav-link {{ request()->routeIs('chart-of-accounts') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.chart-of-accounts') }}" class="nav-link {{ request()->routeIs('clinic.chart-of-accounts') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v14l-5-3-5 3V5z"></path>
@@ -392,19 +372,9 @@
                             </div>
                         </div>
 
-                        <div class="pt-4">
-                            <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Settings</h3>
-                            <div class="mt-3 space-y-2">
-                                <a href="{{ route('settings.index') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
-                                    <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                    <span class="truncate">Settings</span>
-                                </a>
-                            </div>
-                        </div>
 
-                    @elseif(auth()->user()->hasRole('clinic_admin'))
+
+                    @elseif(auth()->check() && auth()->user()->hasRole('clinic_admin'))
                         <!-- Clinic Admin Menu -->
                         <div class="space-y-2">
                             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -415,7 +385,7 @@
                             </a>
                         </div>
 
-                        @if(auth()->user()->clinic->hasModule('crm'))
+                        @if(auth()->check() && auth()->user()->clinic && auth()->user()->clinic->hasModule('crm'))
                         <div class="pt-4">
                             <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">CRM & Marketing</h3>
                             <div class="mt-3 space-y-2">
@@ -425,11 +395,11 @@
                                     </svg>
                                     <span class="truncate">Leads</span>
                                 </a>
-                                <a href="{{ route('landing-page-manager') }}" class="nav-link {{ request()->routeIs('landing-page-manager*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.system-settings.index') }}" class="nav-link {{ request()->routeIs('clinic.landing-page-manager*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                     </svg>
-                                    <span class="truncate">Landing Page CMS</span>
+                                    <span class="truncate">System Settings</span>
                                 </a>
                                 @if(auth()->user()->clinic->hasFeature('has_email_system'))
                                 <a href="{{ route('emails.index') }}" class="nav-link {{ request()->routeIs('emails.*') ? 'active' : '' }}">
@@ -443,11 +413,11 @@
                         </div>
                         @endif
 
-                        @if(auth()->user()->clinic->hasModule('patients'))
+                        @if(auth()->check() && auth()->user()->clinic && auth()->user()->clinic->hasModule('patients'))
                         <div class="pt-4">
                             <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Patient Management</h3>
                             <div class="mt-3 space-y-2">
-                                <a href="{{ route('patients.index') }}" class="nav-link {{ request()->routeIs('patients.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.patients.index') }}" class="nav-link {{ request()->routeIs('clinic.patients.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                     </svg>
@@ -461,13 +431,13 @@
                                     <span class="truncate">Appointments</span>
                                 </a>
                                 @endif
-                                <a href="{{ route('treatment-plans.index') }}" class="nav-link {{ request()->routeIs('treatment-plans.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.treatment-plans.index') }}" class="nav-link {{ request()->routeIs('clinic.treatment-plans.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                     </svg>
                                     <span class="truncate">Treatment Plans</span>
                                 </a>
-                                <a href="{{ route('waitlist.index') }}" class="nav-link {{ request()->routeIs('waitlist.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.waitlist.index') }}" class="nav-link {{ request()->routeIs('clinic.waitlist.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
@@ -495,18 +465,18 @@
                             </div>
                         </div>
 
-                        @if(auth()->user()->clinic->hasModule('invoicing'))
+                        @if(auth()->check() && auth()->user()->clinic && auth()->user()->clinic->hasModule('invoicing'))
                         <div class="pt-4">
                             <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Financial Management</h3>
                             <div class="mt-3 space-y-2">
-                                <a href="{{ route('invoices.index') }}" class="nav-link {{ request()->routeIs('invoices.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.invoices.index') }}" class="nav-link {{ request()->routeIs('clinic.invoices.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                     </svg>
                                     <span class="truncate">Invoices & Billing</span>
                                 </a>
-                                @if(auth()->user()->clinic->hasModule('reports'))
-                                <a href="{{ route('reports.index') }}" class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+                                @if(auth()->check() && auth()->user()->clinic && auth()->user()->clinic->hasModule('reports'))
+                                <a href="{{ route('clinic.reports.index') }}" class="nav-link {{ request()->routeIs('clinic.reports.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                     </svg>
@@ -514,7 +484,7 @@
                                 </a>
                                 @endif
                                 @if(auth()->user()->clinic->hasFeature('has_analytics'))
-                                <a href="{{ route('analytics.dashboard') }}" class="nav-link {{ request()->routeIs('analytics.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.analytics.dashboard') }}" class="nav-link {{ request()->routeIs('clinic.analytics.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                     </svg>
@@ -528,14 +498,14 @@
                         <div class="pt-4">
                             <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Operations</h3>
                             <div class="mt-3 space-y-2">
-                                <a href="{{ route('staff.index') }}" class="nav-link {{ request()->routeIs('staff.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.staff.index') }}" class="nav-link {{ request()->routeIs('clinic.staff.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                     </svg>
                                     <span class="truncate">Staff Management</span>
                                 </a>
                                 @if(auth()->user()->clinic->hasModule('appointments'))
-                                <a href="{{ route('recurring-appointments.index') }}" class="nav-link {{ request()->routeIs('recurring-appointments.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.recurring-appointments.index') }}" class="nav-link {{ request()->routeIs('clinic.recurring-appointments.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                     </svg>
@@ -556,7 +526,13 @@
                         <div class="pt-4">
                             <h3 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Settings & Subscription</h3>
                             <div class="mt-3 space-y-2">
-                                <a href="{{ route('settings.index') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+                                <a href="{{ route('clinic.system-settings.index') }}" class="nav-link {{ request()->routeIs('clinic.system-settings.*') ? 'active' : '' }}">
+                                    <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                                    </svg>
+                                    <span class="truncate">Clinic Settings</span>
+                                </a>
+                                <a href="{{ route('clinic.settings.index') }}" class="nav-link {{ request()->routeIs('clinic.settings.*') ? 'active' : '' }}">
                                     <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     </svg>

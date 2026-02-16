@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Lead;
 use Illuminate\Http\Request;
+use App\Notifications\NewLeadAlert;
+use Illuminate\Support\Facades\Notification;
 
 class ClinicCrmController extends Controller
 {
@@ -42,7 +44,13 @@ class ClinicCrmController extends Controller
         $validated['clinic_id'] = auth()->user()->clinic_id;
         $validated['status'] = 'new';
 
-        Lead::create($validated);
+        $lead = Lead::create($validated);
+
+        // Notify clinic admins
+        $clinic = auth()->user()->clinic;
+        if ($clinic) {
+            Notification::send($clinic->admins, new NewLeadAlert($lead));
+        }
 
         return redirect()->route('clinic.crm.leads.index')->with('success', 'Lead created successfully!');
     }

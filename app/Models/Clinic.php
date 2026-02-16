@@ -32,6 +32,7 @@ class Clinic extends Model
         'theme_color', 'accent_color', 'tagline', 'description', 'about', 'services',
         'gallery_images', 'facebook_url', 'instagram_url', 'website_url',
         'subscription_status', 'subscription_plan', 'subscription_expires_at', 'is_active',
+        'subscription_price', 'subscription_features',
         // Configuration fields
         'enabled_modules', 'enabled_roles', 'has_landing_page', 'has_crm',
         'has_patient_portal', 'has_email_system', 'has_notifications', 'has_analytics',
@@ -40,6 +41,11 @@ class Clinic extends Model
         'has_custom_branding', 'has_api_access', 'has_priority_support',
         'business_type', 'timezone', 'currency', 'business_hours', 'appointment_settings',
         'payment_gateways', 'sms_providers', 'email_providers',
+        'appointment_duration', 'working_hours_start', 'working_hours_end', 'working_days',
+        'linkedin_url', 'youtube_url',
+        'show_in_landing_menu', 'show_services_menu', 'show_team_menu',
+        'show_gallery_menu', 'show_contact_menu', 'show_booking_button',
+        'booking_button_text', 'booking_button_style',
     ];
 
     protected function casts(): array
@@ -56,6 +62,12 @@ class Clinic extends Model
             'has_patient_portal' => 'boolean',
             'has_email_system' => 'boolean',
             'has_notifications' => 'boolean',
+            'show_in_landing_menu' => 'boolean',
+            'show_services_menu' => 'boolean',
+            'show_team_menu' => 'boolean',
+            'show_gallery_menu' => 'boolean',
+            'show_contact_menu' => 'boolean',
+            'show_booking_button' => 'boolean',
             'has_analytics' => 'boolean',
             'has_accounting' => 'boolean',
             'has_inventory' => 'boolean',
@@ -69,12 +81,18 @@ class Clinic extends Model
             'payment_gateways' => 'array',
             'sms_providers' => 'array',
             'email_providers' => 'array',
+            'working_days' => 'array',
         ];
     }
 
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function admins()
+    {
+        return $this->hasMany(User::class)->role('clinic_admin');
     }
 
     public function patients()
@@ -85,6 +103,11 @@ class Clinic extends Model
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function treatmentPlans()
+    {
+        return $this->hasMany(TreatmentPlan::class);
     }
 
     public function invoices()
@@ -141,5 +164,15 @@ class Clinic extends Model
     public function canCreatePatient()
     {
         return $this->patients()->count() < ($this->max_patients ?? 1000);
+    }
+
+    public function tenant()
+    {
+        return $this->hasOne(Tenant::class);
+    }
+
+    public function isProvisioned()
+    {
+        return $this->tenant()->exists();
     }
 }

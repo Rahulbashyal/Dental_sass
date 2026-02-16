@@ -8,9 +8,14 @@ use App\Traits\EncryptedAttributes;
 use App\Traits\AnonymizesData;
 use App\Traits\MasksData;
 
-class Patient extends Model
+use App\Traits\LogsActivity;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class Patient extends Authenticatable
 {
-    use HasFactory, EncryptedAttributes, AnonymizesData, MasksData;
+    use HasFactory, EncryptedAttributes, AnonymizesData, MasksData, LogsActivity, Notifiable;
 
     protected $fillable = [
         'clinic_id',
@@ -32,6 +37,7 @@ class Patient extends Model
         'insurance_provider',
         'insurance_number',
         'is_active',
+        'photo',
     ];
 
     protected $encrypted = [
@@ -57,6 +63,11 @@ class Patient extends Model
         return $this->belongsTo(Clinic::class);
     }
 
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
+
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
@@ -80,5 +91,35 @@ class Patient extends Model
     public function invoices()
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function clinicalNotes()
+    {
+        return $this->hasMany(ClinicalNote::class);
+    }
+
+    public function consents()
+    {
+        return $this->hasMany(PatientConsent::class);
+    }
+
+    public function imagingStudies()
+    {
+        return $this->hasMany(ImagingStudy::class);
+    }
+
+    public function labOrders()
+    {
+        return $this->hasMany(LabOrder::class);
+    }
+
+    public function paymentPlans()
+    {
+        return $this->hasMany(PaymentPlan::class);
+    }
+
+    public function recurringAppointments()
+    {
+        return $this->hasMany(RecurringAppointment::class);
     }
 }

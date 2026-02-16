@@ -98,28 +98,38 @@
     <nav class="bg-white/95 backdrop-blur-md shadow-lg fixed w-full z-50 transition-all duration-300" id="navbar">
         <div class="flex justify-between items-center py-4 transition-all duration-300 px-4 sm:px-6 lg:px-8 gap-8 h-20" id="navbar-content">
             <div class="flex items-center space-x-3 flex-shrink-0 min-w-fit h-full">
-                <img src="https://images.pexels.com/photos/305568/pexels-photo-305568.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" alt="{{ $clinic->name }}" class="h-12 w-12 rounded-full object-cover shadow-lg">
+                <img src="{{ $clinic->logo ? Storage::url($clinic->logo) : 'https://images.pexels.com/photos/305568/pexels-photo-305568.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop' }}" alt="{{ $clinic->name }}" class="h-12 w-12 rounded-full object-cover shadow-lg">
                 <div class="flex flex-col justify-center h-full">
                     <h1 class="text-xl font-bold clinic-text-gradient leading-tight">{{ $clinic->name }}</h1>
-                    <span class="text-xs text-gray-500 leading-tight">Professional Dental Care</span>
+                    <span class="text-xs text-gray-500 leading-tight">{{ $content->footer_tagline ?? 'Professional Dental Care' }}</span>
                 </div>
             </div>
             
             <div class="hidden md:flex items-center space-x-8 justify-center flex-1 px-4 h-full">
-                <a href="#hero" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">Home</a>
-                <a href="#about" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">About</a>
-                <a href="#services" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">Services</a>
-                <a href="#gallery" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">Gallery</a>
-                <a href="#testimonials" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">Reviews</a>
-                <a href="#faq" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">FAQ</a>
-                <a href="#contact" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">Contact</a>
+                <a href="#hero" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">{{ $content->nav_home_label ?? 'Home' }}</a>
+                @if($clinic->show_team_menu)
+                <a href="#about" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">{{ $content->nav_about_label ?? 'About' }}</a>
+                @endif
+                @if($clinic->show_services_menu)
+                <a href="#services" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">{{ $content->nav_services_label ?? 'Services' }}</a>
+                @endif
+                @if($clinic->show_gallery_menu)
+                <a href="#gallery" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">{{ $content->nav_gallery_label ?? 'Gallery' }}</a>
+                @endif
+                <a href="#testimonials" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">{{ $content->nav_testimonials_label ?? 'Reviews' }}</a>
+                <a href="#faq" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">{{ $content->nav_faq_label ?? 'FAQ' }}</a>
+                @if($clinic->show_contact_menu)
+                <a href="#contact" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">{{ $content->nav_contact_label ?? 'Contact' }}</a>
+                @endif
             </div>
             
             <div class="flex items-center space-x-4 flex-shrink-0 h-full">
                 <a href="/login" class="hidden md:flex text-gray-600 hover:text-blue-600 font-medium transition-colors text-sm whitespace-nowrap items-center ">Login</a>
+                @if($clinic->show_booking_button)
                 <a href="{{ route('clinic.book', $clinic->slug) }}" class="hidden md:flex clinic-gradient text-white px-4 py-2 rounded-lg hover:opacity-90 transition-all shadow-lg font-semibold text-sm whitespace-nowrap items-center h-full">
-                    Book Appointment
+                    {{ $clinic->booking_button_text ?? $content->nav_booking_cta ?? 'Book Appointment' }}
                 </a>
+                @endif
                 <button class="md:hidden text-gray-600 hover:text-blue-600" id="mobile-menu-btn">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -131,38 +141,75 @@
         <!-- Mobile Menu -->
         <div class="md:hidden hidden border-t border-gray-200 bg-white" id="mobile-menu">
             <div class="px-4 py-3 space-y-2">
-                <a href="#hero" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">Home</a>
-                <a href="#about" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">About</a>
-                <a href="#services" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">Services</a>
-                <a href="#gallery" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">Gallery</a>
-                <a href="#testimonials" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">Reviews</a>
-                <a href="#faq" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">FAQ</a>
-                <a href="#contact" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">Contact</a>
+                <a href="#hero" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">{{ $content->nav_home_label ?? 'Home' }}</a>
+                @if($clinic->show_team_menu)
+                <a href="#about" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">{{ $content->nav_about_label ?? 'About' }}</a>
+                @endif
+                @if($clinic->show_services_menu)
+                <a href="#services" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">{{ $content->nav_services_label ?? 'Services' }}</a>
+                @endif
+                @if($clinic->show_gallery_menu)
+                <a href="#gallery" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">{{ $content->nav_gallery_label ?? 'Gallery' }}</a>
+                @endif
+                <a href="#testimonials" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">{{ $content->nav_testimonials_label ?? 'Reviews' }}</a>
+                <a href="#faq" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">{{ $content->nav_faq_label ?? 'FAQ' }}</a>
+                @if($clinic->show_contact_menu)
+                <a href="#contact" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">{{ $content->nav_contact_label ?? 'Contact' }}</a>
+                @endif
                 <a href="/login" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded hover:bg-gray-50">Login</a>
+                @if($clinic->show_booking_button)
                 <a href="{{ route('clinic.book', $clinic->slug) }}" class="block mx-3 my-2 clinic-gradient text-white px-6 py-2 rounded-lg text-center font-semibold">
-                    Book Appointment
+                    {{ $clinic->booking_button_text ?? $content->nav_booking_cta ?? 'Book Appointment' }}
                 </a>
+                @endif
             </div>
         </div>
     </nav>
 
+@if($content->show_hero ?? true)
     <!-- Hero Section with Carousel -->
     <section id="hero" class="pt-20 pb-16 relative overflow-hidden min-h-screen flex items-center">
         <!-- Carousel Background -->
         <div class="absolute inset-0 carousel-container">
             @php
-                $heroImages = [
-                    'https://images.pexels.com/photos/3845810/pexels-photo-3845810.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop',
-                    'https://images.pexels.com/photos/3779709/pexels-photo-3779709.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop',
-                    'https://images.pexels.com/photos/3845623/pexels-photo-3845623.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop',
-                    'https://images.pexels.com/photos/3779709/pexels-photo-3779709.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop',
-                    'https://images.pexels.com/photos/3845810/pexels-photo-3845810.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop',
-                    'https://images.pexels.com/photos/3845623/pexels-photo-3845623.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop'
-                ];
+                // Use dynamic carousel images from content, fallback to defaults
+                $carouselImages = $content->hero_carousel_images ?? [];
+                
+                // If a single hero image exists, add it to the carousel if not already present
+                if ($content->hero_image && !in_array($content->hero_image, $carouselImages)) {
+                    array_unshift($carouselImages, $content->hero_image);
+                }
+
+                if (empty($carouselImages)) {
+                    $carouselImages = [
+                        'https://images.pexels.com/photos/3845810/pexels-photo-3845810.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop',
+                        'https://images.pexels.com/photos/3779709/pexels-photo-3779709.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop',
+                        'https://images.pexels.com/photos/3845623/pexels-photo-3845623.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop'
+                    ];
+                }
+                
+                // Resolve URLs for each image (handle both stored paths and URLs)
+                $heroImages = array_map(function($img) {
+                    if (filter_var($img, FILTER_VALIDATE_URL)) {
+                        return $img;
+                    }
+                    return Storage::url($img);
+                }, $carouselImages);
+                
+                // Ensure array keys are sequential for the loop
+                $heroImages = array_values($heroImages);
             @endphp
-            @foreach($heroImages as $index => $image)
+            @forelse($heroImages as $index => $image)
             <div class="carousel-slide {{ $index === 0 ? 'active' : '' }} absolute inset-0 bg-cover bg-center transition-all duration-1000 transform" style="background-image: linear-gradient(135deg, rgba(37, 99, 235, 0.7), rgba(29, 78, 216, 0.7)), url('{{ $image }}');"></div>
-            @endforeach
+            @empty
+                @foreach([
+                    'https://images.pexels.com/photos/3845810/pexels-photo-3845810.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop',
+                    'https://images.pexels.com/photos/3779709/pexels-photo-3779709.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop',
+                    'https://images.pexels.com/photos/3845623/pexels-photo-3845623.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop'
+                ] as $index => $image)
+                <div class="carousel-slide {{ $index === 0 ? 'active' : '' }} absolute inset-0 bg-cover bg-center transition-all duration-1000 transform" style="background-image: linear-gradient(135deg, rgba(37, 99, 235, 0.7), rgba(29, 78, 216, 0.7)), url('{{ $image }}');"></div>
+                @endforeach
+            @endforelse
         </div>
         
         <!-- Floating Elements -->
@@ -205,31 +252,34 @@
             </svg>
         </div>
     </section>
+@endif
 
+@if($content->show_stats ?? true)
     <!-- Stats Section -->
     <section class="clinic-gradient py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
                 <div>
-                    <div class="text-4xl font-bold mb-2">15+</div>
-                    <div class="text-blue-100">Years Experience</div>
+                    <div class="text-4xl font-bold mb-2">{{ $content->stats_experience ?? '15+' }}</div>
+                    <div class="text-blue-100">{{ $content->stats_experience_label ?? 'Years Experience' }}</div>
                 </div>
                 <div>
-                    <div class="text-4xl font-bold mb-2">2500+</div>
-                    <div class="text-blue-100">Happy Patients</div>
+                    <div class="text-4xl font-bold mb-2">{{ $content->stats_patients ?? '2500+' }}</div>
+                    <div class="text-blue-100">{{ $content->stats_patients_label ?? 'Happy Patients' }}</div>
                 </div>
                 <div>
-                    <div class="text-4xl font-bold mb-2">98%</div>
-                    <div class="text-blue-100">Success Rate</div>
+                    <div class="text-4xl font-bold mb-2">{{ $content->stats_success_rate ?? '98%' }}</div>
+                    <div class="text-blue-100">{{ $content->stats_success_rate_label ?? 'Success Rate' }}</div>
                 </div>
                 <div>
-                    <div class="text-4xl font-bold mb-2">24/7</div>
-                    <div class="text-blue-100">Emergency Care</div>
+                    <div class="text-4xl font-bold mb-2">{{ $content->stats_emergency ?? '24/7' }}</div>
+                    <div class="text-blue-100">{{ $content->stats_emergency_label ?? 'Emergency Care' }}</div>
                 </div>
-            </div>
         </div>
     </section>
+@endif
 
+@if($clinic->show_team_menu)
     <!-- About Section -->
     <section id="about" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -277,13 +327,21 @@
                     </div>
                 </div>
                 <div class="relative">
-                    <img src="https://images.pexels.com/photos/3779709/pexels-photo-3779709.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop" alt="About Us" class="w-full h-96 object-cover rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                    @php
+                        $aboutImage = $content->about_image ?? 'https://images.pexels.com/photos/3779709/pexels-photo-3779709.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop';
+                        if (!filter_var($aboutImage, FILTER_VALIDATE_URL)) {
+                            $aboutImage = Storage::url($aboutImage);
+                        }
+                    @endphp
+                    <img src="{{ $aboutImage }}" alt="About Us" class="w-full h-96 object-cover rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300">
                     <div class="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent rounded-2xl"></div>
                 </div>
             </div>
         </div>
     </section>
+    @endif
 
+    @if($clinic->show_services_menu)
     <!-- Services Section -->
     <section id="services" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -297,52 +355,32 @@
             </div>
             
             <div class="grid md:grid-cols-3 gap-8">
+                @php
+                    $defaultServices = [
+                        ['name' => 'General Dentistry', 'icon' => '🦷', 'description' => 'Comprehensive oral health care including cleanings, fillings, and preventive treatments'],
+                        ['name' => 'Cosmetic Dentistry', 'icon' => '✨', 'description' => 'Enhance your smile with teeth whitening, veneers, and smile makeovers'],
+                        ['name' => 'Orthodontics', 'icon' => '🔧', 'description' => 'Straighten your teeth with traditional braces or modern clear aligners'],
+                        ['name' => 'Oral Surgery', 'icon' => '🏥', 'description' => 'Expert surgical procedures including extractions and implant placement'],
+                        ['name' => 'Pediatric Dentistry', 'icon' => '👶', 'description' => 'Specialized dental care for children in a friendly environment'],
+                        ['name' => 'Emergency Care', 'icon' => '🚨', 'description' => '24/7 emergency dental services for urgent dental problems']
+                    ];
+                    $services = $content && !empty($content->services_data) ? $content->services_data : $defaultServices;
+                @endphp
+                @foreach($services as $service)
                 <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all">
                     <div class="w-16 h-16 clinic-gradient rounded-2xl flex items-center justify-center mb-6">
-                        <span class="text-white text-2xl">🦷</span>
+                        <span class="text-white text-2xl">{{ $service['icon'] ?? '🦷' }}</span>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">General Dentistry</h3>
-                    <p class="text-gray-600">Comprehensive oral health care including cleanings, fillings, and preventive treatments</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">{{ $service['name'] ?? 'Service' }}</h3>
+                    <p class="text-gray-600">{{ $service['description'] ?? '' }}</p>
                 </div>
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all">
-                    <div class="w-16 h-16 clinic-gradient rounded-2xl flex items-center justify-center mb-6">
-                        <span class="text-white text-2xl">✨</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Cosmetic Dentistry</h3>
-                    <p class="text-gray-600">Enhance your smile with teeth whitening, veneers, and smile makeovers</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all">
-                    <div class="w-16 h-16 clinic-gradient rounded-2xl flex items-center justify-center mb-6">
-                        <span class="text-white text-2xl">🔧</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Orthodontics</h3>
-                    <p class="text-gray-600">Straighten your teeth with traditional braces or modern clear aligners</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all">
-                    <div class="w-16 h-16 clinic-gradient rounded-2xl flex items-center justify-center mb-6">
-                        <span class="text-white text-2xl">🏥</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Oral Surgery</h3>
-                    <p class="text-gray-600">Expert surgical procedures including extractions and implant placement</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all">
-                    <div class="w-16 h-16 clinic-gradient rounded-2xl flex items-center justify-center mb-6">
-                        <span class="text-white text-2xl">👶</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Pediatric Dentistry</h3>
-                    <p class="text-gray-600">Specialized dental care for children in a friendly environment</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all">
-                    <div class="w-16 h-16 clinic-gradient rounded-2xl flex items-center justify-center mb-6">
-                        <span class="text-white text-2xl">🚨</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Emergency Care</h3>
-                    <p class="text-gray-600">24/7 emergency dental services for urgent dental problems</p>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
+    @endif
 
+    @if($clinic->show_gallery_menu)
     <!-- Gallery Section -->
     <section id="gallery" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -350,7 +388,7 @@
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">
                     {{ $content->gallery_title ?? 'Our Gallery' }}
                 </h2>
-                <p class="text-xl text-gray-600">Take a look at our modern facilities and happy patients</p>
+                <p class="text-xl text-gray-600">{{ $content->gallery_description ?? 'Take a look at our modern facilities and happy patients' }}</p>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 @php
@@ -364,24 +402,63 @@
                         'https://images.pexels.com/photos/3845623/pexels-photo-3845623.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
                         'https://images.pexels.com/photos/305568/pexels-photo-305568.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop'
                     ];
-                    $galleryImages = $content && $content->gallery_images ? json_decode($content->gallery_images, true) : $defaultGallery;
+                    // Gallery images are already cast as array, no need for json_decode
+                    $galleryImages = $content && !empty($content->gallery_images) ? $content->gallery_images : $defaultGallery;
+                    
+                    // Resolve URLs for each image
+                    $galleryImages = array_map(function($img) {
+                        if (filter_var($img, FILTER_VALIDATE_URL)) {
+                            return $img;
+                        }
+                        return Storage::url($img);
+                    }, $galleryImages);
                 @endphp
-                @foreach($galleryImages as $index => $image)
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                    <img src="{{ is_string($image) ? $image : $content->getGalleryImageUrl($image) }}" alt="Gallery Image {{ $index + 1 }}" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-blue-600/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                        <div class="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                            <p class="text-sm font-semibold">View Image</p>
+                @foreach($galleryImages as $index => $item)
+                    @php
+                        $imagePath = is_array($item) ? ($item['path'] ?? '') : $item;
+                        $description = is_array($item) ? ($item['description'] ?? '') : '';
+                        $imageUrl = $content->getGalleryImageUrl($imagePath);
+                    @endphp
+                    <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer" 
+                         onclick="openLightbox('{{ $imageUrl }}', '{{ addslashes($description) }}')">
+                        <img src="{{ $imageUrl }}" alt="{{ $description ?: 'Gallery Image ' . ($index + 1) }}" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-6">
+                            <div class="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                <div class="bg-white/20 backdrop-blur-md w-10 h-10 rounded-full flex items-center justify-center mb-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </div>
+                                @if($description)
+                                    <p class="text-sm font-medium line-clamp-2">{{ $description }}</p>
+                                @else
+                                    <p class="text-sm font-semibold">View Full Image</p>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
             </div>
         </div>
     </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 z-[100] hidden bg-black/95 backdrop-blur-sm flex items-center justify-center p-4">
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white hover:text-blue-400 transition-colors p-2 z-[110]">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <div class="max-w-5xl w-full h-full flex flex-col items-center justify-center relative">
+            <img id="lightbox-img" src="" alt="" class="max-h-[80vh] w-auto h-auto rounded-lg shadow-2xl object-contain opacity-0 scale-95 transition-all duration-500">
+            <div id="lightbox-caption" class="mt-6 text-white text-center max-w-2xl px-4 opacity-0 translate-y-4 transition-all duration-500 delay-200">
+                <p class="text-lg font-medium tracking-wide"></p>
+            </div>
+        </div>
+    </div>
+
+    @endif
 
     <!-- Testimonials Section -->
     <section id="testimonials" class="py-20 bg-gray-50">
@@ -390,7 +467,7 @@
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">
                     {{ $content->testimonials_title ?? 'What Our Patients Say' }}
                 </h2>
-                <p class="text-xl text-gray-600">Real experiences from our valued patients</p>
+                <p class="text-xl text-gray-600">{{ $content->testimonials_description ?? 'Real experiences from our valued patients' }}</p>
             </div>
             <div class="grid md:grid-cols-3 gap-8">
                 @php
@@ -399,7 +476,7 @@
                         ['name' => 'Michael Chen', 'designation' => 'Patient', 'review' => 'Best dental clinic in the city! The doctors are highly skilled and the facility is top-notch. Highly recommended!'],
                         ['name' => 'Emily Davis', 'designation' => 'Patient', 'review' => 'Amazing experience from start to finish. The team made me feel comfortable and the treatment was excellent.']
                     ];
-                    $testimonials = $content && $content->testimonials_data ? json_decode($content->testimonials_data, true) : $defaultTestimonials;
+                    $testimonials = $content && !empty($content->testimonials_data) ? $content->testimonials_data : $defaultTestimonials;
                 @endphp
                 @foreach($testimonials as $testimonial)
                 <div class="bg-white p-8 rounded-2xl shadow-lg">
@@ -435,7 +512,7 @@
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">
                     {{ $content->faq_title ?? 'Frequently Asked Questions' }}
                 </h2>
-                <p class="text-xl text-gray-600">Find answers to common questions about our services</p>
+                <p class="text-xl text-gray-600">{{ $content->faq_description ?? 'Find answers to common questions about our services' }}</p>
             </div>
             <div class="space-y-6">
                 @php
@@ -445,7 +522,7 @@
                         ['question' => 'What should I do in a dental emergency?', 'answer' => 'Contact our office immediately. We provide 24/7 emergency dental care for urgent situations.'],
                         ['question' => 'Are your treatments painful?', 'answer' => 'We use modern techniques and anesthesia to ensure your comfort during all procedures. Most patients experience minimal to no discomfort.']
                     ];
-                    $faqs = $content && $content->faq_data ? json_decode($content->faq_data, true) : $defaultFAQs;
+                    $faqs = $content && !empty($content->faq_data) ? $content->faq_data : $defaultFAQs;
                 @endphp
                 @foreach($faqs as $index => $faq)
                 <div class="bg-gray-50 rounded-2xl p-6">
@@ -464,6 +541,7 @@
         </div>
     </section>
 
+    @if($clinic->show_contact_menu)
     <!-- Contact Section -->
     <section id="contact" class="py-20 clinic-gradient">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -478,7 +556,7 @@
             
             <div class="grid lg:grid-cols-2 gap-16">
                 <div class="text-white">
-                    <h3 class="text-2xl font-bold mb-8">Get in Touch</h3>
+                    <h3 class="text-2xl font-bold mb-8">{{ $content->contact_get_in_touch_title ?? 'Get in Touch' }}</h3>
                     <div class="space-y-6">
                         <div class="flex items-center">
                             <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4">
@@ -518,7 +596,7 @@
                 </div>
                 
                 <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-                    <h3 class="text-2xl font-bold text-white mb-6">Send us a Message</h3>
+                    <h3 class="text-2xl font-bold text-white mb-6">{{ $content->contact_send_message_title ?? 'Send us a Message' }}</h3>
                     <form class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <input type="text" placeholder="Your Name" class="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50">
@@ -534,6 +612,7 @@
             </div>
         </div>
     </section>
+    @endif
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-16">
@@ -541,10 +620,10 @@
             <div class="grid md:grid-cols-4 gap-8">
                 <div class="md:col-span-2">
                     <div class="flex items-center space-x-3 mb-6">
-                        <img src="https://images.pexels.com/photos/305568/pexels-photo-305568.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" alt="{{ $clinic->name }}" class="h-12 w-12 rounded-full object-cover shadow-lg">
+                        <img src="{{ $clinic->logo ? Storage::url($clinic->logo) : 'https://images.pexels.com/photos/305568/pexels-photo-305568.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop' }}" alt="{{ $clinic->name }}" class="h-12 w-12 rounded-full object-cover shadow-lg">
                         <div>
                             <h3 class="text-xl font-bold">{{ $clinic->name }}</h3>
-                            <p class="text-gray-400">Professional Dental Care</p>
+                            <p class="text-gray-400">{{ $content->footer_tagline ?? 'Professional Dental Care' }}</p>
                         </div>
                     </div>
                     <p class="text-gray-400 mb-6">
@@ -568,6 +647,30 @@
                         <li>{{ $content->contact_address ?? $clinic->address ?? 'Kathmandu, Nepal' }}</li>
                         <li>{{ $content->contact_phone ?? $clinic->phone ?? '+977-1-XXXXXXX' }}</li>
                         <li>{{ $content->contact_email ?? $clinic->email }}</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">Business Hours</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        @php
+                            $hours = $content->business_hours ?? [];
+                            $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                        @endphp
+                        @foreach($days as $day)
+                            @if(isset($hours[$day]))
+                                <li class="flex justify-between">
+                                    <span class="capitalize">{{ $day }}</span>
+                                    <span>
+                                        @if($hours[$day]['closed'] ?? false)
+                                            <span class="text-rose-400">Closed</span>
+                                        @else
+                                            {{ $hours[$day]['open'] ?? '09:00' }} - {{ $hours[$day]['close'] ?? '18:00' }}
+                                        @endif
+                                    </span>
+                                </li>
+                            @endif
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -718,6 +821,51 @@
             section.style.transform = 'translateY(30px)';
             section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(section);
+        });
+
+        // Lightbox Functions
+        function openLightbox(url, description) {
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            const caption = document.getElementById('lightbox-caption');
+            const captionText = caption.querySelector('p');
+
+            img.src = url;
+            captionText.textContent = description;
+            
+            lightbox.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+
+            setTimeout(() => {
+                img.style.opacity = '1';
+                img.style.scale = '1';
+                if (description) {
+                    caption.style.opacity = '1';
+                    caption.style.translateY = '0';
+                }
+            }, 50);
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            const caption = document.getElementById('lightbox-caption');
+
+            img.style.opacity = '0';
+            img.style.scale = '0.95';
+            caption.style.opacity = '0';
+
+            setTimeout(() => {
+                lightbox.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 500);
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !document.getElementById('lightbox').classList.contains('hidden')) {
+                closeLightbox();
+            }
         });
 
         // Hero section should be visible immediately

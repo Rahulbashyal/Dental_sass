@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/animations.css'])
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-gray-50">
@@ -30,9 +30,9 @@
             <div class="py-2">
                 <a href="{{ route('dashboard') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Dashboard</a>
                 <a href="{{ route('clinic.appointments.index') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Appointments</a>
-                <a href="{{ route('patients.index') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Patients</a>
-                <a href="{{ route('analytics.dashboard') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Analytics</a>
-                <a href="{{ route('recurring-appointments.index') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Recurring</a>
+                <a href="{{ route('clinic.patients.index') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Patients</a>
+                <a href="{{ route('clinic.analytics.dashboard') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Analytics</a>
+                <a href="{{ route('clinic.recurring-appointments.index') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Recurring</a>
             </div>
         </div>
     </nav>
@@ -57,13 +57,13 @@
                 </svg>
                 Appointments
             </a>
-            <a href="{{ route('patients.index') }}" class="flex flex-col items-center py-2 px-3 text-xs text-gray-600">
+            <a href="{{ route('clinic.patients.index') }}" class="flex flex-col items-center py-2 px-3 text-xs text-gray-600">
                 <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
                 </svg>
                 Patients
             </a>
-            <a href="{{ route('analytics.dashboard') }}" class="flex flex-col items-center py-2 px-3 text-xs text-gray-600">
+            <a href="{{ route('clinic.analytics.dashboard') }}" class="flex flex-col items-center py-2 px-3 text-xs text-gray-600">
                 <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
                 </svg>

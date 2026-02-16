@@ -13,6 +13,7 @@ use App\Models\EmailLog;
 use App\Models\LandingPageContent;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Auth\Events\Registered;
 
 class SuperAdminController extends Controller
 {
@@ -139,12 +140,121 @@ class SuperAdminController extends Controller
         return response()->json($chartData);
     }
 
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::with(['clinic', 'roles'])->paginate(15);
-        return view('superadmin.users.index', compact('users'));
+        // Get all clinics with user counts for the cards
+        $clinics = Clinic::withCount('users')->orderBy('name')->get();
+        
+        return view('superadmin.users.index', compact('clinics'));
     }
-
+    
+    /**
+     * Show users for a specific clinic
+     */
+    public function clinicUsers(Clinic $clinic)
+    {
+        $clinic->load(['users' => function($query) {
+            $query->with('roles')->orderBy('name');
+        }]);
+        
+        $users = $clinic->users()->with('roles')->paginate(15);
+        
+        return view('superadmin.users.clinic', compact('clinic', 'users'));
+    }
+    
+    /**
+     * Show create user form
+     */
+    public function createUser(Request $request)
+    {
+        $clinics = Clinic::all();
+        $roles = \Spatie\Permission\Models\Role::all();
+        $selectedClinic = $request->get('clinic_id');
+        
+        return view('superadmin.users.create', compact('clinics', 'roles', 'selectedClinic'));
+    }
+    
+    /**
+     * Store new user
+     */
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|exists:roles,name',
+            'clinic_id' => 'nullable|exists:clinics,id'
+        ]);
+        
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'clinic_id' => $request->clinic_id,
+            'is_active' => true
+        ]);
+        
+        $user->assignRole($request->role);
+    
+    event(new Registered($user));
+    
+    return redirect()->route('superadmin.users')->with('success', 'User created successfully!');
+    }
+    
+    /**
+     * Show edit user form
+     */
+    public function editUser(User $user)
+    {
+        $clinics = Clinic::all();
+        $roles = \Spatie\Permission\Models\Role::all();
+        
+        return view('superadmin.users.edit', compact('user', 'clinics', 'roles'));
+    }
+    
+    /**
+     * Update user
+     */
+    public function updateUser(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+            'role' => 'required|exists:roles,name',
+            'clinic_id' => 'nullable|exists:clinics,id'
+        ]);
+        
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'clinic_id' => $request->clinic_id
+        ]);
+        
+        if ($request->password) {
+            $user->update(['password' => bcrypt($request->password)]);
+        }
+        
+        $user->syncRoles([$request->role]);
+        
+        return redirect()->route('superadmin.users')->with('success', 'User updated successfully!');
+    }
+    
+    /**
+     * Delete user
+     */
+    public function destroyUser(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return redirect()->back()->with('error', 'You cannot delete your own account!');
+        }
+        
+        $user->delete();
+        
+        return redirect()->route('superadmin.users')->with('success', 'User deleted successfully!');
+    }
+    
     public function toggleClinicStatus(Clinic $clinic)
     {
         $clinic->update(['is_active' => !$clinic->is_active]);
@@ -184,7 +294,22 @@ class SuperAdminController extends Controller
 
     public function blogPosts()
     {
-        return view('superadmin.content.blog');
+        $posts = \App\Models\BlogPost::latest()->paginate(15);
+        return view('superadmin.content.blog', compact('posts'));
+    }
+
+    public function storeBlog(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'status' => 'required|in:draft,published',
+            'image' => 'nullable|image|max:2048'
+        ]);
+
+        \App\Models\BlogPost::create($validated);
+
+        return redirect()->back()->with('success', 'Blog post created successfully.');
     }
 
     public function testimonials()
@@ -314,19 +439,6 @@ class SuperAdminController extends Controller
         return redirect()->back()->with('success', 'Landing page updated successfully!');
     }
 
-    public function storeBlog(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'status' => 'required|in:draft,published'
-        ]);
-        
-        // In a real app, save to database
-        // For now, just return success message
-        return back()->with('success', 'Blog post created successfully!');
-    }
-
     public function storeTestimonial(Request $request)
     {
         $validated = $request->validate([
@@ -339,5 +451,13 @@ class SuperAdminController extends Controller
         // In a real app, save to database
         // For now, just return success message
         return back()->with('success', 'Testimonial added successfully!');
+    }
+    public function debug()
+    {
+        return response()->json([
+            'user' => \Illuminate\Support\Facades\Auth::user()->name,
+            'roles' => \Illuminate\Support\Facades\Auth::user()->getRoleNames(),
+            'is_superadmin' => \Illuminate\Support\Facades\Auth::user()->hasRole('superadmin')
+        ]);
     }
 }

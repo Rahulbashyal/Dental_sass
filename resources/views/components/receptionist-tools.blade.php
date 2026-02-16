@@ -24,14 +24,14 @@
 
         <!-- Today's Actions -->
         <div class="grid grid-cols-2 gap-3">
-            <a href="{{ route('today-schedule') }}" class="inline-flex justify-center items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <a href="{{ route('clinic.today-schedule') }}" class="inline-flex justify-center items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                 <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 Today's Schedule
             </a>
             
-            <a href="{{ route('print-schedule') }}" target="_blank" class="inline-flex justify-center items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <a href="{{ route('clinic.print-schedule') }}" target="_blank" class="inline-flex justify-center items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                 <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                 </svg>
@@ -46,7 +46,7 @@
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75"></div>
         <div class="relative bg-white rounded-lg max-w-md w-full">
-            <form action="{{ route('emergency-appointment') }}" method="POST" class="p-6">
+            <form action="{{ route('clinic.emergency-appointment') }}" method="POST" class="p-6">
                 @csrf
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Emergency Appointment</h3>
                 
@@ -101,7 +101,7 @@ function closeEmergencyModal() {
 document.getElementById('patient-search').addEventListener('input', function(e) {
     const query = e.target.value;
     if (query.length > 2) {
-        fetch(`{{ route('patient-search') }}?q=${query}`)
+        fetch(`{{ route('clinic.patient-search') }}?q=${query}`)
             .then(response => response.json())
             .then(data => {
                 const results = document.getElementById('search-results');

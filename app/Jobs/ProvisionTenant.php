@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Models\ProvisioningLog;
-use Stancl\Tenancy\Database\Models\Tenant;
+use App\Models\Tenant;
+use Illuminate\Auth\Events\Registered;
+use App\Notifications\ClinicProvisioned;
 
 class ProvisionTenant implements ShouldQueue
 {
@@ -73,7 +75,15 @@ class ProvisionTenant implements ShouldQueue
                             $user->assignRole('clinic_admin');
                         }
 
-                        ProvisioningLog::create(['tenant_id' => $tenantId, 'level' => 'info', 'message' => 'Tenant admin created: ' . $adminEmail]);
+                        event(new Registered($user));
+
+                        // Notify the admin that the clinic is ready
+                        $tenantModel = \App\Models\Clinic::where('slug', $tenantId)->first();
+                        if ($tenantModel) {
+                            $user->notify(new ClinicProvisioned($tenantModel, $adminPassword));
+                        }
+
+                        ProvisioningLog::create(['tenant_id' => $tenantId, 'level' => 'info', 'message' => 'Tenant admin created & notified: ' . $adminEmail]);
                     } else {
                         ProvisioningLog::create(['tenant_id' => $tenantId, 'level' => 'info', 'message' => 'Tenant admin already exists: ' . $adminEmail]);
                     }

@@ -2,21 +2,15 @@
 
 use App\Http\Controllers\{AuthController, DashboardController, ClinicController, PatientController, AppointmentController};
 use Illuminate\Support\Facades\Route;
+use App\Models\Clinic;
 
-// Email verification routes
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
+// Test route - refactored to SuperAdminController
+Route::get('/test-clinic-users/{clinic}', [\App\Http\Controllers\SuperAdminController::class, 'clinicUsers'])->middleware(['auth', 'role:superadmin']);
 
-Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
-    $request->fulfill();
-    return redirect('/dashboard');
-})->middleware(['auth', 'signed'])->name('verification.verify');
-
-Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+// Email verification routes - refactored to AuthController
+Route::get('/email/verify', [AuthController::class, 'showVerifyEmail'])->middleware('auth')->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
+Route::post('/email/verification-notification', [AuthController::class, 'resendVerificationNotification'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // 2FA routes
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -25,38 +19,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/2fa/verify', [\App\Http\Controllers\TwoFactorController::class, 'verify'])->name('2fa.verify');
     Route::post('/2fa/verify', [\App\Http\Controllers\TwoFactorController::class, 'verifyCode'])->name('2fa.verify.code');
     Route::post('/2fa/disable', [\App\Http\Controllers\TwoFactorController::class, 'disable'])->name('2fa.disable');
+    
+    // User profile routes
+    Route::get('/profile', [\App\Http\Controllers\SettingsController::class, 'profile'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/profile/password', [\App\Http\Controllers\SettingsController::class, 'editPassword'])->name('password.edit');
+    Route::put('/profile/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('password.update');
 });
 
 // Health check route
 Route::get('/health', [\App\Http\Controllers\HealthCheckController::class, 'check'])->name('health.check');
 
-Route::get('/', function () {
-    // Provide a safe default stub for the landing page content so views render during tests
-    $content = new class {
-        public function __get($key) { return null; }
-        public function getImageUrl($key, $default = null) { return $default ?? asset('logo.png'); }
-    };
-
-    try {
-        if (\Illuminate\Support\Facades\Schema::hasTable('landing_page_contents')) {
-            $actual = \App\Models\LandingPageContent::getContent();
-            if ($actual) {
-                $content = $actual;
-            }
-        }
-    } catch (\Throwable $e) {
-        // Ignore and keep the stub
-    }
-
-    return view('welcome', compact('content'));
-});
+// Homepage - refactored to ClinicController
+Route::get('/', [ClinicController::class, 'welcome'])->name('home');
 
 // Auth routes
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('login', [AuthController::class, 'login'])->middleware(['throttle:10,5', 'csrf', 'auto.verify.admins']);
+Route::post('login', [AuthController::class, 'login'])->middleware(['throttle:10,5', 'auto.verify.admins']);
 Route::get('register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('register', [AuthController::class, 'register'])->middleware(['throttle:3,60', 'csrf']);
-Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middleware(['auth', 'csrf']);
+Route::post('register', [AuthController::class, 'register'])->middleware(['throttle:3,60']);
+Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middleware(['auth']);
 
 // Dashboard route
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
@@ -114,7 +96,19 @@ Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('superadmin')
     Route::delete('/tenants/{id}', [\App\Http\Controllers\SuperAdmin\TenantProvisionController::class, 'destroy'])->name('superadmin.tenants.destroy');
     Route::post('/tenants/{id}/reprovision', [\App\Http\Controllers\SuperAdmin\TenantProvisionController::class, 'reprovision'])->name('superadmin.tenants.reprovision');
     Route::get('/tenants/{id}/logs', [\App\Http\Controllers\SuperAdmin\TenantProvisionController::class, 'logs'])->name('superadmin.tenants.logs');
+    
+    // Module Management
+    Route::get('/modules', [\App\Http\Controllers\SuperAdmin\ModuleController::class, 'index'])->name('superadmin.modules.index');
+    Route::patch('/modules/{module}/toggle', [\App\Http\Controllers\SuperAdmin\ModuleController::class, 'toggle'])->name('superadmin.modules.toggle');
+    Route::put('/modules/{module}', [\App\Http\Controllers\SuperAdmin\ModuleController::class, 'update'])->name('superadmin.modules.update');
+
     Route::get('/users', [\App\Http\Controllers\SuperAdminController::class, 'users'])->name('superadmin.users');
+    Route::get('/users/clinic/{clinic:id}', [\App\Http\Controllers\SuperAdminController::class, 'clinicUsers'])->name('superadmin.users.clinic');
+    Route::get('/users/create', [\App\Http\Controllers\SuperAdminController::class, 'createUser'])->name('superadmin.users.create');
+    Route::post('/users', [\App\Http\Controllers\SuperAdminController::class, 'storeUser'])->name('superadmin.users.store');
+    Route::get('/users/{user}/edit', [\App\Http\Controllers\SuperAdminController::class, 'editUser'])->name('superadmin.users.edit');
+    Route::put('/users/{user}', [\App\Http\Controllers\SuperAdminController::class, 'updateUser'])->name('superadmin.users.update');
+    Route::delete('/users/{user}', [\App\Http\Controllers\SuperAdminController::class, 'destroyUser'])->name('superadmin.users.destroy');
     Route::patch('/clinics/{clinic}/toggle-status', [\App\Http\Controllers\SuperAdminController::class, 'toggleClinicStatus'])->name('superadmin.toggle-clinic-status');
     Route::get('/analytics', [\App\Http\Controllers\SuperAdminController::class, 'analytics'])->name('superadmin.analytics');
     Route::get('/settings', [\App\Http\Controllers\SuperAdminController::class, 'systemSettings'])->name('superadmin.settings');
@@ -146,40 +140,37 @@ Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('superadmin')
     });
     
     // Debug route
-    Route::get('/debug', function() {
-        return response()->json([
-            'user' => \Illuminate\Support\Facades\Auth::user()->name,
-            'roles' => \Illuminate\Support\Facades\Auth::user()->getRoleNames(),
-            'is_superadmin' => \Illuminate\Support\Facades\Auth::user()->hasRole('superadmin')
-        ]);
-    })->name('superadmin.debug');
+    Route::get('/debug', [\App\Http\Controllers\SuperAdminController::class, 'debug'])->name('superadmin.debug');
 });
 
-// Test routes
-Route::get('/test-invoice', function() {
-    return 'Invoice test route works';
-})->middleware('auth');
+// Test routes - Disabled for production safety
+// Route::get('/test-invoice', [\App\Http\Controllers\InvoiceController::class, 'test'])->middleware('auth');
+// Route::get('/test-simple-clinic/{id}', [ClinicController::class, 'testSimple']);
+// Route::get('/test-invoice-create', [\App\Http\Controllers\InvoiceController::class, 'create'])->middleware('auth');
+// Route::get('/test-config', [\App\Http\Controllers\TestConfigController::class, 'testConfig'])->middleware('auth');
 
-Route::get('/test-invoice-create', [\App\Http\Controllers\InvoiceController::class, 'create'])->middleware('auth');
+// Direct invoice create route - protected with auth and role
+Route::get('/invoices/create', [\App\Http\Controllers\InvoiceController::class, 'create'])
+    ->middleware(['auth', 'verified', 'role:accountant|clinic_admin|superadmin'])
+    ->name('direct.invoices.create');
 
-// Test clinic configuration
-Route::get('/test-config', [\App\Http\Controllers\TestConfigController::class, 'testConfig'])->middleware('auth');
 
-// Direct invoice create route without clinic prefix
-Route::get('/invoices/create', [\App\Http\Controllers\InvoiceController::class, 'create'])->middleware('auth')->name('direct.invoices.create');
-
-// Invoice create route - direct access for accountants
-Route::get('/clinic/invoices/create', [\App\Http\Controllers\InvoiceController::class, 'create'])
-    ->middleware(['auth', 'role:accountant|clinic_admin'])
-    ->name('invoices.create');
 
 // Clinic routes - Common for all clinic staff
-Route::middleware(['auth', 'verified'])->prefix('clinic')->group(function () {
+Route::middleware(['auth', 'verified', 'clinic.access', 'resource.owner'])->prefix('clinic')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'clinic'])->name('clinic.dashboard');
     
     // Receptionist & Dentist routes - Appointment and Patient Management
     Route::middleware(['role:receptionist|dentist|clinic_admin'])->group(function () {
-        Route::resource('patients', PatientController::class);
+        Route::resource('patients', PatientController::class)->names([
+            'index' => 'clinic.patients.index',
+            'create' => 'clinic.patients.create',
+            'store' => 'clinic.patients.store',
+            'show' => 'clinic.patients.show',
+            'edit' => 'clinic.patients.edit',
+            'update' => 'clinic.patients.update',
+            'destroy' => 'clinic.patients.destroy'
+        ]);
         Route::resource('appointments', AppointmentController::class)->names([
             'index' => 'clinic.appointments.index',
             'create' => 'clinic.appointments.create',
@@ -191,80 +182,184 @@ Route::middleware(['auth', 'verified'])->prefix('clinic')->group(function () {
         ]);
 
         // Additional appointment actions
-        Route::put('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+        Route::put('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('clinic.appointments.cancel');
         
         // Prescription routes (dentist only)
         Route::middleware('role:dentist|clinic_admin')->group(function () {
-            Route::resource('prescriptions', \App\Http\Controllers\PrescriptionController::class);
-            Route::get('prescriptions/{prescription}/pdf', [\App\Http\Controllers\PrescriptionController::class, 'pdf'])->name('prescriptions.pdf');
-            Route::get('prescriptions/{prescription}/print', [\App\Http\Controllers\PrescriptionController::class, 'print'])->name('prescriptions.print');
+            Route::resource('prescriptions', \App\Http\Controllers\PrescriptionController::class)->names([
+                'index' => 'clinic.prescriptions.index',
+                'create' => 'clinic.prescriptions.create',
+                'store' => 'clinic.prescriptions.store',
+                'show' => 'clinic.prescriptions.show',
+                'edit' => 'clinic.prescriptions.edit',
+                'update' => 'clinic.prescriptions.update',
+                'destroy' => 'clinic.prescriptions.destroy'
+            ]);
+            Route::get('prescriptions/{prescription}/pdf', [\App\Http\Controllers\PrescriptionController::class, 'pdf'])->name('clinic.prescriptions.pdf');
+            Route::get('prescriptions/{prescription}/print', [\App\Http\Controllers\PrescriptionController::class, 'print'])->name('clinic.prescriptions.print');
+            Route::post('prescriptions/{prescription}/dispense', [\App\Http\Controllers\PrescriptionController::class, 'dispense'])->name('clinic.prescriptions.dispense');
             
             // Medication search
-            Route::get('medications/search', [\App\Http\Controllers\MedicationController::class, 'search'])->name('medications.search');
+            Route::get('medications/search', [\App\Http\Controllers\MedicationController::class, 'search'])->name('clinic.medications.search');
+
+            // Clinical Ops
+            Route::get('/clinical-notes', [\App\Http\Controllers\ClinicalNoteController::class, 'index'])->name('clinic.clinical-notes.index');
+            Route::post('/patients/{patient}/clinical-notes', [\App\Http\Controllers\ClinicalNoteController::class, 'store'])->name('clinic.clinical-notes.store');
+            Route::delete('/clinical-notes/{note}', [\App\Http\Controllers\ClinicalNoteController::class, 'destroy'])->name('clinic.clinical-notes.destroy');
+            
+            // Case Discussions
+            Route::get('/patients/{patient}/messages', [\App\Http\Controllers\CaseDiscussionController::class, 'index'])->name('clinic.patients.messages.index');
+            Route::post('/patients/{patient}/messages', [\App\Http\Controllers\CaseDiscussionController::class, 'store'])->name('clinic.patients.messages.store');
+            
+            Route::post('/patients/{patient}/treatment-plans', [\App\Http\Controllers\TreatmentPlanController::class, 'store'])->name('clinic.treatment-plans.store');
+            Route::patch('/treatment-plans/{plan}/status', [\App\Http\Controllers\TreatmentPlanController::class, 'updateStatus'])->name('clinic.treatment-plans.status');
+
+            // Consent & Legal
+            Route::get('/consents/templates', [\App\Http\Controllers\ConsentController::class, 'index'])->name('clinic.consents.templates');
+            Route::post('/consents/templates', [\App\Http\Controllers\ConsentController::class, 'storeTemplate'])->name('clinic.consents.templates.store');
+            Route::post('/patients/{patient}/consents', [\App\Http\Controllers\ConsentController::class, 'sign'])->name('clinic.patients.consents.sign');
+
+            // Radiology & Imaging
+            Route::get('/radiology', [\App\Http\Controllers\RadiologyController::class, 'index'])->name('clinic.radiology.index');
+            Route::get('/radiology/create', [\App\Http\Controllers\RadiologyController::class, 'create'])->name('clinic.radiology.create');
+            Route::post('/radiology', [\App\Http\Controllers\RadiologyController::class, 'store'])->name('clinic.radiology.store');
+            Route::get('/radiology/{study}', [\App\Http\Controllers\RadiologyController::class, 'show'])->name('clinic.radiology.show');
+            Route::patch('/radiology/{study}/findings', [\App\Http\Controllers\RadiologyController::class, 'updateFindings'])->name('clinic.radiology.findings');
+
+            // Lab Orders
+            Route::get('/lab-orders', [\App\Http\Controllers\LabOrderController::class, 'index'])->name('clinic.lab-orders.index');
+            Route::post('/lab-orders', [\App\Http\Controllers\LabOrderController::class, 'store'])->name('clinic.lab-orders.store');
+            Route::patch('/lab-orders/{order}/status', [\App\Http\Controllers\LabOrderController::class, 'updateStatus'])->name('clinic.lab-orders.status');
         });
 
-        Route::resource('waitlist', \App\Http\Controllers\WaitlistController::class);
+        Route::resource('waitlist', \App\Http\Controllers\WaitlistController::class)->names([
+            'index' => 'clinic.waitlist.index',
+            'create' => 'clinic.waitlist.create',
+            'store' => 'clinic.waitlist.store',
+            'show' => 'clinic.waitlist.show',
+            'edit' => 'clinic.waitlist.edit',
+            'update' => 'clinic.waitlist.update',
+            'destroy' => 'clinic.waitlist.destroy'
+        ]);
         Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'clinicIndex'])->name('clinic.notifications.index');
-        Route::post('/notifications/send-reminders', [\App\Http\Controllers\NotificationController::class, 'sendAppointmentReminders'])->name('notifications.send-reminders');
+        Route::post('/notifications/send-reminders', [\App\Http\Controllers\NotificationController::class, 'sendAppointmentReminders'])->name('clinic.notifications.send-reminders');
         
         // Enhanced Receptionist Features
-        Route::post('/appointments/{appointment}/check-in', [\App\Http\Controllers\ReceptionistController::class, 'checkIn'])->name('appointments.check-in');
-        Route::post('/appointments/{appointment}/no-show', [\App\Http\Controllers\ReceptionistController::class, 'noShow'])->name('appointments.no-show');
-        Route::post('/emergency-appointment', [\App\Http\Controllers\ReceptionistController::class, 'emergencyAppointment'])->name('emergency-appointment');
-        Route::get('/today-schedule', [\App\Http\Controllers\ReceptionistController::class, 'todaySchedule'])->name('today-schedule');
-        Route::get('/patient-search', [\App\Http\Controllers\ReceptionistController::class, 'quickSearch'])->name('patient-search');
-        Route::get('/print-schedule', [\App\Http\Controllers\ReceptionistController::class, 'printSchedule'])->name('print-schedule');
+        Route::post('/appointments/{appointment}/check-in', [\App\Http\Controllers\ReceptionistController::class, 'checkIn'])->name('clinic.appointments.check-in');
+        Route::post('/appointments/{appointment}/no-show', [\App\Http\Controllers\ReceptionistController::class, 'noShow'])->name('clinic.appointments.no-show');
+        Route::get('/emergency-appointment', [\App\Http\Controllers\ReceptionistController::class, 'createEmergencyAppointment'])->name('clinic.emergency-appointment');
+        Route::post('/emergency-appointment', [\App\Http\Controllers\ReceptionistController::class, 'emergencyAppointment']);
+        Route::get('/today-schedule', [\App\Http\Controllers\ReceptionistController::class, 'todaySchedule'])->name('clinic.today-schedule');
+        Route::get('/patient-search', [\App\Http\Controllers\ReceptionistController::class, 'quickSearch'])->name('clinic.patient-search');
+        Route::get('/print-schedule', [\App\Http\Controllers\ReceptionistController::class, 'printSchedule'])->name('clinic.print-schedule');
     });
     
     // Financial data - read access for dentists, full access for accountants/admins
     Route::middleware(['role:dentist|accountant|clinic_admin'])->group(function () {
-        Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])->name('invoices.index');
-        Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])->name('invoices.show');
-        Route::get('/reports', [\App\Http\Controllers\ReportsController::class, 'index'])->name('reports.index');
+        Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])->name('clinic.invoices.index');
+        Route::get('/invoices/create', [\App\Http\Controllers\InvoiceController::class, 'create'])->name('clinic.invoices.create');
+        Route::get('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'show'])->name('clinic.invoices.show');
+        Route::get('/reports', [\App\Http\Controllers\ReportsController::class, 'index'])->name('clinic.reports.index');
     });
     
     // Accountant routes - Financial Management (write access)
     Route::middleware(['role:accountant|clinic_admin'])->group(function () {
-        Route::post('/invoices', [\App\Http\Controllers\InvoiceController::class, 'store'])->name('invoices.store');
-        Route::get('/invoices/{invoice}/edit', [\App\Http\Controllers\InvoiceController::class, 'edit'])->name('invoices.edit');
-        Route::put('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'update'])->name('invoices.update');
-        Route::delete('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'destroy'])->name('invoices.destroy');
-        Route::patch('/invoices/{invoice}/mark-paid', [\App\Http\Controllers\InvoiceController::class, 'markPaid'])->name('invoices.mark-paid');
-        Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'dashboard'])->name('analytics.dashboard');
-        
+        Route::post('/invoices', [\App\Http\Controllers\InvoiceController::class, 'store'])->name('clinic.invoices.store');
+        Route::get('/invoices/{invoice}/edit', [\App\Http\Controllers\InvoiceController::class, 'edit'])->name('clinic.invoices.edit');
+        Route::put('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'update'])->name('clinic.invoices.update');
+        Route::delete('/invoices/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'destroy'])->name('clinic.invoices.destroy');
+        Route::patch('/invoices/{invoice}/mark-paid', [\App\Http\Controllers\InvoiceController::class, 'markPaid'])->name('clinic.invoices.mark-paid');
+        Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'dashboard'])->name('clinic.analytics.dashboard');
+        Route::get('/analytics/pro', [\App\Http\Controllers\AnalyticsController::class, 'pro'])->name('clinic.analytics.pro');
         // Enhanced Accountant Features
-        Route::get('/payment-tracking', [\App\Http\Controllers\AccountantController::class, 'paymentTracking'])->name('payment-tracking');
-        Route::get('/expenses', [\App\Http\Controllers\AccountantController::class, 'expenseTracking'])->name('expenses');
-        Route::get('/profit-loss', [\App\Http\Controllers\AccountantController::class, 'profitLossReport'])->name('profit-loss');
-        Route::get('/patient-balances', [\App\Http\Controllers\AccountantController::class, 'patientBalances'])->name('patient-balances');
-        Route::get('/tax-report', [\App\Http\Controllers\AccountantController::class, 'taxReport'])->name('tax-report');
+        Route::get('/payment-tracking', [\App\Http\Controllers\AccountantController::class, 'paymentTracking'])->name('clinic.payment-tracking');
+        Route::get('/expenses', [\App\Http\Controllers\AccountantController::class, 'expenseTracking'])->name('clinic.expenses');
+        Route::get('/profit-loss', [\App\Http\Controllers\AccountantController::class, 'profitLossReport'])->name('clinic.profit-loss');
+        Route::get('/patient-balances', [\App\Http\Controllers\AccountantController::class, 'patientBalances'])->name('clinic.patient-balances');
+        Route::get('/tax-report', [\App\Http\Controllers\AccountantController::class, 'taxReport'])->name('clinic.tax-report');
+        Route::get('/branch-comparison', [\App\Http\Controllers\AccountantController::class, 'branchComparison'])->name('clinic.branch-comparison');
+        Route::get('/service-profitability', [\App\Http\Controllers\AccountantController::class, 'serviceProfitability'])->name('clinic.service-profitability');
+        
+        // Credit Notes
+        Route::get('/credit-notes', [\App\Http\Controllers\AccountantController::class, 'creditNotes'])->name('clinic.credit-notes.index');
+        Route::post('/credit-notes', [\App\Http\Controllers\AccountantController::class, 'storeCreditNote'])->name('clinic.credit-notes.store');
+        
+        // Vendors
+        Route::get('/vendors', [\App\Http\Controllers\AccountantController::class, 'vendors'])->name('clinic.vendors.index');
+        Route::post('/vendors', [\App\Http\Controllers\AccountantController::class, 'storeVendor'])->name('clinic.vendors.store');
         
         // Journal & Ledger Management
-        Route::get('/journal-entries', [\App\Http\Controllers\AccountantController::class, 'journalEntries'])->name('journal-entries');
-        Route::get('/journal-entries/create', [\App\Http\Controllers\AccountantController::class, 'createJournalEntry'])->name('journal-entries.create');
-        Route::post('/journal-entries', [\App\Http\Controllers\AccountantController::class, 'storeJournalEntry'])->name('journal-entries.store');
-        Route::get('/ledger', [\App\Http\Controllers\AccountantController::class, 'ledger'])->name('ledger');
-        Route::get('/chart-of-accounts', [\App\Http\Controllers\AccountantController::class, 'chartOfAccounts'])->name('chart-of-accounts');
-        Route::post('/invoices/{invoice}/send-reminder', [\App\Http\Controllers\AccountantController::class, 'sendPaymentReminder'])->name('invoices.send-reminder');
-        Route::post('/invoices/bulk-actions', [\App\Http\Controllers\AccountantController::class, 'bulkInvoiceActions'])->name('invoices.bulk-actions');
+        Route::get('/journal-entries', [\App\Http\Controllers\AccountantController::class, 'journalEntries'])->name('clinic.journal-entries');
+        Route::get('/journal-entries/create', [\App\Http\Controllers\AccountantController::class, 'createJournalEntry'])->name('clinic.journal-entries.create');
+        Route::post('/journal-entries', [\App\Http\Controllers\AccountantController::class, 'storeJournalEntry'])->name('clinic.journal-entries.store');
+        Route::get('/ledger', [\App\Http\Controllers\AccountantController::class, 'ledger'])->name('clinic.ledger');
+        Route::get('/chart-of-accounts', [\App\Http\Controllers\AccountantController::class, 'chartOfAccounts'])->name('clinic.chart-of-accounts');
+        Route::post('/invoices/{invoice}/send-reminder', [\App\Http\Controllers\AccountantController::class, 'sendPaymentReminder'])->name('clinic.invoices.send-reminder');
+        Route::post('/invoices/bulk-actions', [\App\Http\Controllers\AccountantController::class, 'bulkInvoiceActions'])->name('clinic.invoices.bulk-actions');
+        Route::post('/payments/{payment}/confirm-cash', [\App\Http\Controllers\AccountantController::class, 'confirmCashPayment'])->name('clinic.payments.confirm-cash');
     });
     
     // Treatment plans - accessible by dentists and admins
     Route::middleware('role:dentist|clinic_admin')->group(function () {
-        Route::resource('treatment-plans', \App\Http\Controllers\TreatmentPlanController::class);
+        Route::resource('treatment-plans', \App\Http\Controllers\TreatmentPlanController::class)->names([
+            'index' => 'clinic.treatment-plans.index',
+            'create' => 'clinic.treatment-plans.create',
+            'store' => 'clinic.treatment-plans.store',
+            'show' => 'clinic.treatment-plans.show',
+            'edit' => 'clinic.treatment-plans.edit',
+            'update' => 'clinic.treatment-plans.update',
+            'destroy' => 'clinic.treatment-plans.destroy'
+        ]);
     });
     
     // Admin only routes
     Route::middleware('role:clinic_admin')->group(function () {
-        Route::resource('staff', \App\Http\Controllers\StaffController::class);
-        Route::resource('recurring-appointments', \App\Http\Controllers\RecurringAppointmentController::class);
-        Route::get('/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
-        Route::put('/settings', [\App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
-        Route::get('/settings/business-hours', [\App\Http\Controllers\SettingsController::class, 'businessHours'])->name('settings.business-hours');
-        Route::put('/settings/business-hours', [\App\Http\Controllers\SettingsController::class, 'updateBusinessHours'])->name('settings.update-business-hours');
+        Route::resource('staff', \App\Http\Controllers\StaffController::class)->names([
+            'index' => 'clinic.staff.index',
+            'create' => 'clinic.staff.create',
+            'store' => 'clinic.staff.store',
+            'show' => 'clinic.staff.show',
+            'edit' => 'clinic.staff.edit',
+            'update' => 'clinic.staff.update',
+            'destroy' => 'clinic.staff.destroy'
+        ]);
+        Route::resource('branches', \App\Http\Controllers\BranchController::class)->names([
+            'index' => 'clinic.branches.index',
+            'create' => 'clinic.branches.create',
+            'store' => 'clinic.branches.store',
+            'show' => 'clinic.branches.show',
+            'edit' => 'clinic.branches.edit',
+            'update' => 'clinic.branches.update',
+            'destroy' => 'clinic.branches.destroy'
+        ]);
+        Route::resource('recurring-appointments', \App\Http\Controllers\RecurringAppointmentController::class)->names([
+            'index' => 'clinic.recurring-appointments.index',
+            'create' => 'clinic.recurring-appointments.create',
+            'store' => 'clinic.recurring-appointments.store',
+            'show' => 'clinic.recurring-appointments.show',
+            'edit' => 'clinic.recurring-appointments.edit',
+            'update' => 'clinic.recurring-appointments.update',
+            'destroy' => 'clinic.recurring-appointments.destroy'
+        ]);
+        Route::get('/settings', [\App\Http\Controllers\SystemSettingsController::class, 'index'])->name('clinic.settings.index');
+        Route::put('/settings', [\App\Http\Controllers\SystemSettingsController::class, 'updateGeneral'])->name('clinic.settings.update');
+        Route::get('/settings/business-hours', [\App\Http\Controllers\SystemSettingsController::class, 'index'])->name('clinic.settings.business-hours');
+        Route::put('/settings/business-hours', [\App\Http\Controllers\SystemSettingsController::class, 'updateBusinessHours'])->name('clinic.system-settings.update-business-hours');
         Route::get('/subscription', [\App\Http\Controllers\SubscriptionController::class, 'current'])->name('subscriptions.current');
-        Route::get('/landing-page-manager', [\App\Http\Controllers\ClinicAdminController::class, 'landingPage'])->name('landing-page-manager');
-        Route::put('/landing-page-manager', [\App\Http\Controllers\ClinicAdminController::class, 'updateLandingPage'])->name('landing-page-manager.update');
+
+        // System Settings - Master Control for Landing Page
+        Route::get('/system-settings', [\App\Http\Controllers\SystemSettingsController::class, 'index'])->name('clinic.system-settings.index');
+        Route::put('/system-settings/general', [\App\Http\Controllers\SystemSettingsController::class, 'updateGeneral'])->name('clinic.system-settings.update-general');
+        Route::put('/system-settings/branding', [\App\Http\Controllers\SystemSettingsController::class, 'updateBranding'])->name('clinic.system-settings.update-branding');
+        Route::put('/system-settings/landing-page', [\App\Http\Controllers\SystemSettingsController::class, 'updateLandingPage'])->name('clinic.system-settings.update-landing-page');
+        Route::delete('/system-settings/landing-page/image', [\App\Http\Controllers\SystemSettingsController::class, 'deleteLandingImage'])->name('clinic.system-settings.delete-landing-image');
+        Route::put('/system-settings/navigation', [\App\Http\Controllers\SystemSettingsController::class, 'updateNavigation'])->name('clinic.system-settings.update-navigation');
+        Route::put('/system-settings/seo', [\App\Http\Controllers\SystemSettingsController::class, 'updateSeo'])->name('clinic.system-settings.update-seo');
+        Route::put('/system-settings/features', [\App\Http\Controllers\SystemSettingsController::class, 'updateFeatures'])->name('clinic.system-settings.update-features');
+        Route::get('/system-settings/preview', [\App\Http\Controllers\SystemSettingsController::class, 'preview'])->name('clinic.system-settings.preview');
+        Route::post('/system-settings/toggle-status', [\App\Http\Controllers\SystemSettingsController::class, 'toggleStatus'])->name('clinic.system-settings.toggle-status');
+        Route::get('/landing-page-manager', [\App\Http\Controllers\ClinicAdminController::class, 'landingPage'])->name('clinic.landing-page-manager');
+        Route::put('/landing-page-manager', [\App\Http\Controllers\ClinicAdminController::class, 'updateLandingPage'])->name('clinic.landing-page-manager.update');
         
         // Clinic CRM Routes
         Route::prefix('crm')->name('clinic.crm.')->group(function () {
@@ -272,6 +367,73 @@ Route::middleware(['auth', 'verified'])->prefix('clinic')->group(function () {
             Route::get('/leads/create', [\App\Http\Controllers\ClinicCrmController::class, 'create'])->name('leads.create');
             Route::post('/leads', [\App\Http\Controllers\ClinicCrmController::class, 'store'])->name('leads.store');
         });
+
+        // Payment Plans
+        Route::resource('payment-plans', \App\Http\Controllers\PaymentPlanController::class)->names([
+            'index' => 'clinic.payment-plans.index',
+            'create' => 'clinic.payment-plans.create',
+            'store' => 'clinic.payment-plans.store',
+            'show' => 'clinic.payment-plans.show',
+            'edit' => 'clinic.payment-plans.edit',
+            'update' => 'clinic.payment-plans.update',
+            'destroy' => 'clinic.payment-plans.destroy'
+        ]);
+
+        // Expenses
+        Route::resource('expenses', \App\Http\Controllers\ExpenseController::class)->names([
+            'index' => 'clinic.expenses.index',
+            'create' => 'clinic.expenses.create',
+            'store' => 'clinic.expenses.store',
+            'show' => 'clinic.expenses.show',
+            'edit' => 'clinic.expenses.edit',
+            'update' => 'clinic.expenses.update',
+            'destroy' => 'clinic.expenses.destroy'
+        ]);
+
+        // Inventory
+        Route::resource('inventory', \App\Http\Controllers\InventoryController::class)->names([
+            'index' => 'clinic.inventory.index',
+            'create' => 'clinic.inventory.create',
+            'store' => 'clinic.inventory.store',
+            'show' => 'clinic.inventory.show',
+            'edit' => 'clinic.inventory.edit',
+            'update' => 'clinic.inventory.update',
+            'destroy' => 'clinic.inventory.destroy'
+        ]);
+
+        // Suppliers
+        Route::resource('suppliers', \App\Http\Controllers\SupplierController::class)->names([
+            'index' => 'clinic.suppliers.index',
+            'create' => 'clinic.suppliers.create',
+            'store' => 'clinic.suppliers.store',
+            'show' => 'clinic.suppliers.show',
+            'edit' => 'clinic.suppliers.edit',
+            'update' => 'clinic.suppliers.update',
+            'destroy' => 'clinic.suppliers.destroy'
+        ]);
+
+        // Purchase Orders
+        Route::resource('purchase-orders', \App\Http\Controllers\PurchaseOrderController::class)->names([
+            'index' => 'clinic.purchase-orders.index',
+            'create' => 'clinic.purchase-orders.create',
+            'store' => 'clinic.purchase-orders.store',
+            'show' => 'clinic.purchase-orders.show',
+            'edit' => 'clinic.purchase-orders.edit',
+            'update' => 'clinic.purchase-orders.update',
+            'destroy' => 'clinic.purchase-orders.destroy'
+        ]);
+        Route::patch('purchase-orders/{purchase_order}/status', [\App\Http\Controllers\PurchaseOrderController::class, 'updateStatus'])->name('clinic.purchase-orders.update-status');
+
+        // Equipment
+        Route::resource('equipment', \App\Http\Controllers\EquipmentController::class)->names([
+            'index' => 'clinic.equipment.index',
+            'create' => 'clinic.equipment.create',
+            'store' => 'clinic.equipment.store',
+            'show' => 'clinic.equipment.show',
+            'edit' => 'clinic.equipment.edit',
+            'update' => 'clinic.equipment.update',
+            'destroy' => 'clinic.equipment.destroy'
+        ]);
     });
 });
 
@@ -294,7 +456,8 @@ Route::middleware(['auth', 'verified'])->prefix('emails')->group(function () {
 
 // Global Notification Routes - Available to all authenticated users
 Route::middleware(['auth', 'verified'])->prefix('notifications')->group(function () {
-    Route::get('/', [\App\Http\Controllers\NotificationController::class, 'index'])->name('global.notifications.index');
+    Route::get('/', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    // Notification mark as read refactored to specific controller if needed, but for now it's fine
     Route::post('/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
     Route::get('/unread-count', [\App\Http\Controllers\NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
@@ -303,25 +466,38 @@ Route::middleware(['auth', 'verified'])->prefix('notifications')->group(function
 // Patient Portal routes
 Route::prefix('patient')->group(function () {
     Route::get('/login', [\App\Http\Controllers\PatientPortalController::class, 'login'])->name('patient.login');
-    Route::post('/login', [\App\Http\Controllers\PatientPortalController::class, 'login'])->middleware('throttle:5,10');
-    Route::get('/dashboard', [\App\Http\Controllers\PatientPortalController::class, 'dashboard'])->name('patient.dashboard');
-    Route::get('/appointments', [\App\Http\Controllers\PatientPortalController::class, 'appointments'])->name('patient.appointments');
-    Route::get('/invoices', [\App\Http\Controllers\PatientPortalController::class, 'invoices'])->name('patient.invoices');
-    Route::get('/profile', [\App\Http\Controllers\PatientPortalController::class, 'profile'])->name('patient.profile');
-    Route::put('/profile', [\App\Http\Controllers\PatientPortalController::class, 'updateProfile'])->name('patient.profile.update');
-    Route::get('/payment/{invoice}', [\App\Http\Controllers\PaymentController::class, 'show'])->name('patient.payment');
-    Route::post('/payment/{invoice}', [\App\Http\Controllers\PaymentController::class, 'process'])->name('patient.payment.process');
-    Route::post('/logout', [\App\Http\Controllers\PatientPortalController::class, 'logout'])->name('patient.logout');
+    Route::post('/login', [\App\Http\Controllers\PatientPortalController::class, 'login'])->middleware('throttle:20,1');
+
+    Route::middleware(['auth:patient'])->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\PatientPortalController::class, 'dashboard'])->name('patient.dashboard');
+        Route::get('/appointments', [\App\Http\Controllers\PatientPortalController::class, 'appointments'])->name('patient.appointments');
+        Route::get('/recurring-appointments', [\App\Http\Controllers\PatientPortalController::class, 'recurringAppointments'])->name('patient.recurring-appointments');
+        Route::get('/payment-plans', [\App\Http\Controllers\PatientPortalController::class, 'paymentPlans'])->name('patient.payment-plans');
+        Route::get('/payment-plans/{paymentPlan}', [\App\Http\Controllers\PatientPortalController::class, 'paymentPlan'])->name('patient.payment-plans.show');
+        Route::get('/consents', [\App\Http\Controllers\PatientPortalController::class, 'consents'])->name('patient.consents');
+        Route::get('/consents/{consent}/sign', [\App\Http\Controllers\PatientPortalController::class, 'signConsent'])->name('patient.consents.sign');
+        Route::post('/consents/{consent}/sign', [\App\Http\Controllers\PatientPortalController::class, 'signConsent']);
+        Route::get('/invoices', [\App\Http\Controllers\PatientPortalController::class, 'invoices'])->name('patient.invoices');
+        Route::get('/profile', [\App\Http\Controllers\PatientPortalController::class, 'profile'])->name('patient.profile');
+        Route::put('/profile', [\App\Http\Controllers\PatientPortalController::class, 'updateProfile'])->name('patient.profile.update');
+        Route::post('/profile/photo', [\App\Http\Controllers\PatientPortalController::class, 'updatePhoto'])->name('patient.profile.photo');
+
+        // Payment Form & Processing (Authenticated)
+        Route::get('/payment/{invoice}', [\App\Http\Controllers\PaymentController::class, 'show'])->name('patient.payment');
+        Route::post('/payment/{invoice}', [\App\Http\Controllers\PaymentController::class, 'process'])->name('patient.payment.process');
+        
+        Route::post('/logout', [\App\Http\Controllers\PatientPortalController::class, 'logout'])->name('patient.logout');
+    });
+
+    // Payment Gateway Callbacks (Publicly accessible but protected by internal signatures)
+    Route::get('/payment/esewa/callback', [\App\Http\Controllers\PaymentController::class, 'esewaCallback'])->name('patient.payment.esewa.callback');
+    Route::get('/payment/esewa/failed', [\App\Http\Controllers\PaymentController::class, 'esewaFailed'])->name('patient.payment.esewa.failed');
+    Route::get('/payment/khalti/callback', [\App\Http\Controllers\PaymentController::class, 'khaltiCallback'])->name('patient.payment.khalti.callback');
 });
 
 // Public clinic pages
-Route::get('/clinic/{slug}', function($slug) {
-    $clinic = \App\Models\Clinic::where('slug', $slug)->firstOrFail();
-    $content = \App\Models\LandingPageContent::getContent($clinic->id);
-    return view('clinic.comprehensive-landing', compact('content', 'clinic'));
-})->name('clinic.landing');
+Route::get('/clinic/{slug}', [ClinicController::class, 'publicLanding'])->name('clinic.landing');
 
 // Public appointment booking
 Route::get('/clinic/{clinic:slug}/book', [AppointmentController::class, 'publicBook'])->name('clinic.book');
 Route::post('/clinic/{clinic:slug}/book', [AppointmentController::class, 'storePublicBook'])->name('clinic.book.store')->middleware('throttle:3,60');
-

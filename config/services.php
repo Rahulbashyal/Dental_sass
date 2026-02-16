@@ -35,4 +35,22 @@ return [
         ],
     ],
 
+    'esewa' => [
+        'merchant_code' => env('ESEWA_MERCHANT_CODE', 'EPAYTEST'),
+        'secret_key' => env('ESEWA_SECRET_KEY', '8gBm/:&EnhH.1/q'),
+        'gateway_url' => env('ESEWA_GATEWAY_URL', 'https://rc-epay.esewa.com.np/api/epay/main/v2/form'),
+        'verification_url' => env('ESEWA_VERIFICATION_URL', 'https://rc.esewa.com.np/api/epay/transaction/status/'),
+    ],
+
+    'khalti' => [
+        'secret_key' => env('KHALTI_SECRET_KEY'),
+        'base_url' => env('KHALTI_BASE_URL', 'https://dev.khalti.com/api/v2'),
+        'return_url' => env('KHALTI_RETURN_URL', 'http://127.0.0.1:8000/patient/payment/khalti/callback'),
+    ],
+
+    'sparrow' => [
+        'token' => env('SPARROW_SMS_TOKEN'),
+        'from' => env('SPARROW_SMS_FROM', 'DentalCare'),
+    ],
+
 ];

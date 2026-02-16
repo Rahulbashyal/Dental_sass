@@ -23,7 +23,14 @@ Route::middleware([
     InitializeTenancyByDomain::class,
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
-    Route::get('/', function () {
-        return 'This is your multi-tenant application. The id of the current tenant is ' . tenant('id');
+
+    Route::middleware(['auth'])->group(function () {
+        Route::resource('branches', \App\Http\Controllers\Tenant\BranchController::class)->names('tenant.branches');
+        Route::resource('users', \App\Http\Controllers\Tenant\UserController::class)->names('tenant.users');
+        
+        // Clinic Settings
+        Route::get('/settings', [\App\Http\Controllers\Tenant\SettingsController::class, 'index'])->name('tenant.settings.index');
+        Route::put('/settings', [\App\Http\Controllers\Tenant\SettingsController::class, 'update'])->name('tenant.settings.update');
+        Route::put('/settings/hours', [\App\Http\Controllers\Tenant\SettingsController::class, 'updateBusinessHours'])->name('tenant.settings.hours');
     });
 });

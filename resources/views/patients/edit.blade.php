@@ -10,7 +10,7 @@
     </div>
 
     <div class="card max-w-2xl">
-        <form action="{{ route('patients.update', $patient) }}" method="POST">
+        <form action="{{ route('clinic.patients.update', $patient) }}" method="POST">
             @csrf
             @method('PUT')
             <div class="space-y-6">
@@ -67,7 +67,7 @@
                 </div>
 
                 <div class="flex justify-end space-x-4">
-                    <a href="{{ route('patients.show', $patient) }}" class="btn-secondary">Cancel</a>
+                    <a href="{{ route('clinic.patients.show', $patient) }}" class="btn-secondary">Cancel</a>
                     <button type="submit" class="btn-primary">Update Patient</button>
                 </div>
             </div>

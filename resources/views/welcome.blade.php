@@ -65,95 +65,104 @@
         .hero-bg { background: radial-gradient(ellipse at top, rgba(59, 130, 246, 0.1) 0%, transparent 50%), linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
         .section-divider { clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%); }
         
-        /* Navbar Scroll Animation */
+        /* Navbar Design System */
         nav {
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            width: 100vw !important;
-            height: 10vh !important;
-            max-width: 100vw !important;
-            padding: 1rem 2rem !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            width: 100% !important;
+            height: 72px !important;
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
             right: 0 !important;
-            z-index: 50 !important;
+            z-index: 1000 !important;
+            display: flex !important;
+            align-items: center !important;
+            padding: 0 1.5rem !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
         
         nav.scrolled {
-            top: 1.5rem !important;
-            width: 70vw !important;
-            max-width: 70vw !important;
+            top: 1rem !important;
+            width: 92% !important;
+            max-width: 1200px !important;
             left: 50% !important;
-            right: auto !important;
             transform: translateX(-50%) !important;
-            padding: 0.75rem 2rem !important;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.72)) !important;
+            height: 64px !important;
+            padding: 0 2rem !important;
+            background: rgba(255, 255, 255, 0.8) !important;
             backdrop-filter: blur(20px) !important;
             -webkit-backdrop-filter: blur(20px) !important;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.6) !important;
-            border: 1px solid rgba(255, 255, 255, 0.8) !important;
-            border-radius: 12px !important;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.5) !important;
+            border: 1px solid rgba(255, 255, 255, 0.7) !important;
+            border-radius: 999px !important;
         }
         
-        nav .nav-wrapper {
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        .nav-container {
             width: 100% !important;
+            max-width: 1280px !important;
             margin: 0 auto !important;
-            padding: 0 1rem !important;
-            
-        }
-        
-        nav a.nav-link-item {
-            transition: all 0.3s ease;
-            position: relative;
-            
-            font-size: 0.95rem;
-        }
-        
-        nav a.nav-link-item:hover {
-            color: var(--primary-color);
-        }
-        
-        nav a.nav-link-item span {
-            transition: width 0.3s ease;
-        }
-        
-        @media (max-width: 1024px) {
-            nav.scrolled {
-                width: 72vw !important;
-                max-width: 72vw !important;
-            }
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            height: 100% !important;
         }
 
-        /* On smaller screens keep the scrolled navbar full-width (with small side inset)
-           to avoid cramped centered navbar and overlapping content. */
+        .nav-links-desktop {
+            display: none !important;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-cta-desktop {
+            display: none !important;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-mobile-toggle {
+            display: flex !important;
+        }
+
+        @media (min-width: 1024px) {
+            .nav-links-desktop { display: flex !important; }
+            .nav-cta-desktop { display: flex !important; }
+            .nav-mobile-toggle { display: none !important; }
+        }
+
         @media (max-width: 768px) {
             nav.scrolled {
-                width: calc(100% - 2rem) !important;
-                max-width: calc(100% - 2rem) !important;
-                left: 1rem !important;
-                right: 1rem !important;
-                transform: none !important;
-                padding: 0.6rem 1rem !important;
-                border-radius: 8px !important;
+                width: 95% !important;
+                padding: 0 1.25rem !important;
+                height: 56px !important;
+                top: 0.75rem !important;
+            }
+            nav {
+                height: 64px !important;
+                padding: 0 1rem !important;
             }
         }
 
-        @media (max-width: 640px) {
-            nav {
-                padding: 1rem 1rem !important;
-            }
-
-            nav.scrolled {
-                width: 100% !important;
-                max-width: 100% !important;
-                left: 0 !important;
-                right: 0 !important;
-                transform: none !important;
-                top: 0.5rem !important;
-                padding: 0.5rem 0.75rem !important;
-                border-radius: 6px !important;
-            }
+        /* Mobile Menu */
+        #mobile-menu {
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            background: white;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            z-index: 999;
+            padding: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        nav.scrolled + #mobile-menu {
+            top: 80px;
+            width: 90%;
+            left: 5%;
+            border-radius: 20px;
         }
         
         /* Ensure buttons are visible on desktop */
@@ -167,69 +176,61 @@
         }
     </style>
 </head>
-<body class="antialiased bg-gray-50 overflow-x-hidden">
+<body class="antialiased bg-gray-50 overflow-x-hidden page-fade-in">
     <!-- Navigation -->
-    <nav class="bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100 fixed z-50 w-full">
-        <div class="nav-wrapper flex justify-between items-center py-4 px-4 sm:px-6 lg:px-8 gap-8 h-14">
-            <div class="flex items-center space-x-3 fade-in-left flex-shrink-0 min-w-fit h-full">
-                <img src="{{ $content->getImageUrl('company_logo') ?? asset('logo.png') }}" alt="{{ $content->company_name ?? 'ABS Soft' }} Logo" class="h-10 w-auto">
-                <div class="flex flex-col justify-center h-full">
-                    <h1 class="text-xl font-bold abs-text-gradient leading-tight">{{ isset($clinic) ? $clinic->name : 'DentalCare Pro' }}</h1>
-                    <span class="text-xs text-gray-500 leading-tight">{{ isset($clinic) ? ($content->company_tagline ?? 'Professional Dental Care') : 'by ABS Soft' }}</span>
+    <nav id="main-nav">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="/" class="flex items-center space-x-3 flex-shrink-0">
+                <img src="{{ $content->getImageUrl('company_logo') ?? asset('logo.png') }}" alt="Logo" class="h-9 w-auto">
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold abs-text-gradient leading-none">{{ isset($clinic) ? $clinic->name : 'DentalCare Pro' }}</span>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">by ABS Soft</span>
                 </div>
+            </a>
+            
+            <!-- Desktop Links -->
+            <div class="nav-links-desktop">
+                <a href="#features" class="text-gray-600 hover:text-blue-600 font-medium transition-colors">Features</a>
+                <a href="#pricing" class="text-gray-600 hover:text-blue-600 font-medium transition-colors">Pricing</a>
+                <a href="#about" class="text-gray-600 hover:text-blue-600 font-medium transition-colors">About</a>
+                <a href="#testimonials" class="text-gray-600 hover:text-blue-600 font-medium transition-colors">Reviews</a>
             </div>
             
-            <div class="hidden md:flex items-center space-x-8 justify-center flex-1 px-4 h-full">
-                <a href="#features" class="nav-link-item text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium relative group flex items-center h-full">
-                    Features
-                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#pricing" class="nav-link-item text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium relative group flex items-center h-full">
-                    Pricing
-                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#about" class="nav-link-item text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium relative group flex items-center h-full">
-                    About
-                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#testimonials" class="nav-link-item text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium relative group flex items-center h-full">
-                    Reviews
-                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="https://abssoft.com.np" target="_blank" class="nav-link-item text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium relative group flex items-center h-full">
-                    ABS Soft
-                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-            </div>
-            
-            <div class="flex items-center space-x-4 fade-in-right flex-shrink-0 h-full">
-                <a href="{{ route('login') }}" class="hidden md:flex text-gray-600 hover:text-gray-900 transition-colors font-medium text-sm whitespace-nowrap items-center">Login</a>
-                <a href="{{ route('register') }}" class="hidden md:flex abs-gradient text-white px-4 py-2 rounded-lg hover:opacity-90 transition-all shadow-lg font-medium text-sm whitespace-nowrap items-center">
+            <!-- Desktop CTA -->
+            <div class="nav-cta-desktop">
+                <a href="https://abssoft.com.np" target="_blank" class="text-gray-600 hover:text-blue-600 font-medium transition-colors">ABS Soft</a>
+                <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900 font-medium">Login</a>
+                <a href="{{ route('register') }}" class="abs-gradient text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all scale-hover text-sm">
                     Start Free Trial
                 </a>
-                <button class="md:hidden text-gray-600 hover:text-blue-600" id="mobile-menu-btn">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <div class="nav-mobile-toggle">
+                <button id="mobile-menu-btn" class="p-2 text-gray-600 hover:text-blue-600 transition-colors">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
                     </svg>
                 </button>
             </div>
         </div>
-        
-        <!-- Mobile Menu -->
-        <div class="md:hidden hidden bg-white border-t border-gray-100" id="mobile-menu">
-            <div class="px-4 py-3 space-y-2">
-                <a href="#features" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded-lg hover:bg-gray-50">Features</a>
-                <a href="#pricing" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded-lg hover:bg-gray-50">Pricing</a>
-                <a href="#about" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded-lg hover:bg-gray-50">About</a>
-                <a href="#testimonials" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded-lg hover:bg-gray-50">Reviews</a>
-                <a href="https://abssoft.com.np" target="_blank" class="block px-3 py-2 text-gray-600 hover:text-blue-600 font-medium rounded-lg hover:bg-gray-50">ABS Soft</a>
-                <a href="{{ route('login') }}" class="block px-3 py-2 text-gray-600 hover:text-gray-900 font-medium rounded-lg hover:bg-gray-50">Login</a>
-                <a href="{{ route('register') }}" class="block mx-3 my-2 abs-gradient text-white px-6 py-2 rounded-lg text-center font-medium hover:opacity-90 transition-all">
-                    Start Free Trial
-                </a>
-            </div>
-        </div>
     </nav>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden">
+        <div class="flex flex-col space-y-4">
+            <a href="#features" class="text-lg font-medium text-gray-700 hover:text-blue-600">Features</a>
+            <a href="#pricing" class="text-lg font-medium text-gray-700 hover:text-blue-600">Pricing</a>
+            <a href="#about" class="text-lg font-medium text-gray-700 hover:text-blue-600">About</a>
+            <a href="#testimonials" class="text-lg font-medium text-gray-700 hover:text-blue-600">Reviews</a>
+            <div class="h-px bg-gray-100 my-2"></div>
+            <a href="{{ route('login') }}" class="text-lg font-medium text-gray-700">Login</a>
+            <a href="{{ route('register') }}" class="abs-gradient text-white px-6 py-4 rounded-2xl font-bold text-center shadow-lg">
+                Start Free Trial
+            </a>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="pt-32 pb-20 hero-bg relative overflow-hidden min-h-screen flex items-center section-divider">
@@ -633,8 +634,8 @@
             </div>
             
             <!-- Enhanced Feature Grid -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                <div class="group bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100 hover:shadow-xl transition-all duration-300">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 stagger-in">
+                <div class="group bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100 shadow-sm transition-all duration-300 animate-card-hover">
                     <div class="flex items-center space-x-3 mb-4">
                         <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -928,7 +929,7 @@
             <!-- Enhanced Pricing Cards -->
             <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
                 <!-- Basic Plan -->
-                <div class="group morphism rounded-2xl shadow-lg hover:shadow-2xl p-6 card-3d fade-in-up transition-all duration-500">
+                <div class="group morphism rounded-2xl shadow-lg p-6 card-3d fade-in-up transition-all duration-500 animate-card-hover">
                     <div class="text-center mb-6">
                         <div class="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -981,7 +982,7 @@
                 </div>
 
                 <!-- Professional Plan -->
-                <div class="group morphism rounded-2xl shadow-2xl p-6 border-2 border-blue-300 relative transform scale-105 card-3d fade-in-up transition-all duration-500" style="animation-delay: 0.1s;">
+                <div class="group morphism rounded-2xl shadow-2xl p-6 border-2 border-blue-300 relative transform scale-105 card-3d fade-in-up transition-all duration-500 glass-shimmer animate-card-hover" style="animation-delay: 0.1s;">
                     <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
                         <span class="abs-gradient text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg glow">
                             🏆 MOST POPULAR

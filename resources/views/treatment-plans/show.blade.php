@@ -10,10 +10,10 @@
             <p class="text-gray-600">Patient: {{ $treatmentPlan->patient->name }}</p>
         </div>
         <div class="flex space-x-4">
-            <a href="{{ route('treatment-plans.edit', $treatmentPlan) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+            <a href="{{ route('clinic.treatment-plans.edit', $treatmentPlan) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
                 Edit Plan
             </a>
-            <a href="{{ route('treatment-plans.index') }}" class="border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50">
+            <a href="{{ route('clinic.treatment-plans.index') }}" class="border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50">
                 Back to Plans
             </a>
         </div>

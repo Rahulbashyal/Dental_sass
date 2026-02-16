@@ -22,7 +22,8 @@ class UserSeeder extends Seeder
             'email' => 'admin@dentalcare.com'
         ], [
             'name' => 'Super Admin',
-            'password' => bcrypt('password')
+            'password' => bcrypt('password'),
+            'email_verified_at' => now()
         ]);
         $superadmin->assignRole('superadmin');
 
@@ -46,7 +47,8 @@ class UserSeeder extends Seeder
         ], [
             'name' => 'Clinic Admin',
             'password' => bcrypt('password'),
-            'clinic_id' => $clinic->id
+            'clinic_id' => $clinic->id,
+            'email_verified_at' => now()
         ]);
         $clinicAdmin->assignRole('clinic_admin');
     }

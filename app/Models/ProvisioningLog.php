@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProvisioningLog extends Model
 {
+    protected $connection = 'central';
     protected $table = 'provisioning_logs';
 
     protected $fillable = [

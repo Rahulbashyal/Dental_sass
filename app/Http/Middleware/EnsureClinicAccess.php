@@ -29,10 +29,10 @@ class EnsureClinicAccess
             $parameters = $route->parameters();
             
             foreach ($parameters as $parameter) {
-                if (is_object($parameter) && method_exists($parameter, 'getTable')) {
-                    // Check if model has clinic_id and verify access
-                    if (property_exists($parameter, 'clinic_id') && 
-                        $parameter->clinic_id !== $user->clinic_id) {
+                if ($parameter instanceof \Illuminate\Database\Eloquent\Model) {
+                    // Check if model has clinic_id attribute and verify access
+                    $modelClinicId = $parameter->getAttribute('clinic_id');
+                    if ($modelClinicId !== null && $modelClinicId !== $user->clinic_id) {
                         abort(403, 'Unauthorized access to resource.');
                     }
                 }

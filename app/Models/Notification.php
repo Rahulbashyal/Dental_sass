@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Notification extends Model
 {
     protected $fillable = [
-        'user_id', 'title', 'message', 'type', 'data', 'read_at'
+        'notifiable_id', 'notifiable_type', 'title', 'message', 'type', 'data', 'read_at'
     ];
 
     protected $casts = [
@@ -16,9 +16,12 @@ class Notification extends Model
         'read_at' => 'datetime'
     ];
 
-    public function user(): BelongsTo
+    /**
+     * Get the parent notifiable model (User or Patient).
+     */
+    public function notifiable(): MorphTo
     {
-        return $this->belongsTo(User::class);
+        return $this->morphTo();
     }
 
     public function markAsRead()

@@ -43,15 +43,16 @@
     @endif
     
     <div class="relative">
-        {{-- Display Input (shows BS date) --}}
+        {{-- Display Input (shows BS date) - clickable to open picker --}}
         <input 
             type="text" 
             id="{{ $inputId }}_display"
-            class="nepali-date-display w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 {{ $errorMessage ? 'border-red-500' : '' }}"
+            class="nepali-date-display w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 {{ $errorMessage ? 'border-red-500' : '' }} cursor-pointer"
             value="{{ $bsDisplay }}"
-            placeholder="मिति छान्नुहोस् (Click to select)"
+            placeholder="Click to select date"
             {{ $disabled ? 'disabled' : '' }}
             readonly
+            onclick="document.getElementById('{{ $inputId }}').showPicker()"
         >
         
         {{-- Hidden Date Input (native HTML5 date picker) --}}
@@ -59,12 +60,14 @@
             type="date" 
             id="{{ $inputId }}"
             name="{{ $name }}"
-            class="nepali-date-value absolute inset-0 opacity-0 cursor-pointer"
+            class="nepali-date-value"
+            style="position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer;"
             value="{{ old($name, $value) }}"
             @if($minDate) min="{{ $minDate }}" @endif
             @if($maxDate) max="{{ $maxDate }}" @endif
             {{ $required ? 'required' : '' }}
             {{ $disabled ? 'disabled' : '' }}
+            onchange="document.getElementById('{{ $inputId }}_display').value = this.value"
         >
         
         {{-- Calendar Icon --}}

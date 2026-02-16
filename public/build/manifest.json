@@ -1,6 +1,15 @@
 {
+  "resources/css/animations.css": {
+    "file": "assets/animations-tn0RQdqM.css",
+    "src": "resources/css/animations.css",
+    "isEntry": true,
+    "name": "animations",
+    "names": [
+      "animations.css"
+    ]
+  },
   "resources/css/app.css": {
-    "file": "assets/app-Dupm7tec.css",
+    "file": "assets/app-BALKtfIh.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",

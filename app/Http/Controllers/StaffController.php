@@ -55,7 +55,7 @@ class StaffController extends Controller
 
         $staff->assignRole($validated['role']);
 
-        return redirect()->route('staff.index')->with('success', 'Staff member added successfully!');
+        return redirect()->route('clinic.staff.index')->with('success', 'Staff member added successfully!');
     }
 
     public function edit(User $staff)
@@ -89,7 +89,7 @@ class StaffController extends Controller
 
         $staff->syncRoles([$validated['role']]);
 
-        return redirect()->route('staff.index')->with('success', 'Staff member updated successfully!');
+        return redirect()->route('clinic.staff.index')->with('success', 'Staff member updated successfully!');
     }
 
     public function destroy(User $staff)
@@ -99,6 +99,6 @@ class StaffController extends Controller
         }
 
         $staff->delete();
-        return redirect()->route('staff.index')->with('success', 'Staff member removed successfully!');
+        return redirect()->route('clinic.staff.index')->with('success', 'Staff member removed successfully!');
     }
 }

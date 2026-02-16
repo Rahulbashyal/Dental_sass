@@ -31,6 +31,11 @@ class ReceptionistController extends Controller
         return back()->with('success', 'Appointment marked as no-show.');
     }
 
+    public function createEmergencyAppointment()
+    {
+        return view('receptionist.emergency-appointment');
+    }
+
     public function emergencyAppointment(Request $request)
     {
         $validated = $request->validate([

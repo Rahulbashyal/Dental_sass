@@ -9,121 +9,97 @@ use Illuminate\Support\Facades\Auth;
 
 class TreatmentPlanController extends Controller
 {
-    public function __construct()
+    public function index(Request $request, Patient $patient)
     {
-        $this->middleware(['auth', 'clinic.access']);
-    }
-    
-    public function index()
-    {
-        $user = Auth::user();
-        
-        if (!$user->clinic_id) {
-            return redirect()->route('dashboard')->with('error', 'Access denied. No clinic assigned.');
-        }
+        $treatmentPlans = TreatmentPlan::where('patient_id', $patient->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        $query = TreatmentPlan::where('clinic_id', $user->clinic_id)->with('patient');
-        
-        // If user is dentist, only show their treatment plans
-        if ($user->hasRole('dentist')) {
-            $query->where('dentist_id', $user->id);
-        }
-        
-        $treatmentPlans = $query->latest()->paginate(15);
-
-        return view('treatment-plans.index', compact('treatmentPlans'));
+        return view('treatment-plans.index', compact('treatmentPlans', 'patient'));
     }
 
     public function create()
     {
-        $user = Auth::user();
+        $patients = Patient::where('clinic_id', Auth::user()->clinic_id)
+            ->orderBy('first_name')
+            ->orderBy('last_name')
+            ->get();
         
-        if (!$user->clinic_id) {
-            return redirect()->route('dashboard')->with('error', 'Access denied. No clinic assigned.');
-        }
-
-        $patients = Patient::where('clinic_id', $user->clinic_id)->get();
         return view('treatment-plans.create', compact('patients'));
     }
 
     public function store(Request $request)
     {
-        $user = Auth::user();
-        
-        if (!$user->clinic_id) {
-            return redirect()->route('dashboard')->with('error', 'Access denied. No clinic assigned.');
-        }
-
         $validated = $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'estimated_cost' => 'required|numeric|min:0',
-            'estimated_duration' => 'required|string',
-            'priority' => 'required|in:low,medium,high,urgent'
+            'estimated_cost' => 'nullable|numeric',
+            'priority' => 'required|in:low,medium,high',
         ]);
 
-        TreatmentPlan::create([
-            'clinic_id' => $user->clinic_id,
-            'patient_id' => $validated['patient_id'],
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'estimated_cost' => $validated['estimated_cost'],
-            'estimated_duration' => $validated['estimated_duration'],
-            'priority' => $validated['priority'],
-            'status' => 'draft'
-        ]);
+        $plan = new TreatmentPlan($validated);
+        $plan->clinic_id = Auth::user()->clinic_id;
+        $plan->dentist_id = Auth::id();
+        $plan->status = 'proposed';
+        $plan->save();
 
-        return redirect()->route('treatment-plans.index')->with('success', 'Treatment plan created successfully!');
+        return redirect()->route('clinic.treatment-plans.index', ['patient' => $validated['patient_id']])
+            ->with('success', 'Treatment plan proposed.');
     }
 
     public function show(TreatmentPlan $treatmentPlan)
     {
-        if ($treatmentPlan->clinic_id !== Auth::user()->clinic_id) {
-            abort(403);
-        }
-
-        return view('treatment-plans.show', compact('treatmentPlan'));
+        $patient = $treatmentPlan->patient;
+        return view('treatment-plans.show', compact('treatmentPlan', 'patient'));
     }
 
     public function edit(TreatmentPlan $treatmentPlan)
     {
-        if ($treatmentPlan->clinic_id !== Auth::user()->clinic_id) {
-            abort(403);
-        }
-
-        $patients = Patient::where('clinic_id', Auth::user()->clinic_id)->get();
+        $patients = Patient::where('clinic_id', Auth::user()->clinic_id)
+            ->orderBy('first_name')
+            ->orderBy('last_name')
+            ->get();
+        
         return view('treatment-plans.edit', compact('treatmentPlan', 'patients'));
     }
 
     public function update(Request $request, TreatmentPlan $treatmentPlan)
     {
-        if ($treatmentPlan->clinic_id !== Auth::user()->clinic_id) {
-            abort(403);
-        }
-
         $validated = $request->validate([
-            'patient_id' => 'required|exists:patients,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'estimated_cost' => 'required|numeric|min:0',
-            'estimated_duration' => 'required|string',
-            'priority' => 'required|in:low,medium,high,urgent',
-            'status' => 'required|in:draft,approved,in_progress,completed,cancelled'
+            'estimated_cost' => 'nullable|numeric',
+            'priority' => 'required|in:low,medium,high',
+            'status' => 'required|in:proposed,approved,in_progress,completed',
         ]);
 
         $treatmentPlan->update($validated);
 
-        return redirect()->route('treatment-plans.index')->with('success', 'Treatment plan updated successfully!');
+        return redirect()->route('clinic.treatment-plans.show', $treatmentPlan->id)
+            ->with('success', 'Treatment plan updated.');
     }
 
     public function destroy(TreatmentPlan $treatmentPlan)
     {
-        if ($treatmentPlan->clinic_id !== Auth::user()->clinic_id) {
+        $patientId = $treatmentPlan->patient_id;
+        $treatmentPlan->delete();
+
+        return redirect()->route('clinic.treatment-plans.index', ['patient' => $patientId])
+            ->with('success', 'Treatment plan deleted.');
+    }
+
+    public function updateStatus(Request $request, TreatmentPlan $plan)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:proposed,approved,in_progress,completed',
+        ]);
+
+        if ($plan->clinic_id !== Auth::user()->clinic_id) {
             abort(403);
         }
 
-        $treatmentPlan->delete();
-        return redirect()->route('treatment-plans.index')->with('success', 'Treatment plan deleted successfully!');
+        $plan->update(['status' => $validated['status']]);
+        return back()->with('success', 'Plan status updated.');
     }
 }

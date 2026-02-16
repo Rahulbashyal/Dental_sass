@@ -6,6 +6,7 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/css/animations.css',
                 'resources/css/nepali-datepicker.css',
                 'resources/js/app.js',
                 'resources/js/nepali-datepicker.js'

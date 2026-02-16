@@ -1,87 +1,83 @@
 @extends('layouts.app')
 
-@section('page-title', 'Notifications')
+@section('title', 'Notifications - ' . config('app.name'))
+
+@section('page-title', 'Message Center')
 
 @section('content')
-<div class="space-y-6">
-    <div class="flex items-center justify-between">
-        <div>
-            <p class="text-slate-600">Stay updated with your latest notifications</p>
+<div class="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-6 bg-white p-8 rounded-4xl shadow-sm border border-slate-100">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-3xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
+                <i class="fas fa-bell text-2xl"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Center Hub</h2>
+                <p class="text-sm text-slate-400 font-medium">Keep track of clinical updates and system alerts</p>
+            </div>
         </div>
-        <button onclick="markAllAsRead()" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            Mark All Read
+        <button onclick="markAllAsRead()" class="px-6 py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
+            <i class="fas fa-check-double mr-2"></i> Mark All as Read
         </button>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200">
-        <div class="px-6 py-4 border-b border-slate-200">
-            <h3 class="text-lg font-semibold text-slate-900">All Notifications</h3>
-        </div>
-        
-        <div class="divide-y divide-slate-200">
+    <!-- Notification List -->
+    <div class="bg-white rounded-4xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="divide-y divide-slate-50">
             @forelse($notifications as $notification)
-            <div class="p-6 {{ $notification->read_at ? 'bg-white' : 'bg-blue-50' }} hover:bg-slate-50 transition-colors">
-                <div class="flex items-start space-x-4">
-                    <div class="flex-shrink-0">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center
-                            @if($notification->type === 'email') bg-blue-100 text-blue-600
-                            @elseif($notification->type === 'system') bg-green-100 text-green-600
-                            @elseif($notification->type === 'appointment') bg-yellow-100 text-yellow-600
-                            @else bg-purple-100 text-purple-600 @endif">
-                            @if($notification->type === 'email')
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                </svg>
-                            @elseif($notification->type === 'system')
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            @elseif($notification->type === 'appointment')
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            @else
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                </svg>
+                <div class="p-8 group transition-all duration-300 {{ !$notification->read_at ? 'bg-blue-50/30' : 'bg-white' }}">
+                    <div class="flex items-start gap-6">
+                        <!-- Icon Column -->
+                        <div class="flex-shrink-0">
+                            @php
+                                $typeStyles = [
+                                    'email' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-600', 'icon' => 'fa-envelope'],
+                                    'system' => ['bg' => 'bg-emerald-100', 'text' => 'text-emerald-600', 'icon' => 'fa-server'],
+                                    'appointment' => ['bg' => 'bg-amber-100', 'text' => 'text-amber-600', 'icon' => 'fa-calendar-check'],
+                                    'billing' => ['bg' => 'bg-purple-100', 'text' => 'text-purple-600', 'icon' => 'fa-file-invoice-dollar'],
+                                ];
+                                $style = $typeStyles[$notification->type] ?? ['bg' => 'bg-slate-100', 'text' => 'text-slate-600', 'icon' => 'fa-bell'];
+                            @endphp
+                            <div class="w-12 h-12 rounded-2xl {{ $style['bg'] }} {{ $style['text'] }} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                                <i class="fas {{ $style['icon'] }} text-lg"></i>
+                            </div>
+                        </div>
+
+                        <!-- Content Column -->
+                        <div class="flex-1 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <h4 class="text-sm font-black text-slate-900 uppercase tracking-tight">{{ $notification->title }}</h4>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">{{ $notification->created_at->diffForHumans() }}</span>
+                            </div>
+                            <p class="text-sm text-slate-600 leading-relaxed">{{ $notification->message }}</p>
+                            
+                            @if(!$notification->read_at)
+                                <div class="pt-2 flex items-center gap-4">
+                                    <button onclick="markAsRead({{ $notification->id }})" class="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-blue-800 transition-colors">
+                                        Mark as Done
+                                    </button>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
+                                </div>
                             @endif
                         </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between">
-                            <h4 class="text-sm font-semibold text-slate-900">{{ $notification->title }}</h4>
-                            <div class="flex items-center space-x-2">
-                                @if(!$notification->read_at)
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">New</span>
-                                @endif
-                                <span class="text-xs text-slate-500">{{ $notification->created_at->diffForHumans() }}</span>
-                            </div>
-                        </div>
-                        <p class="mt-1 text-sm text-slate-600">{{ $notification->message }}</p>
-                        @if(!$notification->read_at)
-                            <button onclick="markAsRead({{ $notification->id }})" class="mt-2 text-xs text-blue-600 hover:text-blue-800">Mark as read</button>
-                        @endif
-                    </div>
                 </div>
-            </div>
             @empty
-            <div class="p-12 text-center">
-                <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM11 19H6a2 2 0 01-2-2V7a2 2 0 012-2h5m5 0v5"></path>
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-slate-900">No notifications</h3>
-                <p class="mt-1 text-sm text-slate-500">You're all caught up!</p>
-            </div>
+                <div class="py-24 text-center">
+                    <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-moon text-3xl text-slate-200"></i>
+                    </div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest">Quiet in the hub</h3>
+                    <p class="text-xs text-slate-400 mt-1 font-medium italic">There are no new notifications for you right now.</p>
+                </div>
             @endforelse
         </div>
-        
+
         @if($notifications->hasPages())
-        <div class="px-6 py-4 border-t border-slate-200">
-            {{ $notifications->links() }}
-        </div>
+            <div class="px-8 py-6 bg-slate-50 border-t border-slate-100">
+                {{ $notifications->links() }}
+            </div>
         @endif
     </div>
 </div>
@@ -119,4 +115,11 @@ function markAllAsRead() {
     });
 }
 </script>
+
+<style>
+    .rounded-4xl { border-radius: 2.5rem; }
+    .pagination { @apply flex items-center gap-2; }
+    .pagination .active { @apply px-3 py-1 bg-slate-900 text-white rounded-lg text-[10px] font-black; }
+    .pagination a { @apply px-3 py-1 bg-white text-slate-600 border border-slate-200 rounded-lg text-[10px] font-bold hover:bg-slate-50; }
+</style>
 @endsection

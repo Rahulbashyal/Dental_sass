@@ -11,10 +11,10 @@
         
         <div class="space-y-1">
             <p class="text-blue-300 text-xs uppercase tracking-wide font-semibold mt-4 mb-2">Patient Management</p>
-            <a href="{{ route('patients.index') }}" class="flex items-center p-3 rounded hover:bg-blue-700">
+            <a href="{{ route('clinic.patients.index') }}" class="flex items-center p-3 rounded hover:bg-blue-700">
                 <i class="fas fa-users mr-3"></i> Patients
             </a>
-            <a href="{{ route('patients.create') }}" class="flex items-center p-3 rounded hover:bg-blue-700">
+            <a href="{{ route('clinic.patients.create') }}" class="flex items-center p-3 rounded hover:bg-blue-700">
                 <i class="fas fa-user-plus mr-3"></i> Add Patient
             </a>
         </div>
@@ -27,10 +27,10 @@
             <a href="{{ route('clinic.appointments.create') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('clinic.appointments.create') ? 'bg-blue-700' : '' }}">
                 <i class="fas fa-calendar-plus mr-3"></i> Schedule
             </a>
-            <a href="{{ route('waitlist.index') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('waitlist.*') ? 'bg-blue-700' : '' }}">
+            <a href="{{ route('clinic.waitlist.index') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('clinic.waitlist.*') ? 'bg-blue-700' : '' }}">
                 <i class="fas fa-clock mr-3"></i> Waiting List
             </a>
-            <a href="{{ route('print-schedule') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('print-schedule') ? 'bg-blue-700' : '' }}">
+            <a href="{{ route('clinic.print-schedule') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->route('clinic.print-schedule') ? 'bg-blue-700' : '' }}">
                 <i class="fas fa-print mr-3"></i> Print Schedule
             </a>
         </div>

@@ -12,9 +12,9 @@
                 <p class="text-slate-600 text-lg">Here's what's happening with your platform today.</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-4">
-                <div class="flex items-center space-x-2 px-4 py-2 bg-emerald-100 rounded-full border border-emerald-200">
-                    <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                    <span class="text-emerald-700 font-medium text-sm">All systems operational</span>
+                <div class="flex items-center space-x-2 px-4 py-2 bg-blue-100 rounded-full border border-blue-200">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span class="text-blue-700 font-medium text-sm">All systems operational</span>
                 </div>
                 <div class="flex items-center space-x-2 px-4 py-2 bg-blue-100 rounded-full border border-blue-200">
                     <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,8 +33,8 @@
 <!-- Platform Overview - Full Width -->
 <div class="mb-8">
     <h2 class="text-2xl font-bold text-slate-900 mb-6">Platform Overview</h2>
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 hover:shadow-lg transition-all duration-200 hover:border-blue-300">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 stagger-in">
+        <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 animate-card-hover hover:border-blue-300">
             <div class="p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -48,8 +48,8 @@
                         <dl>
                             <dt class="text-sm font-medium text-slate-500 truncate">Total Clinics</dt>
                             <dd class="text-3xl font-bold text-slate-900">{{ \App\Models\Clinic::count() }}</dd>
-                            <dd class="flex items-baseline text-sm font-semibold text-emerald-600 mt-1">
-                                <svg class="self-center flex-shrink-0 h-4 w-4 text-emerald-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <dd class="flex items-baseline text-sm font-semibold text-blue-600 mt-1">
+                                <svg class="self-center flex-shrink-0 h-4 w-4 text-blue-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                                 </svg>
                                 +12% from last month
@@ -74,8 +74,8 @@
                         <dl>
                             <dt class="text-sm font-medium text-slate-500 truncate">Total Users</dt>
                             <dd class="text-3xl font-bold text-slate-900">{{ \App\Models\User::count() }}</dd>
-                            <dd class="flex items-baseline text-sm font-semibold text-emerald-600 mt-1">
-                                <svg class="self-center flex-shrink-0 h-4 w-4 text-emerald-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <dd class="flex items-baseline text-sm font-semibold text-sky-600 mt-1">
+                                <svg class="self-center flex-shrink-0 h-4 w-4 text-sky-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                                 </svg>
                                 +18% from last month
@@ -100,8 +100,8 @@
                         <dl>
                             <dt class="text-sm font-medium text-slate-500 truncate">Monthly Revenue</dt>
                             <dd class="text-3xl font-bold text-slate-900">NPR {{ number_format(\App\Models\Subscription::where('status', 'active')->sum('amount'), 0) }}</dd>
-                            <dd class="flex items-baseline text-sm font-semibold text-emerald-600 mt-1">
-                                <svg class="self-center flex-shrink-0 h-4 w-4 text-emerald-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <dd class="flex items-baseline text-sm font-semibold text-cyan-600 mt-1">
+                                <svg class="self-center flex-shrink-0 h-4 w-4 text-cyan-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                                 </svg>
                                 +24% from last month
@@ -126,8 +126,8 @@
                         <dl>
                             <dt class="text-sm font-medium text-slate-500 truncate">Active Subscriptions</dt>
                             <dd class="text-3xl font-bold text-slate-900">{{ \App\Models\Subscription::where('status', 'active')->count() }}</dd>
-                            <dd class="flex items-baseline text-sm font-semibold text-emerald-600 mt-1">
-                                <svg class="self-center flex-shrink-0 h-4 w-4 text-emerald-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <dd class="flex items-baseline text-sm font-semibold text-indigo-600 mt-1">
+                                <svg class="self-center flex-shrink-0 h-4 w-4 text-indigo-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                                 </svg>
                                 +8% from last month
@@ -167,7 +167,7 @@
                 <div class="flex items-center space-x-2">
                     <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
                     <span class="text-sm text-slate-600">Clinics</span>
-                    <div class="w-3 h-3 bg-emerald-500 rounded-full ml-4"></div>
+                    <div class="w-3 h-3 bg-sky-500 rounded-full ml-4"></div>
                     <span class="text-sm text-slate-600">Users</span>
                 </div>
             </div>
@@ -181,7 +181,7 @@
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-xl font-semibold text-slate-900">Revenue Trends</h3>
                 <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-indigo-500 rounded-full"></div>
                     <span class="text-sm text-slate-600">Revenue (NPR)</span>
                 </div>
             </div>
@@ -202,23 +202,23 @@
             <h2 class="text-2xl font-bold text-slate-900 mb-6">Quick Actions</h2>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <!-- CRM Management -->
-                <div class="relative group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-rose-300 transition-all duration-300 cursor-pointer">
+                <div class="relative group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-blue-300 transition-all duration-300 cursor-pointer">
                     <a href="{{ route('superadmin.crm.leads') }}" class="absolute inset-0"></a>
                     <div class="flex items-center space-x-5">
                         <div class="flex-shrink-0">
-                            <div class="w-16 h-16 bg-gradient-to-br from-rose-500 to-rose-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-sky-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
                             </div>
                         </div>
                         <div class="flex-1">
-                            <h3 class="text-xl font-semibold text-slate-900 group-hover:text-rose-600 transition-colors">CRM & Leads</h3>
+                            <h3 class="text-xl font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">CRM & Leads</h3>
                             <p class="text-slate-600 mt-2">Manage leads, sales pipeline, and customer relationships</p>
                         </div>
                     </div>
                     <div class="mt-6">
-                        <span class="inline-flex items-center text-rose-600 font-medium group-hover:text-rose-700">
+                        <span class="inline-flex items-center text-blue-600 font-medium group-hover:text-blue-700">
                             Manage CRM 
                             <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -254,23 +254,23 @@
                 </div>
 
                 <!-- Platform Management -->
-                <div class="relative group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-emerald-300 transition-all duration-300 cursor-pointer">
+                <div class="relative group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-sky-300 transition-all duration-300 cursor-pointer">
                     <a href="{{ route('clinics.index') }}" class="absolute inset-0"></a>
                     <div class="flex items-center space-x-5">
                         <div class="flex-shrink-0">
-                            <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <div class="w-16 h-16 bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                 </svg>
                             </div>
                         </div>
                         <div class="flex-1">
-                            <h3 class="text-xl font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors">Platform Management</h3>
+                            <h3 class="text-xl font-semibold text-slate-900 group-hover:text-sky-600 transition-colors">Platform Management</h3>
                             <p class="text-slate-600 mt-2">Manage clinics, users, and system settings</p>
                         </div>
                     </div>
                     <div class="mt-6">
-                        <span class="inline-flex items-center text-emerald-600 font-medium group-hover:text-emerald-700">
+                        <span class="inline-flex items-center text-sky-600 font-medium group-hover:text-sky-700">
                             Manage platform 
                             <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -280,23 +280,23 @@
                 </div>
 
                 <!-- Analytics & Reports -->
-                <div class="relative group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-purple-300 transition-all duration-300 cursor-pointer">
+                <div class="relative group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-indigo-300 transition-all duration-300 cursor-pointer">
                     <a href="{{ route('superadmin.analytics') }}" class="absolute inset-0"></a>
                     <div class="flex items-center space-x-5">
                         <div class="flex-shrink-0">
-                            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
                             </div>
                         </div>
                         <div class="flex-1">
-                            <h3 class="text-xl font-semibold text-slate-900 group-hover:text-purple-600 transition-colors">Analytics & Reports</h3>
+                            <h3 class="text-xl font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">Analytics & Reports</h3>
                             <p class="text-slate-600 mt-2">View detailed analytics and generate reports</p>
                         </div>
                     </div>
                     <div class="mt-6">
-                        <span class="inline-flex items-center text-purple-600 font-medium group-hover:text-purple-700">
+                        <span class="inline-flex items-center text-indigo-600 font-medium group-hover:text-indigo-700">
                             View analytics 
                             <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -318,7 +318,7 @@
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <div class="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                                     </svg>
@@ -339,7 +339,7 @@
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-sky-600 rounded-xl flex items-center justify-center shadow-lg">
                                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
@@ -381,7 +381,7 @@
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <div class="w-14 h-14 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-sky-600 rounded-xl flex items-center justify-center shadow-lg">
                                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                     </svg>
@@ -489,12 +489,12 @@ function initializeCharts() {
             }, {
                 label: 'New Users',
                 data: chartData.map(d => d.users),
-                borderColor: 'rgb(16, 185, 129)',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderColor: 'rgb(14, 165, 233)',
+                backgroundColor: 'rgba(14, 165, 233, 0.1)',
                 tension: 0.4,
                 fill: true,
                 borderWidth: 3,
-                pointBackgroundColor: 'rgb(16, 185, 129)',
+                pointBackgroundColor: 'rgb(14, 165, 233)',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
                 pointRadius: 6,
@@ -560,13 +560,13 @@ function initializeCharts() {
             datasets: [{
                 label: 'Revenue (NPR)',
                 data: chartData.map(d => d.revenue),
-                backgroundColor: 'rgba(147, 51, 234, 0.8)',
-                borderColor: 'rgb(147, 51, 234)',
+                backgroundColor: 'rgba(79, 70, 229, 0.8)',
+                borderColor: 'rgb(79, 70, 229)',
                 borderWidth: 2,
                 borderRadius: 8,
                 borderSkipped: false,
-                hoverBackgroundColor: 'rgba(147, 51, 234, 0.9)',
-                hoverBorderColor: 'rgb(147, 51, 234)'
+                hoverBackgroundColor: 'rgba(79, 70, 229, 0.9)',
+                hoverBorderColor: 'rgb(79, 70, 229)'
             }]
         },
         options: {

@@ -13,6 +13,40 @@ class LandingPageContent extends Model
 
     protected $fillable = [
         'clinic_id',
+        // Section Visibility
+        'show_hero',
+        'show_stats',
+        'show_about',
+        'show_services',
+        'show_gallery',
+        'show_testimonials',
+        'show_faq',
+        'show_contact',
+        'show_footer',
+        
+        // Navigation
+        'navbar_title',
+        'navbar_tagline',
+        'nav_home_label',
+        'nav_about_label',
+        'nav_services_label',
+        'nav_gallery_label',
+        'nav_testimonials_label',
+        'nav_faq_label',
+        'nav_contact_label',
+        'nav_booking_cta',
+        
+        // Stats Section
+        'stats_experience',
+        'stats_experience_label',
+        'stats_patients',
+        'stats_patients_label',
+        'stats_success_rate',
+        'stats_success_rate_label',
+        'stats_emergency',
+        'stats_emergency_label',
+        
+        // Hero Section
         'hero_title',
         'hero_subtitle', 
         'hero_image',
@@ -29,16 +63,20 @@ class LandingPageContent extends Model
         'services_description',
         'services_data',
         'gallery_title',
+        'gallery_description',
         'gallery_images',
         'gallery_layout',
         'testimonials_title',
+        'testimonials_description',
         'testimonials_data',
         'testimonials_style',
         'faq_title',
-        'faq_data',
         'faq_description',
+        'faq_data',
         'contact_title',
         'contact_subtitle',
+        'contact_get_in_touch_title',
+        'contact_send_message_title',
         'contact_phone',
         'contact_email',
         'contact_address',
@@ -57,6 +95,7 @@ class LandingPageContent extends Model
         'facebook_pixel_id',
         'footer_description',
         'footer_copyright',
+        'footer_tagline',
         'social_facebook',
         'social_instagram',
         'social_twitter',
@@ -67,6 +106,15 @@ class LandingPageContent extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'show_hero' => 'boolean',
+        'show_stats' => 'boolean',
+        'show_about' => 'boolean',
+        'show_services' => 'boolean',
+        'show_gallery' => 'boolean',
+        'show_testimonials' => 'boolean',
+        'show_faq' => 'boolean',
+        'show_contact' => 'boolean',
+        'show_footer' => 'boolean',
         'hero_carousel_images' => 'array',
         'gallery_images' => 'array',
         'services_data' => 'array',
@@ -74,6 +122,8 @@ class LandingPageContent extends Model
         'testimonials_data' => 'array',
         'custom_sections' => 'array',
         'contact_form_enabled' => 'boolean',
+        'business_hours' => 'array',
+        'custom_navigation' => 'array',
     ];
 
     public function clinic(): BelongsTo
@@ -83,9 +133,11 @@ class LandingPageContent extends Model
 
     public static function getContent($clinicId = null)
     {
-        return self::where('clinic_id', $clinicId)
-            ->where('is_active', true)
-            ->first() ?? self::getDefaultContent();
+        if ($clinicId) {
+            return self::where('clinic_id', $clinicId)->first() ?? self::getDefaultContent();
+        }
+        
+        return self::where('is_active', true)->first() ?? self::getDefaultContent();
     }
 
     public static function getDefaultContent()
@@ -133,6 +185,13 @@ class LandingPageContent extends Model
     
     public function getGalleryImageUrl($filename)
     {
+        if (!$filename) return null;
+        
+        // Handle array structure [path => ..., description => ...]
+        if (is_array($filename)) {
+            $filename = $filename['path'] ?? null;
+        }
+
         if (!$filename) return null;
         
         // If it's already a full URL, return as is

@@ -22,17 +22,17 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('patients.*') ? 'active' : '' }}" href="{{ route('patients.index') }}">
+            <a class="nav-link {{ request()->routeIs('clinic.patients.*') ? 'active' : '' }}" href="{{ route('clinic.patients.index') }}">
                 <i class="fas fa-users"></i> Patients
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('patients.create') }}">
+            <a class="nav-link" href="{{ route('clinic.patients.create') }}">
                 <i class="fas fa-user-plus"></i> Add Patient
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('waitlist.*') ? 'active' : '' }}" href="{{ route('waitlist.index') }}">
+            <a class="nav-link {{ request()->routeIs('clinic.waitlist.*') ? 'active' : '' }}" href="{{ route('clinic.waitlist.index') }}">
                 <i class="fas fa-clock"></i> Waiting List
             </a>
         </li>
@@ -61,12 +61,12 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('invoices.*') ? 'active' : '' }}" href="{{ route('invoices.index') }}">
+            <a class="nav-link {{ request()->routeIs('clinic.invoices.*') ? 'active' : '' }}" href="{{ route('clinic.invoices.index') }}">
                 <i class="fas fa-file-invoice"></i> Invoices
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('invoices.create') }}">
+            <a class="nav-link" href="{{ route('clinic.invoices.create') }}">
                 <i class="fas fa-plus-circle"></i> Create Invoice
             </a>
         </li>
@@ -77,12 +77,12 @@
     </h6>
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('invoices.index') }}?status=pending">
+            <a class="nav-link" href="{{ route('clinic.invoices.index') }}?status=pending">
                 <i class="fas fa-exclamation-triangle"></i> Pending Payments
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('invoices.index') }}?status=overdue">
+            <a class="nav-link" href="{{ route('clinic.invoices.index') }}?status=overdue">
                 <i class="fas fa-clock"></i> Overdue Payments
             </a>
         </li>
@@ -93,12 +93,12 @@
     </h6>
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="{{ route('reports.index') }}">
+            <a class="nav-link {{ request()->routeIs('clinic.reports.*') ? 'active' : '' }}" href="{{ route('clinic.reports.index') }}">
                 <i class="fas fa-chart-bar"></i> Financial Reports
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('analytics.*') ? 'active' : '' }}" href="{{ route('analytics.dashboard') }}">
+            <a class="nav-link {{ request()->routeIs('clinic.analytics.*') ? 'active' : '' }}" href="{{ route('clinic.analytics.dashboard') }}">
                 <i class="fas fa-analytics"></i> Revenue Analytics
             </a>
         </li>
@@ -121,29 +121,31 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('patients.*') ? 'active' : '' }}" href="{{ route('patients.index') }}">
+            <a class="nav-link {{ request()->routeIs('clinic.patients.*') ? 'active' : '' }}" href="{{ route('clinic.patients.index') }}">
                 <i class="fas fa-users"></i> Patients
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('invoices.*') ? 'active' : '' }}" href="{{ route('invoices.index') }}">
+            <a class="nav-link {{ request()->routeIs('clinic.invoices.*') ? 'active' : '' }}" href="{{ route('clinic.invoices.index') }}">
                 <i class="fas fa-file-invoice"></i> Invoices
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('staff.*') ? 'active' : '' }}" href="{{ route('staff.index') }}">
+            <a class="nav-link {{ request()->routeIs('clinic.staff.*') ? 'active' : '' }}" href="{{ route('clinic.staff.index') }}">
                 <i class="fas fa-user-md"></i> Staff
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="{{ route('reports.index') }}">
+            <a class="nav-link {{ request()->routeIs('clinic.reports.*') ? 'active' : '' }}" href="{{ route('clinic.reports.index') }}">
                 <i class="fas fa-chart-bar"></i> Reports
             </a>
         </li>
+        @if(auth()->user()->hasRole('clinic_admin'))
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">
+            <a class="nav-link {{ request()->routeIs('clinic.settings.*') ? 'active' : '' }}" href="{{ route('clinic.settings.index') }}">
                 <i class="fas fa-cog"></i> Settings
             </a>
         </li>
+        @endif
     </ul>
 @endif

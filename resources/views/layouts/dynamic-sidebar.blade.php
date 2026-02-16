@@ -5,7 +5,7 @@ $sidebarItems = ClinicConfigService::getSidebarItems();
 
 <!-- Dynamic Navigation based on clinic configuration -->
 <nav class="mt-8 flex-1 px-4 space-y-2">
-    @if(auth()->user()->hasRole('superadmin'))
+    @if(auth()->check() && auth()->user()->hasRole('superadmin'))
         <!-- Superadmin Menu (unchanged) -->
         <div class="space-y-2">
             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -33,7 +33,9 @@ $sidebarItems = ClinicConfigService::getSidebarItems();
             <div class="mt-3 space-y-2">
                 @foreach($sidebarItems as $item)
                 <a href="{{ route($item['route']) }}" class="nav-link {{ request()->routeIs($item['route'].'*') ? 'active' : '' }}">
-                    @if($item['icon'] === 'calendar')
+                    @if(str_contains($item['icon'], 'fa-'))
+                        <i class="fas {{ $item['icon'] }} mr-3 flex-shrink-0 h-5 w-5 flex items-center justify-center text-lg"></i>
+                    @elseif($item['icon'] === 'calendar')
                         <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
@@ -57,6 +59,9 @@ $sidebarItems = ClinicConfigService::getSidebarItems();
                         <svg class="mr-3 flex-shrink-0 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
                         </svg>
+                    @else
+                        <!-- Fallback FontAwesome -->
+                        <i class="fas fa-{{ $item['icon'] }} mr-3 flex-shrink-0 h-5 w-5 flex items-center justify-center text-lg"></i>
                     @endif
                     <span class="truncate">{{ $item['name'] }}</span>
                 </a>

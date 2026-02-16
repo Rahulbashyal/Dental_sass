@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -12,15 +11,13 @@ class DailyFinancialSummary extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $accountant;
     protected $summary;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(User $accountant, array $summary)
+    public function __construct(array $summary)
     {
-        $this->accountant = $accountant;
         $this->summary = $summary;
     }
 
@@ -29,7 +26,7 @@ class DailyFinancialSummary extends Notification implements ShouldQueue
      */
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -37,15 +34,20 @@ class DailyFinancialSummary extends Notification implements ShouldQueue
      */
     public function toMail($notifiable): MailMessage
     {
-        $clinic = $this->accountant->clinic;
+        $clinic = $notifiable->clinic;
         
         return (new MailMessage)
-            ->subject('Daily Financial Summary - ' . now()->format('F j, Y') . ' - ' . $clinic->name)
-            ->view('emails.staff.financial-summary', [
-                'accountant' => $this->accountant,
-                'summary' => $this->summary,
-                'clinic' => $clinic
-            ]);
+            ->subject('Daily Clinic Summary - ' . ($this->summary['date'] ?? now()->format('F j, Y')))
+            ->greeting('Hello ' . $notifiable->name . '!')
+            ->line('Here is the daily overview for **' . ($clinic->name ?? 'your clinic') . '**.')
+            ->line('**Key Performance Indicators:**')
+            ->line('- Total Revenue Collected: ' . ($this->summary['revenue'] ?? 0) . ' ' . ($clinic->currency ?? 'NPR'))
+            ->line('- New Patients Registered: ' . ($this->summary['new_patients'] ?? 0))
+            ->line('- New Appointments Scheduled: ' . ($this->summary['new_appointments'] ?? 0))
+            ->line('- Appointments Completed: ' . ($this->summary['completed_appointments'] ?? 0))
+            ->line('- New Leads Generated: ' . ($this->summary['total_leads'] ?? 0))
+            ->action('View Full Analytics', route('clinic.analytics.dashboard'))
+            ->line('Keep up the great work!');
     }
 
     /**
@@ -54,9 +56,11 @@ class DailyFinancialSummary extends Notification implements ShouldQueue
     public function toArray($notifiable): array
     {
         return [
-            'date' => now()->format('Y-m-d'),
-            'total_revenue' => $this->summary['total_revenue'] ?? 0,
-            'invoices_generated' => $this->summary['invoices_generated'] ?? 0,
+            'date' => $this->summary['date'] ?? now()->format('Y-m-d'),
+            'revenue' => $this->summary['revenue'] ?? 0,
+            'message' => 'Daily summary for ' . ($this->summary['date'] ?? 'today') . ' is ready.',
+            'type' => 'info',
+            'action_url' => route('clinic.analytics.dashboard'),
         ];
     }
 }

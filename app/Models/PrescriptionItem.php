@@ -21,6 +21,12 @@ class PrescriptionItem extends Model
         'quantity',
         'instructions',
         'precautions',
+        'status',
+        'dispensed_at',
+    ];
+
+    protected $casts = [
+        'dispensed_at' => 'datetime',
     ];
 
     /**

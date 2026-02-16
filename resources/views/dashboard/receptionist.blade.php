@@ -19,8 +19,8 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="stat-card group">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 stagger-in">
+        <div class="stat-card group animate-card-hover">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 mb-1">Today's Appointments</p>
@@ -39,11 +39,11 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 mb-1">Waiting Patients</p>
-                    <p class="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">{{ $stats['waiting_patients'] }}</p>
-                    <p class="text-xs text-yellow-600 mt-1">{{ $stats['waiting_patients'] > 0 ? 'In queue' : 'No waiting' }}</p>
+                    <p class="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-sky-600 bg-clip-text text-transparent">{{ $stats['waiting_patients'] }}</p>
+                    <p class="text-xs text-cyan-600 mt-1">{{ $stats['waiting_patients'] > 0 ? 'In queue' : 'No waiting' }}</p>
                 </div>
-                <div class="p-4 rounded-2xl bg-gradient-to-br from-yellow-100 to-orange-100 group-hover:from-yellow-200 group-hover:to-orange-200 transition-all duration-300">
-                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-cyan-100 to-sky-100 group-hover:from-cyan-200 group-hover:to-sky-200 transition-all duration-300">
+                    <svg class="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
@@ -54,11 +54,11 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 mb-1">Pending Appointments</p>
-                    <p class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{{ $stats['pending_appointments'] }}</p>
-                    <p class="text-xs text-purple-600 mt-1">{{ $stats['pending_appointments'] > 0 ? 'Needs confirmation' : 'All confirmed' }}</p>
+                    <p class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">{{ $stats['pending_appointments'] }}</p>
+                    <p class="text-xs text-indigo-600 mt-1">{{ $stats['pending_appointments'] > 0 ? 'Needs confirmation' : 'All confirmed' }}</p>
                 </div>
-                <div class="p-4 rounded-2xl bg-gradient-to-br from-purple-100 to-pink-100 group-hover:from-purple-200 group-hover:to-pink-200 transition-all duration-300">
-                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-100 to-blue-100 group-hover:from-indigo-200 group-hover:to-blue-200 transition-all duration-300">
+                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
                 </div>
@@ -69,11 +69,11 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 mb-1">Total Patients</p>
-                    <p class="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">{{ $stats['total_patients'] }}</p>
-                    <p class="text-xs text-green-600 mt-1">{{ $stats['total_patients'] > 0 ? 'Registered' : 'Start adding' }}</p>
+                    <p class="text-3xl font-bold bg-gradient-to-r from-blue-500 to-sky-500 bg-clip-text text-transparent">{{ $stats['total_patients'] }}</p>
+                    <p class="text-xs text-blue-500 mt-1">{{ $stats['total_patients'] > 0 ? 'Registered' : 'Start adding' }}</p>
                 </div>
-                <div class="p-4 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-100 group-hover:from-green-200 group-hover:to-emerald-200 transition-all duration-300">
-                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-blue-100 to-sky-100 group-hover:from-blue-200 group-hover:to-sky-200 transition-all duration-300">
+                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
                 </div>
@@ -123,14 +123,14 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
-                                    {{ $appointment->status === 'confirmed' ? 'bg-green-100 text-green-800' : 
-                                       ($appointment->status === 'scheduled' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
+                                    {{ $appointment->status === 'confirmed' ? 'bg-blue-100 text-blue-800' : 
+                                       ($appointment->status === 'scheduled' ? 'bg-cyan-100 text-cyan-800' : 'bg-slate-100 text-slate-800') }}">
                                     {{ ucfirst($appointment->status) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                 <a href="{{ route('clinic.appointments.show', $appointment) }}" class="text-blue-600 hover:text-blue-900">View</a>
-                                <a href="{{ route('clinic.appointments.edit', $appointment) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
+                                <a href="{{ route('clinic.appointments.edit', $appointment) }}" class="text-cyan-600 hover:text-cyan-900">Edit</a>
                             </td>
                         </tr>
                         @endforeach

@@ -1,121 +1,123 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-6 page-fade-in">
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Blog Posts</h1>
-            <p class="text-gray-600">Manage blog content for your website</p>
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Platform Knowledge Base</h1>
+            <p class="text-slate-500 font-medium">Manage and publish blog content for all clinics and landing pages.</p>
         </div>
-        <button onclick="openCreateModal()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+        <button onclick="openCreateModal()" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all transform hover:scale-105">
+            <i class="fas fa-plus"></i>
             New Post
         </button>
     </div>
 
     <!-- Create Post Modal -->
-    <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 backdrop-blur-sm">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-2xl transform transition-all duration-300 scale-95 hover:scale-100">
-                <div class="flex items-center mb-6">
-                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900">Create New Blog Post</h3>
+    <div id="createModal" class="fixed inset-0 bg-slate-900/60 hidden z-50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl p-10 w-full max-w-2xl transform transition-all duration-300">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mr-5 shadow-inner">
+                    <i class="fas fa-edit text-2xl"></i>
                 </div>
-                <form method="POST" action="{{ route('superadmin.content.blog.store') }}">
-                    @csrf
-                    <div class="space-y-6">
-                        <div class="group">
-                            <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.994 1.994 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                </svg>
-                                Title
-                            </label>
-                            <input type="text" name="title" placeholder="Enter an engaging blog title..." class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200" required>
-                        </div>
-                        <div class="group">
-                            <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                Content
-                            </label>
-                            <textarea name="content" rows="8" placeholder="Write your blog content here..." class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-200 resize-none" required></textarea>
-                        </div>
-                        <div class="group">
-                            <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Status
-                            </label>
-                            <select name="status" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200">
-                                <option value="draft">📝 Draft</option>
-                                <option value="published">🚀 Published</option>
+                <div>
+                    <h3 class="text-2xl font-black text-slate-900">Draft New Insight</h3>
+                    <p class="text-slate-400 font-medium text-sm">Prepare content for platform-wide distribution.</p>
+                </div>
+            </div>
+            
+            <form method="POST" action="{{ route('superadmin.content.blog.store') }}" class="space-y-6">
+                @csrf
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Article Title</label>
+                        <input type="text" name="title" placeholder="e.g. The Future of Digital Dentistry in Nepal" class="w-full bg-slate-50 border-2 border-transparent focus:bg-white focus:border-blue-100 rounded-2xl px-6 py-4 font-bold text-slate-900 outline-none transition-all" required>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Rich Content</label>
+                        <textarea name="content" rows="6" placeholder="Deep dive into your topic..." class="w-full bg-slate-50 border-2 border-transparent focus:bg-white focus:border-blue-100 rounded-[2rem] px-6 py-4 font-medium text-slate-900 outline-none transition-all resize-none" required></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Publication Status</label>
+                            <select name="status" class="w-full bg-slate-50 border-2 border-transparent focus:bg-white focus:border-blue-100 rounded-2xl px-6 py-4 font-bold text-slate-900 outline-none transition-all appearance-none cursor-pointer">
+                                <option value="draft">📁 Internal Draft</option>
+                                <option value="published">🌐 Live Broadcast</option>
                             </select>
                         </div>
                     </div>
-                    <div class="mt-8 flex justify-end space-x-4">
-                        <button type="button" onclick="closeCreateModal()" class="px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-medium flex items-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                            Cancel
-                        </button>
-                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Create Post
-                        </button>
-                    </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="pt-6 flex gap-4">
+                    <button type="button" onclick="closeCreateModal()" class="flex-1 py-4 bg-slate-50 text-slate-400 rounded-2xl font-bold hover:bg-slate-100 hover:text-slate-600 transition-all">
+                        Discard
+                    </button>
+                    <button type="submit" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all">
+                        Secure Post
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+    <!-- Posts Grid/Table -->
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden stagger-in">
+        <table class="w-full text-left">
+            <thead class="bg-slate-50/50">
+                <tr class="text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100">
+                    <th class="px-8 py-5">Article Overview</th>
+                    <th class="px-8 py-5">Current Status</th>
+                    <th class="px-8 py-5">Timestamp</th>
+                    <th class="px-8 py-5 text-right">Interactions</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">5 Tips for Better Dental Health</div>
+            <tbody class="divide-y divide-slate-50">
+                @forelse($posts as $post)
+                <tr class="hover:bg-slate-50/50 transition-colors group">
+                    <td class="px-8 py-6">
+                        <div class="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors">{{ $post->title }}</div>
+                        <div class="text-[11px] font-medium text-slate-400 truncate max-w-sm">{{ Str::limit($post->content, 60) }}</div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Published</span>
+                    <td class="px-8 py-6">
+                        <span class="px-3 py-1 text-[10px] font-black uppercase rounded-full border
+                            {{ $post->status === 'published' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-100' }}">
+                            {{ $post->status }}
+                        </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Nov 13, 2024</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                        <button class="text-red-600 hover:text-red-900">Delete</button>
+                    <td class="px-8 py-6">
+                        <div class="text-[11px] font-bold text-slate-400">{{ $post->created_at->format('M d, Y') }}</div>
+                    </td>
+                    <td class="px-8 py-6 text-right">
+                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="w-9 h-9 bg-white border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 shadow-sm">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
+                            <button class="w-9 h-9 bg-white border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-600 hover:border-rose-200 shadow-sm">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
+                @empty
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">How to Choose the Right Dentist</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Draft</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Nov 12, 2024</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                        <button class="text-red-600 hover:text-red-900">Delete</button>
+                    <td colspan="4" class="px-8 py-20 text-center">
+                        <div class="max-w-xs mx-auto">
+                            <i class="fas fa-newspaper text-5xl text-slate-100 mb-4"></i>
+                            <h3 class="text-lg font-black text-slate-900 uppercase tracking-tight">Zero Articles Found</h3>
+                            <p class="text-xs text-slate-400 font-medium">The platform knowledge base is currently empty. Start drafting to educate your users.</p>
+                        </div>
                     </td>
                 </tr>
+                @endforelse
             </tbody>
         </table>
+        @if($posts->hasPages())
+        <div class="px-8 py-5 bg-slate-50/50 border-t border-slate-100">
+            {{ $posts->links() }}
+        </div>
+        @endif
     </div>
 </div>
 

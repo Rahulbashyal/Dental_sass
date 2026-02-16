@@ -6,12 +6,12 @@
 <div class="container mx-auto px-4 py-6">
     <div class="max-w-2xl mx-auto">
         <div class="flex items-center mb-6">
-            <a href="{{ route('invoices.index') }}" class="text-blue-600 hover:text-blue-800 mr-4">← Back</a>
+            <a href="{{ route('clinic.invoices.index') }}" class="text-blue-600 hover:text-blue-800 mr-4">← Back</a>
             <h1 class="text-2xl font-bold text-gray-900">Create Invoice</h1>
         </div>
 
         <div class="bg-white shadow-md rounded-lg p-6">
-            <form action="{{ route('invoices.store') }}" method="POST">
+            <form action="{{ route('clinic.invoices.store') }}" method="POST">
                 @csrf
                 
                 <div class="mb-4">
@@ -96,7 +96,7 @@
                 </div>
 
                 <div class="flex justify-end space-x-4">
-                    <a href="{{ route('invoices.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                    <a href="{{ route('clinic.invoices.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
                         Cancel
                     </a>
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">

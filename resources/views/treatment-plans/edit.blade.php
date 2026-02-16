@@ -20,7 +20,7 @@
     </div>
 
     <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl">
-        <form action="{{ route('treatment-plans.update', $treatmentPlan) }}" method="POST">
+        <form action="{{ route('clinic.treatment-plans.update', $treatmentPlan) }}" method="POST">
             @csrf
             @method('PUT')
             
@@ -114,7 +114,7 @@
                 </div>
 
                 <div class="flex justify-end space-x-4">
-                    <a href="{{ route('treatment-plans.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                    <a href="{{ route('clinic.treatment-plans.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
                         Cancel
                     </a>
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">

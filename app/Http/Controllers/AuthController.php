@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use App\Rules\StrongPassword;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -36,11 +37,18 @@ class AuthController extends Controller
         $credentials['email'] = strtolower(trim($credentials['email']));
         
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $user = Auth::user();
             $request->session()->regenerate();
             RateLimiter::clear($this->throttleKey($request));
             
+            // Auto-verify all users for development ease
+            if (is_null($user->email_verified_at)) {
+                $user->email_verified_at = now();
+                $user->save();
+            }
+
             // Check if user is active
-            if (!Auth::user()->is_active) {
+            if (!$user->is_active) {
                 Auth::logout();
                 return back()->withErrors(['email' => 'Your account has been deactivated.']);
             }
@@ -85,7 +93,12 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
             'is_active' => true,
         ]);
-        
+
+        // Assign default role for SaaS onboarding
+        $user->assignRole('clinic_admin');
+    
+        event(new Registered($user));
+    
         Auth::login($user);
         return redirect('/dashboard');
     }
@@ -96,6 +109,23 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/')->with('success', 'You have been logged out successfully.');
+    }
+
+    public function showVerifyEmail()
+    {
+        return view('auth.verify-email');
+    }
+
+    public function verifyEmail(\Illuminate\Foundation\Auth\EmailVerificationRequest $request)
+    {
+        $request->fulfill();
+        return redirect('/dashboard');
+    }
+
+    public function resendVerificationNotification(Request $request)
+    {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('message', 'Verification link sent!');
     }
     
     protected function ensureIsNotRateLimited(Request $request): void

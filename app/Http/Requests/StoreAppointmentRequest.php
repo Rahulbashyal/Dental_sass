@@ -23,6 +23,7 @@ class StoreAppointmentRequest extends FormRequest
                     return $query->where('clinic_id', Auth::user()->clinic_id);
                 }),
             ],
+            'dentist_id' => 'nullable|integer|exists:users,id',
             'appointment_date' => 'required|date|after_or_equal:today|before:' . now()->addYear()->format('Y-m-d'),
             'appointment_time' => 'required|date_format:H:i',
             'type' => 'required|string|max:100|in:consultation,cleaning,filling,extraction,checkup,emergency,surgery,orthodontics',

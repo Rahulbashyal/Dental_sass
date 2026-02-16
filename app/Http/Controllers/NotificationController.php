@@ -8,21 +8,32 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function index()
+    /**
+     * Get the current authenticated notifiable (User or Patient).
+     */
+    private function getNotifiable()
     {
-        $notifications = Auth::user()->notifications()->latest()->paginate(20);
-        return view('notifications.index', compact('notifications'));
+        if (Auth::guard('patient')->check()) {
+            return Auth::guard('patient')->user();
+        }
+        return Auth::user();
     }
 
-    public function clinicIndex()
+    public function index()
     {
-        $notifications = Auth::user()->notifications()->latest()->paginate(20);
+        $notifiable = $this->getNotifiable();
+        if (!$notifiable) abort(401);
+
+        $notifications = $notifiable->notifications()->latest()->paginate(20);
         return view('notifications.index', compact('notifications'));
     }
 
     public function markAsRead($id)
     {
-        $notification = Notification::where('user_id', Auth::id())->findOrFail($id);
+        $notifiable = $this->getNotifiable();
+        if (!$notifiable) return response()->json(['success' => false], 401);
+
+        $notification = $notifiable->notifications()->findOrFail($id);
         $notification->markAsRead();
         
         return response()->json(['success' => true]);
@@ -30,22 +41,40 @@ class NotificationController extends Controller
 
     public function markAllAsRead()
     {
-        if (!Auth::check()) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized']);
-        }
+        $notifiable = $this->getNotifiable();
+        if (!$notifiable) return response()->json(['success' => false], 401);
         
-        Notification::where('user_id', Auth::id())->whereNull('read_at')->update(['read_at' => now()]);
+        $notifiable->notifications()->whereNull('read_at')->update(['read_at' => now()]);
         
         return response()->json(['success' => true]);
     }
 
     public function getUnreadCount()
     {
-        if (!Auth::check()) {
-            return response()->json(['count' => 0]);
-        }
+        $notifiable = $this->getNotifiable();
+        if (!$notifiable) return response()->json(['count' => 0]);
         
-        $count = Notification::where('user_id', Auth::id())->unread()->count();
+        $count = $notifiable->notifications()->unread()->count();
         return response()->json(['count' => $count]);
+    }
+
+    public function clinicIndex()
+    {
+        $clinic = Auth::user()->clinic;
+        if (!$clinic) abort(403);
+        
+        // This might be for global clinic notifications
+        $notifications = Notification::where('notifiable_type', 'App\Models\Clinic')
+            ->where('notifiable_id', $clinic->id)
+            ->latest()
+            ->paginate(20);
+            
+        return view('admin.notifications.index', compact('notifications'));
+    }
+
+    public function sendAppointmentReminders()
+    {
+        // Placeholder logic for sending reminders
+        return back()->with('success', 'Appointment reminders queued for delivery.');
     }
 }

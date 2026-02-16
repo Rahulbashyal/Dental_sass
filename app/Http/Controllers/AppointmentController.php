@@ -76,6 +76,11 @@ class AppointmentController extends Controller
 
         $validated = $request->validated();
 
+        // Set default dentist_id to current user if not provided
+        if (empty($validated['dentist_id'])) {
+            $validated['dentist_id'] = $user->id;
+        }
+
         // Check for conflicts
         $conflictService = new AppointmentConflictService();
         $conflicts = $conflictService->checkConflicts(
@@ -91,24 +96,47 @@ class AppointmentController extends Controller
 
         $validated['clinic_id'] = $user->clinic_id;
         $validated['status'] = 'scheduled';
-        $validated['dentist_id'] = $validated['dentist_id'] ?? $user->id;
 
         $appointment = Appointment::create($validated);
         
-        // Send confirmation email to patient
-        if ($appointment->patient && $appointment->patient->email) {
-            $appointment->patient->notify(new \App\Notifications\AppointmentConfirmation($appointment));
+        // --- High-Performance Alerting Suite ---
+        
+        // 1. Patient Notification (Unified)
+        if ($appointment->patient) {
+            \App\Services\CommunicationService::notify(
+                $appointment->patient,
+                'Appointment Scheduled',
+                "Your clinical session for " . ucfirst($appointment->type) . " is scheduled for " . $appointment->appointment_date->format('M d, Y') . " at " . $appointment->appointment_time,
+                'appointment',
+                ['appointment_id' => $appointment->id]
+            );
+
+            if ($appointment->patient->email) {
+                \App\Services\CommunicationService::email(
+                    $appointment->patient,
+                    'Appointment Confirmation - ' . $user->clinic->name,
+                    'emails.appointment-confirmation',
+                    ['appointment' => $appointment]
+                );
+            }
         }
         
-        // Send alert to all receptionists
+        // 2. Staff Internal Alert (Internal Mesh)
         $receptionists = \App\Models\User::role('receptionist')
             ->where('clinic_id', $user->clinic_id)
             ->get();
+            
         foreach ($receptionists as $receptionist) {
-            $receptionist->notify(new \App\Notifications\NewAppointmentAlert($appointment));
+            \App\Services\CommunicationService::notify(
+                $receptionist,
+                'New Appointment Logged',
+                "Patient " . $appointment->patient->full_name . " has been scheduled for " . $appointment->appointment_date->format('M d'),
+                'system',
+                ['appointment_id' => $appointment->id]
+            );
         }
 
-        return redirect()->route('appointments.index')->with('success', 'Appointment scheduled successfully. Confirmation email sent.');
+        return redirect()->route('clinic.appointments.index')->with('success', 'Appointment scheduled successfully. Confirmation email sent.');
     }
 
     public function show(Appointment $appointment)
@@ -166,18 +194,23 @@ class AppointmentController extends Controller
 
         $appointment->update($validated);
 
-        return redirect()->route('appointments.index')->with('success', 'Appointment updated successfully.');
+        return redirect()->route('clinic.appointments.index')->with('success', 'Appointment updated successfully.');
     }
 
-    public function destroy(Appointment $appointment)
+    public function destroy(Appointment $appointment, \App\Services\WaitlistService $waitlistService)
     {
         // Ensure user can only delete appointments from their clinic
         if ($appointment->clinic_id !== Auth::user()->clinic_id) {
             abort(403, 'Unauthorized access to appointment.');
         }
         
+        $backup = $appointment;
         $appointment->delete();
-        return redirect()->route('appointments.index')->with('success', 'Appointment cancelled successfully.');
+
+        // Trigger Waitlist Engine
+        $waitlistService->notifyNextInLine($backup);
+
+        return redirect()->route('clinic.appointments.index')->with('success', 'Appointment cancelled and waitlist notified.');
     }
 
     public function book(Request $request, $clinic = null)

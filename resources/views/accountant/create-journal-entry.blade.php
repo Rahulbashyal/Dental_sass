@@ -3,14 +3,14 @@
 @section('content')
 <div class="p-6">
     <div class="flex items-center mb-6">
-        <a href="{{ route('journal-entries') }}" class="text-gray-600 hover:text-gray-800 mr-4">
+        <a href="{{ route('clinic.journal-entries') }}" class="text-gray-600 hover:text-gray-800 mr-4">
             <i class="fas fa-arrow-left"></i>
         </a>
         <h1 class="text-2xl font-bold">Create Journal Entry</h1>
     </div>
 
     <div class="bg-white rounded-lg shadow p-6 max-w-2xl">
-        <form action="{{ route('journal-entries.store') }}" method="POST">
+        <form action="{{ route('clinic.journal-entries.store') }}" method="POST">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-6">
@@ -60,7 +60,7 @@
                 <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
                     Create Entry
                 </button>
-                <a href="{{ route('journal-entries') }}" class="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400">
+                <a href="{{ route('clinic.journal-entries') }}" class="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400">
                     Cancel
                 </a>
             </div>

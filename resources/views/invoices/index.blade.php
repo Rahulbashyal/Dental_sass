@@ -6,11 +6,11 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Invoices</h1>
-        <a href="{{ route('invoices.create') }}" class="btn-primary">Create Invoice</a>
+        <a href="{{ route('clinic.invoices.create') }}" class="btn-primary">Create Invoice</a>
     </div>
 
     @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
             {{ session('success') }}
         </div>
     @endif
@@ -23,8 +23,8 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    {{ $invoice->status === 'paid' ? 'bg-green-100 text-green-800' : 
-                                       ($invoice->status === 'overdue' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                    {{ $invoice->status === 'paid' ? 'bg-blue-100 text-blue-800' : 
+                                       ($invoice->status === 'overdue' ? 'bg-slate-100 text-slate-800' : 'bg-cyan-100 text-cyan-800') }}">
                                     {{ ucfirst($invoice->status) }}
                                 </span>
                             </div>
@@ -38,9 +38,9 @@
                             </div>
                         </div>
                         <div class="flex space-x-2">
-                            <a href="{{ route('invoices.show', $invoice) }}" class="text-blue-600 hover:text-blue-900">View</a>
+                            <a href="{{ route('clinic.invoices.show', $invoice) }}" class="text-blue-600 hover:text-blue-900">View</a>
                             @if($invoice->status !== 'paid')
-                                <form method="POST" action="{{ route('invoices.mark-paid', $invoice) }}" class="inline">
+                                <form method="POST" action="{{ route('clinic.invoices.mark-paid', $invoice) }}" class="inline">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="text-green-600 hover:text-green-900">Mark Paid</button>
@@ -51,7 +51,7 @@
                 </li>
             @empty
                 <li class="px-4 py-8 text-center text-gray-500">
-                    No invoices found. <a href="{{ route('invoices.create') }}" class="text-blue-600">Create your first invoice</a>
+                    No invoices found. <a href="{{ route('clinic.invoices.create') }}" class="text-blue-600">Create your first invoice</a>
                 </li>
             @endforelse
         </ul>

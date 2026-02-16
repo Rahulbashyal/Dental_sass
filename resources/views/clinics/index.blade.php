@@ -1,81 +1,110 @@
 @extends('layouts.app')
 
+@section('page-title', 'Clinics')
+
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Clinics</h1>
-        <a href="{{ route('clinics.create') }}" class="btn-primary">Add New Clinic</a>
+<div class="space-y-8 page-fade-in">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
+                Clinics
+                <span class="text-xs font-bold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md border border-slate-200">
+                    {{ $clinics->total() }} Entities
+                </span>
+            </h1>
+            <p class="text-slate-500 mt-1">Manage physical clinics, contact details, and operational status</p>
+        </div>
+        <a href="{{ route('clinics.create') }}" class="btn-primary flex items-center gap-2">
+            <i class="fas fa-plus"></i>
+            Add New Clinic
+        </a>
     </div>
 
-    @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            {{ session('success') }}
-        </div>
-    @endif
-
     @if(session('new_clinic_info'))
-        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+        <div class="card bg-blue-50 border-blue-200 shadow-blue-100/50 animate-card-hover overflow-hidden relative">
+            <div class="absolute top-0 right-0 p-4 opacity-10">
+                <i class="fas fa-shield-alt text-6xl text-blue-900 rotate-12"></i>
+            </div>
+            <div class="flex gap-4 items-start relative z-10">
+                <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                    <i class="fas fa-user-shield text-xl"></i>
                 </div>
-                <div class="ml-3">
-                    <h3 class="text-sm font-medium text-blue-800">Clinic Admin Created</h3>
-                    <div class="mt-2 text-sm text-blue-700">
-                        <p class="mb-2">The clinic admin can now login with the following credentials:</p>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li><strong>Login URL:</strong> <a href="{{ session('new_clinic_info.login_url') }}" class="underline">{{ session('new_clinic_info.login_url') }}</a></li>
-                            <li><strong>Email:</strong> {{ session('new_clinic_info.email') }}</li>
-                            <li><strong>Password:</strong> The password you just set</li>
-                        </ul>
+                <div>
+                    <h3 class="text-lg font-black text-blue-900">Clinic Admin Provisioned</h3>
+                    <p class="text-blue-700 font-medium mt-1">Initial administrative credentials generated. Please share these securely:</p>
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white/60 backdrop-blur p-3 rounded-xl border border-blue-200">
+                            <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-1">Login Identity</span>
+                            <span class="text-sm font-bold text-slate-900">{{ session('new_clinic_info.email') }}</span>
+                        </div>
+                        <div class="bg-white/60 backdrop-blur p-3 rounded-xl border border-blue-200">
+                            <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-1">Access URL</span>
+                            <a href="{{ session('new_clinic_info.login_url') }}" class="text-sm font-bold text-blue-600 hover:underline flex items-center">
+                                Portal Access <i class="fas fa-external-link-alt ml-2 text-[10px]"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     @endif
 
-    <div class="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul class="divide-y divide-gray-200">
-            @forelse($clinics as $clinic)
-                <li>
-                    <div class="px-4 py-4 flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10">
-                                <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
-                                    <span class="text-white font-medium">{{ substr($clinic->name, 0, 1) }}</span>
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">
-                                    {{ $clinic->name }}
-                                </div>
-                                <div class="text-sm text-gray-500">
-                                    {{ $clinic->email }} • {{ $clinic->phone }}
-                                </div>
-                            </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-in">
+        @forelse($clinics as $clinic)
+            <div class="card group relative p-0 overflow-hidden flex flex-col h-full bg-white border-slate-200 hover:border-blue-400">
+                <div class="p-6 flex-1">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-inner group-hover:shadow-lg group-hover:shadow-blue-600/30">
+                            <i class="fas fa-clinic-medical text-2xl"></i>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                {{ $clinic->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                {{ $clinic->is_active ? 'Active' : 'Inactive' }}
-                            </span>
-                            <a href="{{ route('clinics.show', $clinic) }}" class="text-blue-600 hover:text-blue-900">View</a>
-                            <a href="{{ route('clinics.edit', $clinic) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border
+                            {{ $clinic->is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-100' }}">
+                            {{ $clinic->is_active ? 'Active' : 'Inactive' }}
+                        </span>
+                    </div>
+                    
+                    <h3 class="text-xl font-black text-slate-900 mb-1 group-hover:text-blue-600 transition-colors">{{ $clinic->name }}</h3>
+                    <div class="space-y-2 mt-4">
+                        <div class="flex items-center text-sm text-slate-500 font-medium">
+                            <i class="fas fa-envelope w-5 text-slate-300"></i>
+                            {{ $clinic->email }}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-500 font-medium">
+                            <i class="fas fa-phone w-5 text-slate-300"></i>
+                            {{ $clinic->phone }}
+                        </div>
+                        <div class="flex items-start text-sm text-slate-500 font-medium">
+                            <i class="fas fa-map-marker-alt w-5 mt-1 text-slate-300"></i>
+                            <span class="line-clamp-2">{{ $clinic->address }}</span>
                         </div>
                     </div>
-                </li>
-            @empty
-                <li class="px-4 py-8 text-center text-gray-500">
-                    No clinics found. <a href="{{ route('clinics.create') }}" class="text-blue-600">Add your first clinic</a>
-                </li>
-            @endforelse
-        </ul>
+                </div>
+                
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex gap-2">
+                    <a href="{{ route('clinics.show', $clinic) }}" class="flex-1 btn-secondary py-2 text-xs flex items-center justify-center gap-2">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                    <a href="{{ route('clinics.edit', $clinic) }}" class="flex-1 btn-secondary py-2 text-xs text-indigo-600 hover:text-indigo-700 flex items-center justify-center gap-2">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                </div>
+            </div>
+        @empty
+            <div class="col-span-full card py-16 text-center">
+                <div class="w-20 h-20 bg-slate-50 text-slate-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-hospital-alt text-4xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">No clinics found</h3>
+                <p class="text-slate-500 max-w-xs mx-auto mb-8">Start growing your network by adding your first dental practice location.</p>
+                <a href="{{ route('clinics.create') }}" class="btn-primary">Add New Clinic</a>
+            </div>
+        @endforelse
     </div>
 
-    <div class="mt-6">
-        {{ $clinics->links() }}
-    </div>
+    @if($clinics->hasPages())
+        <div class="mt-8 font-bold">
+            {{ $clinics->links() }}
+        </div>
+    @endif
 </div>
 @endsection

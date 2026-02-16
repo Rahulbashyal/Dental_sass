@@ -3,122 +3,200 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Notification')</title>
+    <title>@yield('title', 'Medical Notification')</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
             margin: 0;
             padding: 0;
+            -webkit-font-smoothing: antialiased;
         }
+        
+        .email-wrapper {
+            width: 100%;
+            background-color: #f8fafc;
+            padding: 40px 0;
+        }
+        
         .email-container {
             max-width: 600px;
-            margin: 20px auto;
+            margin: 0 auto;
             background-color: #ffffff;
-            border-radius: 8px;
+            border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.02);
+            border: 1px solid #edf2f7;
         }
+        
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #ffffff;
-            padding: 30px 20px;
+            background-color: #0f172a;
+            padding: 48px 40px;
             text-align: center;
+            position: relative;
         }
+        
+        .header-logo {
+            width: 56px;
+            height: 56px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
         .header h1 {
-            margin: 0;
+            color: #ffffff;
             font-size: 24px;
-            font-weight: 600;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.025em;
         }
+        
         .header p {
-            margin: 5px 0 0;
+            color: #94a3b8;
             font-size: 14px;
-            opacity: 0.9;
+            margin: 8px 0 0;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
+        
         .content {
-            padding: 30px;
+            padding: 48px 40px;
         }
+        
         .greeting {
-            font-size: 18px;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 16px;
+            letter-spacing: -0.025em;
         }
+        
         .message {
-            color: #4a5568;
-            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #475569;
+            margin-bottom: 32px;
         }
-        .info-box {
-            background-color: #f7fafc;
-            border-left: 4px solid #667eea;
-            padding: 15px 20px;
-            margin: 20px 0;
-            border-radius: 4px;
+        
+        .info-card {
+            background-color: #f8fafc;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 32px;
+            border: 1px solid #f1f5f9;
         }
-        .info-box strong {
-            color: #2d3748;
-            display: block;
-            margin-bottom: 5px;
+        
+        .info-item {
+            margin-bottom: 16px;
         }
-        .button {
-            display: inline-block;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 5px;
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 4px;
+        }
+        
+        .info-value {
+            font-size: 15px;
             font-weight: 600;
-            margin: 20px 0;
-            transition: transform 0.2s;
+            color: #1e293b;
         }
-        .button:hover {
-            transform: translateY(-2px);
-        }
-        .footer {
-            background-color: #f7fafc;
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid #e2e8f0;
-        }
-        .footer p {
-            margin: 5px 0;
-            font-size: 12px;
-            color: #718096;
-        }
-        .footer a {
-            color: #667eea;
+        
+        .cta-button {
+            display: inline-block;
+            background-color: #0f172a;
+            color: #ffffff !important;
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 14px;
             text-decoration: none;
+            text-align: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
         }
-        .divider {
-            height: 1px;
-            background-color: #e2e8f0;
-            margin: 25px 0;
+        
+        .footer {
+            padding: 40px;
+            background-color: #f8fafc;
+            text-align: center;
+            border-top: 1px solid #f1f5f9;
+        }
+        
+        .footer-text {
+            font-size: 13px;
+            color: #64748b;
+            margin: 0 0 12px;
+            line-height: 1.5;
+        }
+        
+        .footer-meta {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #ecfdf5;
+            color: #059669;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
         }
     </style>
 </head>
 <body>
-    <div class="email-container">
-        <div class="header">
-            <h1>{{ $clinic->name ?? config('app.name') }}</h1>
-            <p>{{ $clinic->address ?? 'Professional Dental Care' }}</p>
-        </div>
-        
-        <div class="content">
-            @yield('content')
-        </div>
-        
-        <div class="footer">
-            @if(isset($clinic))
-                <p><strong>Contact Us:</strong></p>
-                <p>📞 {{ $clinic->phone ?? 'N/A' }} | ✉️ {{ $clinic->email ?? 'N/A' }}</p>
-                <p>📍 {{ $clinic->address ?? 'N/A' }}</p>
-            @endif
-            <div class="divider" style="margin: 15px 0;"></div>
-            <p style="font-size: 11px; color: #a0aec0;">
-                This is an automated email from {{ config('app.name') }}. Please do not reply to this email.
-            </p>
+    <div class="email-wrapper">
+        <div class="email-container">
+            <div class="header">
+                <div class="header-logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 3C4.23858 3 2 5.23858 2 8V16C2 18.7614 4.23858 21 7 21H17C19.7614 21 22 18.7614 22 16V8C22 5.23858 19.7614 3 17 3H7Z" fill="white" fill-opacity="0.2"/>
+                        <path d="M16 8L12 11L8 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1>{{ $clinic->name ?? config('app.name') }}</h1>
+                <p>Medical Communication System</p>
+            </div>
+            
+            <div class="content">
+                @yield('content')
+            </div>
+            
+            <div class="footer">
+                <p class="footer-text">
+                    {{ $clinic->name ?? config('app.name') }} &bull; {{ $clinic->address ?? 'Professional Medical Care' }}
+                </p>
+                <p class="footer-text">
+                    📞 {{ $clinic->phone ?? 'Support Line' }} | ✉️ {{ $clinic->email ?? 'Support Email' }}
+                </p>
+                <div style="height: 1px; background-color: #e2e8f0; margin: 24px 0;"></div>
+                <p class="footer-meta">
+                    This is a secure automated notification. Please do not reply.
+                </p>
+            </div>
         </div>
     </div>
 </body>

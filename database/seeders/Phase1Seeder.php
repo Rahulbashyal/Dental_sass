@@ -3,9 +3,10 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\{User, Clinic, Patient, Appointment, Invoice};
+use App\Models\{User, Clinic, Patient, Appointment, Invoice, Expense};
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class Phase1Seeder extends Seeder
 {
@@ -18,22 +19,24 @@ class Phase1Seeder extends Seeder
         }
 
         // Create superadmin user
-        $superadmin = User::firstOrCreate(
+        $superadmin = User::updateOrCreate(
             ['email' => 'admin@dentalcare.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('password'),
                 'is_active' => true,
+                'clinic_id' => null,
+                'email_verified_at' => now(),
             ]
         );
         $superadmin->assignRole('superadmin');
 
         // Create test clinic
-        $clinic = Clinic::firstOrCreate(
+        $clinic = Clinic::updateOrCreate(
             ['slug' => 'smile-dental-clinic'],
             [
                 'name' => 'Smile Dental Clinic',
-                'email' => 'info@smiledentalclinic.com',
+                'email' => 'info@clinic.com',
                 'phone' => '+977-1-4567890',
                 'address' => 'Durbar Marg, Kathmandu',
                 'city' => 'Kathmandu',
@@ -46,143 +49,135 @@ class Phase1Seeder extends Seeder
                 'subscription_plan' => 'premium',
                 'subscription_expires_at' => now()->addYear(),
                 'is_active' => true,
+                'enabled_modules' => ['patients', 'appointments', 'Financials', 'inventory', 'reports', 'crm', 'invoicing'],
+                'enabled_roles' => ['dentist', 'receptionist', 'accountant'],
+                'has_analytics' => true,
+                'has_accounting' => true,
             ]
         );
 
-        // Create clinic admin
-        $clinicAdmin = User::firstOrCreate(
-            ['email' => 'admin@smiledentalclinic.com'],
-            [
-                'name' => 'Dr. Rajesh Sharma',
-                'password' => Hash::make('password123'),
-                'clinic_id' => $clinic->id,
-                'phone' => '+977-9841234567',
-                'is_active' => true,
-            ]
-        );
-        $clinicAdmin->assignRole('clinic_admin');
-
-        // Create dentist
-        $dentist = User::firstOrCreate(
-            ['email' => 'dentist@smiledentalclinic.com'],
-            [
-                'name' => 'Dr. Priya Patel',
-                'password' => Hash::make('password123'),
-                'clinic_id' => $clinic->id,
-                'phone' => '+977-9841234568',
-                'is_active' => true,
-            ]
-        );
-        $dentist->assignRole('dentist');
-
-        // Create receptionist
-        $receptionist = User::firstOrCreate(
-            ['email' => 'reception@smiledentalclinic.com'],
-            [
-                'name' => 'Sita Gurung',
-                'password' => Hash::make('password123'),
-                'clinic_id' => $clinic->id,
-                'phone' => '+977-9841234569',
-                'is_active' => true,
-            ]
-        );
-        $receptionist->assignRole('receptionist');
-
-        // Create test patients
-        $patients = [
-            [
-                'first_name' => 'Ram',
-                'last_name' => 'Bahadur',
-                'email' => 'ram.bahadur@email.com',
-                'phone' => '+977-9841111111',
-                'date_of_birth' => '1985-05-15',
-                'gender' => 'male',
-                'address' => 'Thamel, Kathmandu',
-                'city' => 'Kathmandu',
-                'patient_id' => 'P000001',
-            ],
-            [
-                'first_name' => 'Sita',
-                'last_name' => 'Devi',
-                'email' => 'sita.devi@email.com',
-                'phone' => '+977-9841111112',
-                'date_of_birth' => '1990-08-22',
-                'gender' => 'female',
-                'address' => 'Patan, Lalitpur',
-                'city' => 'Lalitpur',
-                'patient_id' => 'P000002',
-            ],
-            [
-                'first_name' => 'Krishna',
-                'last_name' => 'Thapa',
-                'email' => 'krishna.thapa@email.com',
-                'phone' => '+977-9841111113',
-                'date_of_birth' => '1988-12-10',
-                'gender' => 'male',
-                'address' => 'Bhaktapur Durbar Square',
-                'city' => 'Bhaktapur',
-                'patient_id' => 'P000003',
-            ]
+        // Create core users assigned to the clinic
+        $coreUsers = [
+            ['email' => 'admin@clinic.com', 'name' => 'Dr. Rajesh Sharma', 'role' => 'clinic_admin'],
+            ['email' => 'dentist@clinic.com', 'name' => 'Dr. Priya Patel', 'role' => 'dentist'],
+            ['email' => 'receptionist@clinic.com', 'name' => 'Sita Gurung', 'role' => 'receptionist'],
+            ['email' => 'accountant@clinic.com', 'name' => 'Bishal Thapa', 'role' => 'accountant'],
         ];
 
-        foreach ($patients as $patientData) {
-            $patientData['clinic_id'] = $clinic->id;
-            $patientData['is_active'] = true;
-            Patient::firstOrCreate(
-                ['email' => $patientData['email'], 'clinic_id' => $clinic->id],
-                $patientData
-            );
-        }
-
-        // Create test appointments
-        $patients = Patient::where('clinic_id', $clinic->id)->get();
-        foreach ($patients as $index => $patient) {
-            Appointment::firstOrCreate(
+        foreach ($coreUsers as $uData) {
+            $u = User::updateOrCreate(
+                ['email' => $uData['email']],
                 [
-                    'patient_id' => $patient->id,
-                    'appointment_date' => now()->addDays($index + 1)->format('Y-m-d')
-                ],
-                [
+                    'name' => $uData['name'],
+                    'password' => Hash::make('password'),
                     'clinic_id' => $clinic->id,
-                    'dentist_id' => $dentist->id,
-                    'appointment_time' => '10:00',
-                    'type' => ['consultation', 'cleaning', 'checkup'][$index % 3],
-                    'status' => 'scheduled',
-                    'treatment_cost' => [2000, 1500, 1000][$index % 3],
-                    'notes' => 'Regular appointment for ' . $patient->first_name,
+                    'is_active' => true,
+                    'email_verified_at' => now(),
+                    'phone' => '+977-980' . rand(1000000, 9999999),
                 ]
             );
+            $u->syncRoles([$uData['role']]);
         }
 
-        // Create test invoices
-        $appointments = Appointment::where('clinic_id', $clinic->id)->get();
-        foreach ($appointments as $appointment) {
-            $amount = $appointment->treatment_cost ?? 1000;
-            $taxAmount = $amount * 0.13; // 13% VAT
-            $totalAmount = $amount + $taxAmount;
+        // Create a large batch of test patients
+        $firstNames = ['Ram', 'Sita', 'Hari', 'Gita', 'Shiva', 'Parvati', 'Anil', 'Sunita', 'Bishnu', 'Laxmi', 'Kiran', 'Maya', 'Nabin', 'Ritu', 'Suraj'];
+        $lastNames = ['Bahadur', 'Devi', 'Prasad', 'Kumari', 'Thapa', 'Magar', 'Gurung', 'Rai', 'Limbu', 'Sherpa', 'Tamang', 'Shrestha', 'Joshi', 'Pandey'];
+        
+        $patientModels = [];
+        for ($i = 1; $i <= 20; $i++) {
+            $fName = $firstNames[array_rand($firstNames)];
+            $lName = $lastNames[array_rand($lastNames)];
+            $p = Patient::updateOrCreate(
+                ['patient_id' => 'P' . str_pad($i, 6, '0', STR_PAD_LEFT)],
+                [
+                    'clinic_id' => $clinic->id,
+                    'first_name' => $fName,
+                    'last_name' => $lName,
+                    'email' => strtolower($fName . '.' . $lName . $i . '@example.com'),
+                    'phone' => '+977-98' . rand(41000000, 41999999),
+                    'date_of_birth' => Carbon::now()->subYears(rand(5, 75))->subMonths(rand(0, 11)),
+                    'gender' => rand(0, 1) ? 'male' : 'female',
+                    'address' => 'Street ' . $i . ', Kathmandu',
+                    'city' => 'Kathmandu',
+                    'is_active' => true,
+                ]
+            );
+            $patientModels[] = $p;
+        }
+
+        $dentist = User::where('email', 'dentist@clinic.com')->first();
+        
+        // Create a large batch of appointments (Past, Today, Future)
+        $appointmentTypes = ['consultation', 'cleaning', 'checkup', 'extraction', 'root-canal', 'filling'];
+        
+        foreach ($patientModels as $index => $patient) {
+            // Past appointment
+            Appointment::create([
+                'patient_id' => $patient->id,
+                'clinic_id' => $clinic->id,
+                'dentist_id' => $dentist->id,
+                'appointment_date' => Carbon::now()->subDays(rand(1, 30)),
+                'appointment_time' => rand(9, 16) . ':00:00',
+                'type' => $appointmentTypes[array_rand($appointmentTypes)],
+                'status' => 'completed',
+                'treatment_cost' => rand(5, 50) * 100,
+                'notes' => 'Past checkup completed.',
+            ]);
+
+            // Today's or future appointments
+            $daysOffset = rand(0, 14);
+            $status = ($daysOffset === 0) ? 'scheduled' : (rand(0, 1) ? 'scheduled' : 'confirmed');
             
-            Invoice::firstOrCreate(
-                ['appointment_id' => $appointment->id],
-                [
-                    'clinic_id' => $clinic->id,
-                    'patient_id' => $appointment->patient_id,
-                    'invoice_number' => 'INV-' . str_pad(Invoice::count() + 1, 6, '0', STR_PAD_LEFT),
-                    'description' => 'Dental treatment - ' . $appointment->type,
-                    'amount' => $amount,
-                    'tax_amount' => $taxAmount,
-                    'total_amount' => $totalAmount,
-                    'status' => 'pending',
-                    'due_date' => now()->addDays(30),
-                    'issued_date' => now(),
-                ]
-            );
+            Appointment::create([
+                'patient_id' => $patient->id,
+                'clinic_id' => $clinic->id,
+                'dentist_id' => $dentist->id,
+                'appointment_date' => Carbon::now()->addDays($daysOffset),
+                'appointment_time' => rand(9, 16) . ':30:00',
+                'type' => $appointmentTypes[array_rand($appointmentTypes)],
+                'status' => $status,
+                'treatment_cost' => rand(10, 100) * 100,
+                'notes' => 'Generated appointment.',
+            ]);
         }
 
-        $this->command->info('Phase 1 test data seeded successfully!');
-        $this->command->info('Superadmin: admin@dentalcare.com / password123');
-        $this->command->info('Clinic Admin: admin@smiledentalclinic.com / password123');
-        $this->command->info('Dentist: dentist@smiledentalclinic.com / password123');
-        $this->command->info('Receptionist: reception@smiledentalclinic.com / password123');
-        $this->command->info('Test Clinic: http://localhost:8000/smile-dental-clinic');
+        // Create test invoices for completed appointments
+        $completedAppointments = Appointment::where('status', 'completed')->get();
+        foreach ($completedAppointments as $index => $app) {
+            $amount = $app->treatment_cost ?? 1500;
+            $taxAmount = $amount * 0.13;
+            $total = $amount + $taxAmount;
+            
+            Invoice::create([
+                'clinic_id' => $clinic->id,
+                'patient_id' => $app->patient_id,
+                'appointment_id' => $app->id,
+                'invoice_number' => 'INV-' . Carbon::now()->format('Y') . '-' . str_pad($index + 1, 5, '0', STR_PAD_LEFT),
+                'description' => 'Dental Services: ' . ucfirst($app->type),
+                'amount' => $amount,
+                'tax_amount' => $taxAmount,
+                'total_amount' => $total,
+                'status' => rand(0, 3) === 0 ? 'pending' : 'paid',
+                'due_date' => Carbon::parse($app->appointment_date)->addDays(7),
+                'issued_date' => $app->appointment_date,
+            ]);
+        }
+
+        // Create test expenses to make the finance dashboard look alive
+        $expenseCategories = ['Supplies', 'Rent', 'Utilities', 'Salaries', 'Marketing', 'Equipment Maintenance'];
+        for ($i = 0; $i < 10; $i++) {
+            Expense::create([
+                'clinic_id' => $clinic->id,
+                'category' => $expenseCategories[array_rand($expenseCategories)],
+                'amount' => rand(500, 5000),
+                'description' => 'Monthly ' . $expenseCategories[array_rand($expenseCategories)] . ' expense',
+                'expense_date' => Carbon::now()->subDays(rand(1, 30)),
+                'status' => 'paid',
+            ]);
+        }
+
+        $this->command->info('Test data seeded successfully for all roles!');
+        $this->command->info('Emails: admin@clinic.com, dentist@clinic.com, receptionist@clinic.com, accountant@clinic.com');
+        $this->command->info('Password: "password" for all.');
     }
 }

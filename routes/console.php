@@ -14,6 +14,9 @@ Schedule::command('nepali:update-dates')->hourly();
 // Schedule daily encrypted database backups
 Schedule::command('backup:database --encrypt')->daily()->at('02:00');
 
+// Schedule installment overdue monitoring
+Schedule::command('financials:check-overdue')->daily()->at('05:00');
+
 // Schedule security monitoring
 Schedule::call(function () {
     // Clean old security events from cache
