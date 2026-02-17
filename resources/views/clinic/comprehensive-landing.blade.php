@@ -50,25 +50,35 @@
                 max-width: 72vw !important;
             }
         }
-        
+
+        /* On smaller screens keep the scrolled navbar full-width (with small side inset)
+           to avoid cramped centered navbar and overlapping content. */
         @media (max-width: 768px) {
             nav.scrolled {
-                width: 75vw !important;
-                max-width: 75vw !important;
-                padding: 0.6rem 1.5rem !important;
+                width: calc(100% - 2rem) !important;
+                max-width: calc(100% - 2rem) !important;
+                left: 1rem !important;
+                right: 1rem !important;
+                transform: none !important;
+                padding: 0.6rem 1rem !important;
+                border-radius: 8px !important;
             }
         }
-        
+
         @media (max-width: 640px) {
             nav {
                 padding: 1rem 1rem !important;
             }
-            
+
             nav.scrolled {
-                width: 80vw !important;
-                max-width: 80vw !important;
-                top: 1rem !important;
-                padding: 0.6rem 1rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                left: 0 !important;
+                right: 0 !important;
+                transform: none !important;
+                top: 0.5rem !important;
+                padding: 0.5rem 0.75rem !important;
+                border-radius: 6px !important;
             }
         }
         
@@ -105,7 +115,7 @@
                 <a href="#contact" class="text-gray-600 hover:text-blue-600 transition-colors font-medium flex items-center h-full">Contact</a>
             </div>
             
-            <div class="flex items-center space-x-4 flex-shrink-0 min-w-fit h-full">
+            <div class="flex items-center space-x-4 flex-shrink-0 h-full">
                 <a href="/login" class="hidden md:flex text-gray-600 hover:text-blue-600 font-medium transition-colors text-sm whitespace-nowrap items-center ">Login</a>
                 <a href="{{ route('clinic.book', $clinic->slug) }}" class="hidden md:flex clinic-gradient text-white px-4 py-2 rounded-lg hover:opacity-90 transition-all shadow-lg font-semibold text-sm whitespace-nowrap items-center h-full">
                     Book Appointment

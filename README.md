@@ -85,5 +85,5 @@ We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for 
 ---
 
 <p align="center">
-  <sub>Built with ❤️ by the Dental Care Team. Licensed under MIT.</sub>
+  <sub>Built by the Dental Care Team. Licensed under MIT.</sub>
 </p>

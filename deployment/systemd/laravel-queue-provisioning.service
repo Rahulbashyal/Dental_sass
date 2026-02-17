@@ -1,0 +1,16 @@
+[Unit]
+Description=Laravel Queue Worker (provisioning)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=3
+# Adjust the working directory to your app path
+WorkingDirectory=/opt/lampp/htdocs/dental-care
+# Use the system php binary; if you need a different php, update ExecStart
+ExecStart=/usr/bin/php /opt/lampp/htdocs/dental-care/artisan queue:work --queue=provisioning --sleep=3 --tries=3
+
+[Install]
+WantedBy=multi-user.target

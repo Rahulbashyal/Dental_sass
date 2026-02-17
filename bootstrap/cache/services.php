@@ -34,6 +34,7 @@
     30 => 'PragmaRX\\Google2FALaravel\\ServiceProvider',
     31 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
     32 => 'Spatie\\Permission\\PermissionServiceProvider',
+    33 => 'Stancl\\Tenancy\\TenancyServiceProvider',
   ),
   'eager' => 
   array (
@@ -55,6 +56,7 @@
     15 => 'PragmaRX\\Google2FALaravel\\ServiceProvider',
     16 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
     17 => 'Spatie\\Permission\\PermissionServiceProvider',
+    18 => 'Stancl\\Tenancy\\TenancyServiceProvider',
   ),
   'deferred' => 
   array (

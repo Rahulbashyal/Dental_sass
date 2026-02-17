@@ -27,6 +27,9 @@
             <a href="{{ route('superadmin.users') }}" class="flex items-center p-3 rounded hover:bg-red-700 {{ request()->routeIs('superadmin.users') ? 'bg-red-700' : '' }}">
                 <i class="fas fa-users mr-3"></i> Users
             </a>
+            <a href="{{ route('superadmin.tenants.index') }}" class="flex items-center p-3 rounded hover:bg-red-700 {{ request()->routeIs('superadmin.tenants*') ? 'bg-red-700' : '' }}">
+                <i class="fas fa-network-wired mr-3"></i> Tenants
+            </a>
         </div>
         
         <div class="space-y-1">

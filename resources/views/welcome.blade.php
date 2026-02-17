@@ -6,6 +6,15 @@
     <title>DentalCare Pro - Advanced Dental Practice Management | ABS Soft</title>
     <meta name="description" content="Professional dental clinic management solution by ABS Soft. Manage patients, appointments, billing in NPR, and reports all in one platform designed for Nepal.">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @php
+        // Ensure $content is an object in case the landing page table is not migrated yet
+        if (! isset($content) || is_null($content)) {
+            $content = new class {
+                public function __get($key) { return null; }
+                public function getImageUrl($key, $default = null) { return $default ?? asset('logo.png'); }
+            };
+        }
+    @endphp
     <style>
         :root {
             --primary-color: {{ $content->theme_primary_color ?? '#3b82f6' }};
@@ -33,11 +42,24 @@
         @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-        
+
+        /* Marquee / Trusted partners */
         .marquee-container { position: relative; overflow: hidden; }
-        .marquee-content { display: flex; animation: marquee 30s linear infinite; }
-        .partner-item { flex: 0 0 auto; margin-right: 4rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .marquee-content:hover { animation-play-state: paused; }
+        .marquee-content { display: flex; gap: 2.5rem; align-items: center; animation: marquee 30s linear infinite; }
+        .partner-item { flex: 0 0 auto; margin-right: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .marquee-content:hover,
+        .marquee-container:focus-within .marquee-content { animation-play-state: paused; }
+
+        /* Respect users who prefer reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .marquee-content { animation: none !important; }
+        }
+
+        /* Smaller gaps on narrow screens */
+        @media (max-width: 640px) {
+            .marquee-content { gap: 1.25rem; }
+            .partner-item img { height: 48px; }
+        }
         
         .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); background-size: 200% 100%; animation: shimmer 2s infinite; }
         .hero-bg { background: radial-gradient(ellipse at top, rgba(59, 130, 246, 0.1) 0%, transparent 50%), linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
@@ -102,25 +124,35 @@
                 max-width: 72vw !important;
             }
         }
-        
+
+        /* On smaller screens keep the scrolled navbar full-width (with small side inset)
+           to avoid cramped centered navbar and overlapping content. */
         @media (max-width: 768px) {
             nav.scrolled {
-                width: 75vw !important;
-                max-width: 75vw !important;
-                padding: 0.6rem 1.5rem !important;
+                width: calc(100% - 2rem) !important;
+                max-width: calc(100% - 2rem) !important;
+                left: 1rem !important;
+                right: 1rem !important;
+                transform: none !important;
+                padding: 0.6rem 1rem !important;
+                border-radius: 8px !important;
             }
         }
-        
+
         @media (max-width: 640px) {
             nav {
                 padding: 1rem 1rem !important;
             }
-            
+
             nav.scrolled {
-                width: 80vw !important;
-                max-width: 80vw !important;
-                top: 1rem !important;
-                padding: 0.6rem 1rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                left: 0 !important;
+                right: 0 !important;
+                transform: none !important;
+                top: 0.5rem !important;
+                padding: 0.5rem 0.75rem !important;
+                border-radius: 6px !important;
             }
         }
         
@@ -170,7 +202,7 @@
                 </a>
             </div>
             
-            <div class="flex items-center space-x-4 fade-in-right flex-shrink-0 min-w-fit h-full">
+            <div class="flex items-center space-x-4 fade-in-right flex-shrink-0 h-full">
                 <a href="{{ route('login') }}" class="hidden md:flex text-gray-600 hover:text-gray-900 transition-colors font-medium text-sm whitespace-nowrap items-center">Login</a>
                 <a href="{{ route('register') }}" class="hidden md:flex abs-gradient text-white px-4 py-2 rounded-lg hover:opacity-90 transition-all shadow-lg font-medium text-sm whitespace-nowrap items-center">
                     Start Free Trial
@@ -354,94 +386,14 @@
         </div>
     </section>
 
-    <!-- Trusted Partners Marquee -->
-    <section class="py-12 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+    <!-- Trusted Partners  -->
+    <section class="pt-16 pb-36  bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-8">
                 <h3 class="text-2xl font-bold text-gray-900 mb-2">Trusted by Leading Dental Clinics</h3>
                 <p class="text-gray-600">Join hundreds of satisfied dental professionals across Nepal</p>
             </div>
-            <div class="relative overflow-hidden">
-                <div class="marquee-container">
-                    <div class="marquee-content">
-                        @if($content->trusted_partners && count($content->trusted_partners) > 0)
-                            @foreach($content->trusted_partners as $partner)
-                                <div class="partner-item">
-                                    <img src="{{ $content->getPartnerImageUrl($partner['logo']) }}" alt="{{ $partner['name'] }}" class="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300">
-                                    <span class="text-sm font-medium text-gray-700 mt-2">{{ $partner['name'] }}</span>
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="partner-item">
-                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
-                                    <span class="text-gray-500 font-bold">Clinic 1</span>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700 mt-2">Dental Care Plus</span>
-                            </div>
-                            <div class="partner-item">
-                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
-                                    <span class="text-gray-500 font-bold">Clinic 2</span>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700 mt-2">Smile Dental</span>
-                            </div>
-                            <div class="partner-item">
-                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
-                                    <span class="text-gray-500 font-bold">Clinic 3</span>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700 mt-2">Perfect Teeth</span>
-                            </div>
-                            <div class="partner-item">
-                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
-                                    <span class="text-gray-500 font-bold">Clinic 4</span>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700 mt-2">Bright Smile</span>
-                            </div>
-                            <div class="partner-item">
-                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
-                                    <span class="text-gray-500 font-bold">Clinic 5</span>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700 mt-2">Dental Excellence</span>
-                            </div>
-                            <div class="partner-item">
-                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
-                                    <span class="text-gray-500 font-bold">Clinic 6</span>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700 mt-2">Modern Dentistry</span>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Trust Indicators -->
-    <section class="py-16 bg-white border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 fade-in-up">
-                <div class="flex items-center justify-center space-x-6 mb-8">
-                    <img src="{{ asset('logo.png') }}" alt="ABS Soft" class="h-16 w-auto">
-                    <div class="text-left">
-                        <h3 class="text-2xl font-bold text-gray-900">ABS Soft</h3>
-                        <p class="text-gray-600">Leading Software Solutions Provider</p>
-                        <div class="flex items-center space-x-2 mt-2">
-                            <div class="flex text-yellow-400">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                            </div>
-                            <span class="text-sm text-gray-600">4.9/5 Rating</span>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-lg text-gray-600 max-w-4xl mx-auto leading-[1.7]">
-                    <strong class="text-blue-600">DentalCare Pro</strong> is proudly developed by <a href="https://abssoft.com.np" target="_blank" class="text-blue-600 hover:text-blue-700 font-semibold underline decoration-2 underline-offset-2">ABS Soft</a>, Nepal's premier software development company. With years of experience in healthcare technology, we deliver cutting-edge solutions tailored for Nepal's unique market needs.
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 <div class="fade-in-up">
                     <div class="text-4xl font-bold abs-text-gradient mb-2">500+</div>
                     <div class="text-gray-600 font-medium">Trusted Clinics</div>
@@ -459,8 +411,63 @@
                     <div class="text-gray-600 font-medium">Uptime</div>
                 </div>
             </div>
+            <div class="relative overflow-hidden mt-6 md:mt-12 lg:mt-20">
+                <div class="marquee-container" tabindex="0" aria-label="Trusted clinics carousel">
+                    <div class="marquee-content" role="list">
+                        @if($content->trusted_partners && count($content->trusted_partners) > 0)
+                            @foreach($content->trusted_partners as $partner)
+                                <div class="partner-item" role="listitem">
+                                    <img src="{{ $content->getPartnerImageUrl($partner['logo']) }}" alt="{{ $partner['name'] }}" loading="lazy" onerror="this.onerror=null;this.src='{{ asset('logo.png') }}'" class="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300">
+                                    <span class="text-sm font-medium text-gray-700 mt-2">{{ $partner['name'] }}</span>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="partner-item" role="listitem">
+                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <span class="text-gray-500 font-bold">Clinic 1</span>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 mt-2">Dental Care Plus</span>
+                            </div>
+                            <div class="partner-item" role="listitem">
+                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <span class="text-gray-500 font-bold">Clinic 2</span>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 mt-2">Smile Dental</span>
+                            </div>
+                            <div class="partner-item" role="listitem">
+                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <span class="text-gray-500 font-bold">Clinic 3</span>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 mt-2">Perfect Teeth</span>
+                            </div>
+                            <div class="partner-item" role="listitem">
+                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <span class="text-gray-500 font-bold">Clinic 4</span>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 mt-2">Bright Smile</span>
+                            </div>
+                            <div class="partner-item" role="listitem">
+                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <span class="text-gray-500 font-bold">Clinic 5</span>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 mt-2">Dental Excellence</span>
+                            </div>
+                            <div class="partner-item" role="listitem">
+                                <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <span class="text-gray-500 font-bold">Clinic 6</span>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 mt-2">Modern Dentistry</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <br>
+            
         </div>
-    </section>    <!-- About Section -->
+    </section>
+
+        <!-- About Section -->
     <section id="about" class="py-16 bg-gradient-to-br from-blue-50 via-white to-cyan-50 relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <!-- Section Header -->
@@ -1251,7 +1258,7 @@
             <div class="border-t border-gray-800 mt-16 pt-10">
                 <div class="flex flex-col md:flex-row justify-between items-center">
                     <p class="text-gray-400 text-lg mb-4 md:mb-0">
-                        {{ $content->footer_copyright ?? '© 2024 ABS Soft. All rights reserved. DentalCare Pro - Made with ❤️ in Nepal 🇳🇵' }}
+                        {{ $content->footer_copyright ?? '© 2024 ABS Soft. All rights reserved. DentalCare Pro ' }}
                     </p>
                     <div class="flex items-center space-x-6">
                         <span class="text-gray-400">Powered by</span>

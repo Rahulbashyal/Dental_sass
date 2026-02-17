@@ -1,0 +1,25 @@
+server {
+    listen 80;
+    server_name  REPLACE_WITH_TENANT_DOMAIN;
+
+    root /opt/lampp/htdocs/dental-care/public;
+    index index.php index.html;
+
+    access_log /var/log/nginx/tenants-REPLACE_WITH_TENANT_DOMAIN.access.log;
+    error_log /var/log/nginx/tenants-REPLACE_WITH_TENANT_DOMAIN.error.log;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.5-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
