@@ -145,16 +145,13 @@
 
         <!-- Static Sidebar for Desktop -->
         <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-            <div class="flex grow flex-col gap-y-5 overflow-y-auto no-scrollbar sidebar-premium px-6 pb-4">
+            <div class="flex grow flex-col gap-y-5 overflow-y-auto sidebar-premium px-6 pb-4">
                 <!-- Logo -->
                 <div class="flex h-16 shrink-0 items-center border-b border-white/5 pb-4 mt-4">
                     <img class="h-8 w-auto" src="/logo.png" alt="{{ config('app.name') }}">
                     <div class="ml-3">
                         <h1 class="text-lg font-bold text-white tracking-tight">{{ config('app.name') }}</h1>
                     </div>
-                    <button class="ml-auto text-slate-500 hover:text-white transition-colors">
-                        <i class="fa-solid fa-sidebar"></i>
-                    </button>
                 </div>
                 
                 <!-- Navigation -->
@@ -163,43 +160,55 @@
                         @include('layouts.navigation-items')
                     </ul>
                 </nav>
-
-                <!-- Sidebar Footer removed (moved to top bar) -->
             </div>
         </div>
 
         <!-- Main content area -->
-        <div class="lg:pl-72 flex flex-col flex-1 w-full overflow-y-auto">
+        <div class="lg:pl-72 flex flex-col flex-1 w-full min-h-screen">
             <!-- Top bar -->
-            <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-                <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" @click="mobileMenuOpen = true">
+            <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 transition-colors duration-300">
+                <button type="button" class="-m-2.5 p-2.5 text-gray-700 dark:text-gray-200 lg:hidden" @click="mobileMenuOpen = true">
                     <span class="sr-only">Open sidebar</span>
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                     </svg>
                 </button>
 
-                <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
+                <div class="h-6 w-px bg-gray-200 dark:bg-slate-800 lg:hidden" aria-hidden="true"></div>
 
                 <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
                     <div class="flex items-center gap-x-4 lg:gap-x-6">
-                        <h1 class="text-xl font-semibold leading-7 text-gray-900">@yield('page-title', 'Dashboard')</h1>
+                        <h1 class="text-xl font-semibold leading-7 text-gray-900 dark:text-white">@yield('page-title', 'Dashboard')</h1>
                         <div class="flex items-center gap-x-2">
                             <div class="h-2 w-2 bg-green-400 rounded-full"></div>
-                            <span class="text-sm text-gray-500">Live</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Live</span>
                         </div>
                     </div>
                     
                     <div class="ml-auto flex items-center gap-x-4 lg:gap-x-6">
+                        <!-- Theme Toggle -->
+                        <div class="flex items-center bg-gray-100 dark:bg-slate-800 p-1 rounded-xl transition-colors">
+                            <button @click="darkMode = false" 
+                                    :class="{ 'bg-white text-blue-600 shadow-sm': !darkMode, 'text-slate-400': darkMode }"
+                                    class="p-1.5 rounded-lg transition-all duration-200">
+                                <i class="fa-solid fa-sun text-sm"></i>
+                            </button>
+                            <button @click="darkMode = true" 
+                                    :class="{ 'bg-slate-700 text-amber-400 shadow-sm': darkMode, 'text-slate-400': !darkMode }"
+                                    class="p-1.5 rounded-lg transition-all duration-200">
+                                <i class="fa-solid fa-moon text-sm"></i>
+                            </button>
+                        </div>
+
                         <!-- Notification Center -->
                         <div x-data="{ open: false, count: 0 }" 
                              x-init="fetch('/notifications/unread-count').then(r => r.json()).then(d => count = d.count)"
                              class="relative">
-                            <button @click="open = !open" type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500 relative">
+                            <button @click="open = !open" type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500 dark:text-slate-400 dark:hover:text-white relative transition-colors">
                                 <span class="sr-only">View notifications</span>
                                 <i class="fa-solid fa-bell text-xl"></i>
                                 <template x-if="count > 0">
-                                    <span class="absolute top-2 right-2 block h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white"></span>
+                                    <span class="absolute top-2 right-2 block h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900 border-2 border-white dark:border-slate-900"></span>
                                 </template>
                             </button>
 
@@ -208,28 +217,28 @@
                                  x-transition:enter="transition ease-out duration-200"
                                  x-transition:enter-start="opacity-0 translate-y-1"
                                  x-transition:enter-end="opacity-100 translate-y-0"
-                                 class="absolute right-0 z-50 mt-4 w-96 origin-top-right rounded-3xl bg-white p-4 shadow-2xl ring-1 ring-slate-900/5 focus:outline-none"
+                                 class="absolute right-0 z-50 mt-4 w-96 origin-top-right rounded-3xl bg-white dark:bg-slate-900 p-4 shadow-2xl ring-1 ring-slate-900/5 focus:outline-none border dark:border-slate-800"
                                  x-cloak>
                                 <div class="flex items-center justify-between mb-4 px-2">
-                                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest">Notifications</h3>
-                                    <a href="{{ route('notifications.index') }}" class="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-blue-800">View All</a>
+                                    <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">Notifications</h3>
+                                    <a href="{{ route('notifications.index') }}" class="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest hover:text-blue-800 dark:hover:text-blue-300">View All</a>
                                 </div>
                                 <div class="max-h-96 overflow-y-auto no-scrollbar space-y-2">
                                     @php $topNotifications = Auth::user()->notifications()->latest()->take(5)->get(); @endphp
                                     @forelse($topNotifications as $notification)
-                                        <div class="group relative flex gap-x-4 rounded-2xl p-3 hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100 {{ $notification->read_at ? 'opacity-60' : '' }}">
-                                            <div class="mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-slate-50 group-hover:bg-white shadow-sm transition-all text-slate-400">
+                                        <div class="group relative flex gap-x-4 rounded-2xl p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-800 {{ $notification->read_at ? 'opacity-60' : '' }}">
+                                            <div class="mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 group-hover:bg-white dark:group-hover:bg-slate-700 shadow-sm transition-all text-slate-400">
                                                 <i class="fa-solid {{ $notification->type === 'email' ? 'fa-envelope' : ($notification->type === 'appointment' ? 'fa-calendar-check' : 'fa-info-circle') }}"></i>
                                             </div>
                                             <div class="flex-auto">
-                                                <p class="text-sm font-black text-slate-900 leading-tight">{{ $notification->title }}</p>
-                                                <p class="mt-1 text-xs text-slate-500 line-clamp-2">{{ $notification->message }}</p>
+                                                <p class="text-sm font-black text-slate-900 dark:text-white leading-tight line-clamp-1">{{ $notification->title }}</p>
+                                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">{{ $notification->message }}</p>
                                                 <p class="mt-1 text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{{ $notification->created_at->diffForHumans() }}</p>
                                             </div>
                                         </div>
                                     @empty
                                         <div class="py-10 text-center">
-                                            <i class="fa-solid fa-bell-slash text-slate-200 text-3xl mb-3"></i>
+                                            <i class="fa-solid fa-bell-slash text-slate-200 dark:text-slate-800 text-3xl mb-3"></i>
                                             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">No New Alerts</p>
                                         </div>
                                     @endforelse
@@ -237,14 +246,52 @@
                             </div>
                         </div>
 
-                        <div class="h-6 w-px bg-gray-200" aria-hidden="true"></div>
+                        <div class="h-6 w-px bg-gray-200 dark:bg-slate-800" aria-hidden="true"></div>
 
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="flex items-center gap-x-2 rounded-xl bg-white px-4 py-2 text-sm font-black text-slate-900 shadow-sm ring-1 ring-inset ring-slate-200 hover:bg-slate-50 transition-all active:scale-95 uppercase tracking-widest text-[10px]">
-                                Logout
+                        <!-- User Profile Dropdown -->
+                        <div x-data="{ userOpen: false }" class="relative">
+                            <button @click="userOpen = !userOpen" class="flex items-center gap-3 p-1.5 rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-800 transition-all border border-transparent hover:border-gray-100 dark:hover:border-slate-700">
+                                <div class="h-9 w-9 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 p-0.5 shadow-sm">
+                                    <img class="h-full w-full rounded-full border-2 border-white dark:border-slate-900 object-cover" 
+                                         src="{{ auth()->user()->profile_photo_url ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&color=7F9CF5&background=EBF4FF' }}" 
+                                         alt="">
+                                </div>
+                                <div class="hidden lg:block text-left mr-2">
+                                    <p class="text-xs font-black text-slate-900 dark:text-white leading-none mb-1">{{ auth()->user()->name }}</p>
+                                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{{ auth()->user()->roles->first()->name ?? 'Member' }}</p>
+                                </div>
+                                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200" :class="{ 'rotate-180': userOpen }"></i>
                             </button>
-                        </form>
+
+                            <div x-show="userOpen" 
+                                 @click.away="userOpen = false"
+                                 x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="opacity-0 scale-95"
+                                 x-transition:enter-end="opacity-100 scale-100"
+                                 class="absolute right-0 z-50 mt-3 w-64 origin-top-right rounded-3xl bg-white dark:bg-slate-900 border dark:border-slate-800 shadow-2xl p-2"
+                                 x-cloak>
+                                <div class="px-4 py-3 border-b border-gray-100 dark:border-slate-800 mb-2">
+                                    <p class="text-xs font-black text-slate-900 dark:text-white">{{ auth()->user()->email }}</p>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Status: Online</p>
+                                </div>
+                                <a href="{{ route('profile.edit') }}" class="flex items-center gap-4 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-800 transition-all">
+                                    <div class="h-8 w-8 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                        <i class="fa-solid fa-user-circle"></i>
+                                    </div>
+                                    My details
+                                </a>
+                                <div class="my-1 border-t border-gray-100 dark:border-slate-800"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left flex items-center gap-4 px-4 py-3 text-sm font-bold text-rose-600 rounded-2xl hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all">
+                                        <div class="h-8 w-8 rounded-xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center">
+                                            <i class="fa-solid fa-power-off"></i>
+                                        </div>
+                                        Log Out
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
