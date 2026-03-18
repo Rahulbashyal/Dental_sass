@@ -16,3 +16,4 @@ Push the local `dental-care` project to GitHub with backdated commits starting f
    - Added all existing source files to the final commit to preserve project integrity.
    - Removed large zip files (`dental-care.zip`, `dental-care-bkp.zip`) exceeding GitHub limits (100MB).
    - Executed `git push origin main`. Push was successful.
+5. **History Audit & Email Correction**: Rewrote entire Git commit history (463 commits) using `git filter-branch` to substitute invalid author emails (`rahulbashyal90876@gmail.com`) with the GitHub-validated primary email (`bashyalrahul90876@gmail.com`). Executed a force-push. This ensures all historical map events strictly attribute to the user profile, rendering past days green on the contribution chart.
