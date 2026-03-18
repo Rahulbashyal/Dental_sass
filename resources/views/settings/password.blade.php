@@ -81,7 +81,7 @@
                 <button type="submit" class="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-slate-800 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-xl shadow-slate-200">
                     Save New Password
                 </button>
-                <a href="{{ route('profile.edit') }}" class="py-4 px-8 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-slate-200 transition-all duration-200 text-center">
+                <a href="{{ route('profile.edit', ['iframe' => 1]) }}" data-modal-url="{{ route('profile.edit', ['iframe' => 1]) }}" data-modal-title="Form" class="py-4 px-8 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-slate-200 transition-all duration-200 text-center">
                     Cancel
                 </a>
             </div>

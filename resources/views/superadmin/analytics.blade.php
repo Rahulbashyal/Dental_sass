@@ -1,99 +1,160 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="space-y-6">
-    <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-gray-900">System Analytics</h1>
-        <div class="bg-blue-50 p-3 rounded-lg">
-            <div class="text-sm text-gray-600">आज</div>
-            @php
-                $nepaliDate = \App\Helpers\NepaliDateHelper::getCurrentNepaliDate();
-            @endphp
-            <div class="text-lg font-bold text-blue-800">{{ $nepaliDate['formatted'] ?? '२६ कार्तिक २०८२' }}</div>
-            <div class="text-sm text-gray-600">{{ $nepaliDate['day_of_week'] ? \App\Services\NepaliCalendarService::getDayName($nepaliDate['day_of_week']) : 'बुधबार' }}</div>
+<!-- Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+    <div>
+        <h1 class="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-4">
+            <div class="w-12 h-12 bg-white border border-slate-100 rounded-2xl flex items-center justify-center shadow-sm">
+                <i class="fas fa-chart-line text-blue-500"></i>
+            </div>
+            Analytics Dashboard
+        </h1>
+        <p class="text-slate-500 font-medium mt-2 flex items-center gap-2 italic">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+            Real-time business performance and monthly growth metrics.
+        </p>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="relative bg-white/70 backdrop-blur-xl border border-slate-100 p-4 rounded-[2rem] flex items-center gap-5 shadow-sm group hover:shadow-xl transition-all duration-700">
+            <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                <i class="fas fa-calendar-alt text-xs"></i>
+            </div>
+            <div>
+                @php
+                    $nepaliDate = \App\Helpers\NepaliDateHelper::getCurrentNepaliDate();
+                @endphp
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $nepaliDate['day_of_week'] ? \App\Services\NepaliCalendarService::getDayName($nepaliDate['day_of_week']) : 'बुधबार' }}</div>
+                <div class="text-xs font-black text-slate-900">{{ $nepaliDate['formatted'] ?? '२६ कार्तिक २०८२' }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="space-y-12">
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 stagger-in">
+        <div class="stat-card group">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-50/50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="relative z-10 flex flex-col gap-6">
+                <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-[1.25rem] flex items-center justify-center shadow-inner group-hover:rotate-12 transition-all">
+                    <i class="fas fa-arrow-trend-up text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Business Growth</p>
+                    <h3 class="text-3xl font-black text-slate-900 tracking-tight">+15%</h3>
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-[8px] font-bold text-emerald-600 uppercase tracking-widest">Upward Trend</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card group">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-50/50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="relative z-10 flex flex-col gap-6">
+                <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-[1.25rem] flex items-center justify-center shadow-inner group-hover:rotate-12 transition-all">
+                    <i class="fas fa-hand-holding-dollar text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Average Revenue</p>
+                    <h3 class="text-3xl font-black text-slate-900 tracking-tight">NPR 8.5K</h3>
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
+                        <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Per Clinic</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card group">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-50/50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="relative z-10 flex flex-col gap-6">
+                <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-[1.25rem] flex items-center justify-center shadow-inner group-hover:rotate-12 transition-all">
+                    <i class="fas fa-users-viewfinder text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Active Users</p>
+                    <h3 class="text-3xl font-black text-slate-900 tracking-tight">1,250</h3>
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                        <span class="text-[8px] font-bold text-purple-600 uppercase tracking-widest">Live Now</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card group">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-50/50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="relative z-10 flex flex-col gap-6">
+                <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-[1.25rem] flex items-center justify-center shadow-inner group-hover:rotate-12 transition-all">
+                    <i class="fas fa-link text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Retention Rate</p>
+                    <h3 class="text-3xl font-black text-slate-900 tracking-tight">92%</h3>
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                        <span class="text-[8px] font-bold text-amber-600 uppercase tracking-widest">Returning Customers</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Monthly Growth Chart -->
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Monthly Growth</h2>
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Month</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">New Clinics</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Revenue (NPR)</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($monthlyStats as $stat)
+    <div class="relative">
+        <div class="premium-table-container">
+            <div class="px-10 py-8 border-b border-slate-50 flex items-center gap-4">
+                <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shadow-sm">
+                    <i class="fas fa-layer-group text-xs"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-black text-slate-900 tracking-tight">Monthly Performance</h2>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 italic">Monitor your monthly clinic growth and revenue.</p>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="premium-table">
+                    <thead>
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $stat['month'] }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $stat['clinics'] }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">NPR {{ number_format($stat['revenue']) }}</td>
+                            <th>Month</th>
+                            <th>New Clinics</th>
+                            <th>Revenue (NPR)</th>
+                            <th class="text-right">Details</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Key Metrics -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 mr-4">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Growth Rate</p>
-                    <p class="text-2xl font-bold text-gray-900">+15%</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 mr-4">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Avg Revenue/Clinic</p>
-                    <p class="text-2xl font-bold text-gray-900">NPR 8,500</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-purple-100 mr-4">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Active Users</p>
-                    <p class="text-2xl font-bold text-gray-900">1,250</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-yellow-100 mr-4">
-                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Retention Rate</p>
-                    <p class="text-2xl font-bold text-gray-900">92%</p>
-                </div>
+                    </thead>
+                    <tbody>
+                        @foreach($monthlyStats as $stat)
+                            <tr>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                        <span class="font-black text-slate-900 tracking-tight uppercase">{{ $stat['month'] }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="px-3 py-1 bg-slate-100 rounded-lg text-xs font-black text-slate-700">
+                                        {{ $stat['clinics'] }} Clinics
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-black text-slate-900 tracking-tight">NPR {{ number_format($stat['revenue']) }}</span>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Earnings</span>
+                                    </div>
+                                </td>
+                                <td class="text-right">
+                                    <button class="btn-premium-ghost !px-3 !py-1.5 text-xs">
+                                        <i class="fas fa-ellipsis-v text-[10px]"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

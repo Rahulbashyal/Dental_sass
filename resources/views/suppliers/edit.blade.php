@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(request()->has('iframe') ? 'layouts.iframe' : 'layouts.app')
 
 @section('page-title', 'Supply Chain: Partner Refactoring')
 
@@ -25,6 +25,10 @@
     </div>
 
     <form method="POST" action="{{ route('clinic.suppliers.update', $supplier) }}" class="space-y-6">
+    @if(request()->has('iframe'))
+        <input type="hidden" name="iframe" value="1">
+    @endif
+
         @csrf
         @method('PUT')
         
@@ -105,3 +109,13 @@
     </form>
 </div>
 @endsection
+
+
+{{-- Auto-close modal script on success --}}
+@if(session('success') && request()->has('iframe'))
+    <script>
+        setTimeout(() => {
+            window.parent.location.reload();
+        }, 1500);
+    </script>
+@endif

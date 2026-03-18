@@ -1,0 +1,9 @@
+{
+    "name": "Default Healthcare",
+    "description": "The original clean and professional healthcare landing page with modern aesthetics.",
+    "preview_image": "preview.png",
+    "config": {
+        "animations_enabled": true,
+        "sticky_header": true
+    }
+}

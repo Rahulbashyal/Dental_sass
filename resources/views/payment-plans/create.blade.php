@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(request()->has('iframe') ? 'layouts.iframe' : 'layouts.app')
 
 @section('title', 'Create Payment Plan')
 @section('page-title', 'Create Payment Plan')
@@ -12,6 +12,10 @@
         </div>
         
         <form action="{{ route('clinic.payment-plans.store') }}" method="POST" class="p-8 space-y-8" id="paymentPlanForm">
+    @if(request()->has('iframe'))
+        <input type="hidden" name="iframe" value="1">
+    @endif
+
             @csrf
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -130,3 +134,13 @@
 </script>
 @endpush
 @endsection
+
+
+{{-- Auto-close modal script on success --}}
+@if(session('success') && request()->has('iframe'))
+    <script>
+        setTimeout(() => {
+            window.parent.location.reload();
+        }, 1500);
+    </script>
+@endif

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(request()->has('iframe') ? 'layouts.iframe' : 'layouts.app')
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -8,6 +8,10 @@
     </div>
 
     <form method="POST" action="{{ route('clinics.update', $clinic) }}" class="space-y-8">
+    @if(request()->has('iframe'))
+        <input type="hidden" name="iframe" value="1">
+    @endif
+
         @csrf
         @method('PUT')
 
@@ -100,3 +104,13 @@
     </form>
 </div>
 @endsection
+
+
+{{-- Auto-close modal script on success --}}
+@if(session('success') && request()->has('iframe'))
+    <script>
+        setTimeout(() => {
+            window.parent.location.reload();
+        }, 1500);
+    </script>
+@endif

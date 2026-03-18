@@ -11,6 +11,8 @@ class LandingPageContent extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
+
     protected $fillable = [
         'clinic_id',
         // Section Visibility
@@ -101,7 +103,8 @@ class LandingPageContent extends Model
         'social_twitter',
         'social_linkedin',
         'custom_sections',
-        'is_active'
+        'is_active',
+        'vision_hook'
     ];
 
     protected $casts = [
@@ -140,9 +143,9 @@ class LandingPageContent extends Model
         return self::where('is_active', true)->first() ?? self::getDefaultContent();
     }
 
-    public static function getDefaultContent()
+    public static function getDefaultContent($initialData = [])
     {
-        return new self([
+        $defaults = [
             'hero_title' => 'Nepal\'s Most Advanced Dental Platform',
             'hero_subtitle' => 'Transform your dental clinic with our comprehensive management solution. Built by ABS Soft specifically for Nepal\'s healthcare industry.',
             'hero_cta_primary' => 'Start 14-Day Free Trial',
@@ -166,7 +169,9 @@ class LandingPageContent extends Model
             'theme_secondary_color' => '#06b6d4',
             'theme_accent_color' => '#8b5cf6',
             'theme_template' => 'default'
-        ]);
+        ];
+
+        return new self(array_merge($defaults, $initialData));
     }
 
     public function getImageUrl($field)

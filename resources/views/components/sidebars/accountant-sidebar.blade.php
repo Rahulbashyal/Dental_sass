@@ -14,7 +14,7 @@
             <a href="{{ route('clinic.invoices.index') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('invoices.*') ? 'bg-blue-700' : '' }}">
                 <i class="fas fa-file-invoice mr-3"></i> Invoices
             </a>
-            <a href="{{ route('direct.invoices.create') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('direct.invoices.create') ? 'bg-blue-700' : '' }}">
+            <a href="{{ route('direct.invoices.create', ['iframe' => 1]) }}" data-modal-url="{{ route('direct.invoices.create', ['iframe' => 1]) }}" data-modal-title="Create" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('direct.invoices.create') ? 'bg-blue-700' : '' }}">
                 <i class="fas fa-plus mr-3"></i> Create Invoice
             </a>
             <a href="{{ route('clinic.payment-tracking') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->route('clinic.payment-tracking') ? 'bg-blue-700' : '' }}">
@@ -26,7 +26,29 @@
             <a href="{{ route('clinic.vendors.index') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('clinic.vendors.*') ? 'bg-blue-700' : '' }}">
                 <i class="fas fa-truck mr-3"></i> Vendors
             </a>
-            <a href="{{ route('clinic.credit-notes.index') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('clinic.credit-notes.*') ? 'bg-blue-700' : '' }}">
+            <a href="{{ route('clinic.credit-notes.index', ['iframe' => 1]) }}" data-modal-url="{{ route('dashboard') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('dashboard') ? 'bg-blue-700' : '' }}">
+            <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+        </a>
+        
+        <div class="space-y-1">
+            <p class="text-blue-300 text-xs uppercase tracking-wide font-semibold mt-4 mb-2">Financial Management</p>
+            <a href="{{ route('clinic.invoices.index') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('invoices.*') ? 'bg-blue-700' : '' }}">
+                <i class="fas fa-file-invoice mr-3"></i> Invoices
+            </a>
+            <a href="{{ route('direct.invoices.create', ['iframe' => 1]) }}" data-modal-url="{{ route('direct.invoices.create', ['iframe' => 1]) }}" data-modal-title="Create" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('direct.invoices.create') ? 'bg-blue-700' : '' }}">
+                <i class="fas fa-plus mr-3"></i> Create Invoice
+            </a>
+            <a href="{{ route('clinic.payment-tracking') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->route('clinic.payment-tracking') ? 'bg-blue-700' : '' }}">
+                <i class="fas fa-credit-card mr-3"></i> Payment Tracking
+            </a>
+            <a href="{{ route('clinic.expenses') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('clinic.expenses') ? 'bg-blue-700' : '' }}">
+                <i class="fas fa-receipt mr-3"></i> Expenses
+            </a>
+            <a href="{{ route('clinic.vendors.index') }}" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('clinic.vendors.*') ? 'bg-blue-700' : '' }}">
+                <i class="fas fa-truck mr-3"></i> Vendors
+            </a>
+            <a href="{{ route('clinic.credit-notes.index', ['iframe' => 1]) }}" data-modal-title="routeIs('clinic.credit-notes.*') ? 'bg-blue-700' : '' }}">
+                 Credit Notes" class="flex items-center p-3 rounded hover:bg-blue-700 {{ request()->routeIs('clinic.credit-notes.*') ? 'bg-blue-700' : '' }}">
                 <i class="fas fa-undo mr-3"></i> Credit Notes
             </a>
         </div>

@@ -31,7 +31,7 @@ class SettingsController extends Controller
             'postal_code' => 'nullable|string|max:20',
             'country' => 'nullable|string|max:100',
             'website' => 'nullable|url|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'facebook' => 'nullable|url|max:255',
             'twitter' => 'nullable|url|max:255',
             'linkedin' => 'nullable|url|max:255',
@@ -39,36 +39,43 @@ class SettingsController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
+            // Delete old photo if it exists
             if ($user->photo && \Storage::disk('public')->exists($user->photo)) {
                 \Storage::disk('public')->delete($user->photo);
             }
-            $path = $request->file('photo')->store('profile-photos', 'public');
+            
+            // Store new photo
+            $file = $request->file('photo');
+            $fileName = time() . '_' . $user->id . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('profile-photos', $fileName, 'public');
             $user->photo = $path;
         }
 
         $socialLinks = [
-            'facebook' => $request->facebook,
-            'twitter' => $request->twitter,
-            'linkedin' => $request->linkedin,
-            'instagram' => $request->instagram,
+            'facebook' => $request->facebook ?? '',
+            'twitter' => $request->twitter ?? '',
+            'linkedin' => $request->linkedin ?? '',
+            'instagram' => $request->instagram ?? '',
         ];
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
-        $user->phone = $validated['phone'];
-        $user->specialization = $validated['specialization'];
-        $user->bio = $validated['bio'];
-        $user->address = $validated['address'];
-        $user->city = $validated['city'];
-        $user->state = $validated['state'];
-        $user->postal_code = $validated['postal_code'];
-        $user->country = $validated['country'];
-        $user->website = $validated['website'];
+        $user->phone = $validated['phone'] ?? $user->phone;
+        $user->specialization = $validated['specialization'] ?? $user->specialization;
+        $user->bio = $validated['bio'] ?? $user->bio;
+        $user->address = $validated['address'] ?? $user->address;
+        $user->city = $validated['city'] ?? $user->city;
+        $user->state = $validated['state'] ?? $user->state;
+        $user->postal_code = $validated['postal_code'] ?? $user->postal_code;
+        $user->country = $validated['country'] ?? $user->country;
+        $user->website = $validated['website'] ?? $user->website;
         $user->social_links = $socialLinks;
 
-        $user->save();
+        if ($user->save()) {
+            return redirect()->route('profile.edit')->with('success', 'Profile updated successfully.');
+        }
 
-        return redirect()->route('profile.edit')->with('success', 'Profile updated successfully.');
+        return redirect()->route('profile.edit')->with('error', 'Failed to update profile. Please try again.');
     }
 
     public function editPassword()

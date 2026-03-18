@@ -24,7 +24,7 @@ class ClinicController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:clinics',
+            'email' => 'required|email|unique:clinics,email|unique:users,email',
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
             'city' => 'nullable|string',
@@ -81,48 +81,69 @@ class ClinicController extends Controller
         
         // Generate slug
         $validated['slug'] = Str::slug($validated['name']);
-        
-        $clinic = Clinic::create($validated);
+        // Wrap the creation logic in a transaction to prevent orphaned clinics when user creation fails
+        $result = \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $request) {
+            $clinic = Clinic::create($validated);
 
-        // Provision Tenant if Full Suite
-        if ($clinic->plan_type === 'full_suite') {
-            \App\Models\Tenant::create([
-                'id' => $clinic->slug,
+            // Provision Tenant if Full Suite
+            if ($clinic->plan_type === 'full_suite') {
+                \App\Models\Tenant::create([
+                    'id' => $clinic->slug,
+                    'clinic_id' => $clinic->id,
+                    'data' => [
+                        'name' => $clinic->name,
+                        'email' => $clinic->email,
+                        'provision_status' => 'pending'
+                    ]
+                ]);
+                
+                // Note: The TenancyServiceProvider events will trigger database creation.
+                // We should still dispatch the ProvisionTenant job for migrations/seeds/admin.
+                \App\Jobs\ProvisionTenant::dispatch($clinic->slug, $clinic->email, $request->admin_password);
+            }
+
+            // Create landing page content with selected theme and its defaults
+            $themeManager = app(\App\Services\ThemeManagerService::class);
+            $themeDefaults = $themeManager->getThemeDefaults($request->theme_template);
+
+            $content = LandingPageContent::getDefaultContent([
                 'clinic_id' => $clinic->id,
-                'data' => [
-                    'name' => $clinic->name,
-                    'email' => $clinic->email,
-                    'provision_status' => 'pending'
-                ]
+                'theme_template' => $request->theme_template,
+                'custom_sections' => $themeDefaults, // Populate with theme-specific defaults
+                'is_active' => true
             ]);
+            $content->save();
+
+            // Create Clinic Admin User with provided password
+            $admin = \App\Models\User::create([
+                'name' => $clinic->name . ' Admin',
+                'email' => $clinic->email,
+                'password' => $request->admin_password,
+                'clinic_id' => $clinic->id,
+                'is_active' => true,
+                'phone' => $clinic->phone,
+                'email_verified_at' => now(), // Auto-verify clinic admins
+            ]);
+
+            $admin->assignRole('clinic_admin');
             
-            // Note: The TenancyServiceProvider events will trigger database creation.
-            // We should still dispatch the ProvisionTenant job for migrations/seeds/admin.
-            \App\Jobs\ProvisionTenant::dispatch($clinic->slug, $clinic->email, $request->admin_password);
+            return [
+                'admin' => $admin, 
+                'password' => $request->admin_password,
+                'clinic' => $clinic
+            ];
+        });
+
+        // Notify the admin (outside transaction to ensure mail doesn't rollback DB)
+        try {
+            $result['admin']->notify(new \App\Notifications\ClinicProvisioned($result['clinic'], $result['password']));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send clinic provisioned email: ' . $e->getMessage());
         }
 
-        // Create landing page content with selected theme
-        $content = LandingPageContent::getDefaultContent();
-        $content->clinic_id = $clinic->id;
-        $content->theme_template = $request->theme_template;
-        $content->save();
-
-        // Create Clinic Admin User with provided password
-        $admin = \App\Models\User::create([
-            'name' => $clinic->name . ' Admin',
-            'email' => $clinic->email,
-            'password' => \Illuminate\Support\Facades\Hash::make($request->admin_password),
-            'clinic_id' => $clinic->id,
-            'is_active' => true,
-            'phone' => $clinic->phone,
-            'email_verified_at' => now(), // Auto-verify clinic admins
-        ]);
-
-        $admin->assignRole('clinic_admin');
-
-        return redirect()->route('clinics.index')->with('success', 'Clinic created successfully.')
+        return redirect()->route('clinics.index')->with('success', 'Clinic created successfully and welcome email sent.')
             ->with('new_clinic_info', [
-                'email' => $admin->email,
+                'email' => $result['admin']->email,
                 'login_url' => route('login')
             ]);
     }
@@ -149,18 +170,37 @@ class ClinicController extends Controller
         return view('welcome', compact('content'));
     }
 
-    public function show(Clinic $clinic)
+    public function show(Clinic $clinic, \App\Services\ThemeManagerService $themeManager)
     {
-        // Use comprehensive landing page
+        // Use comprehensive landing page based on template
         $content = \App\Models\LandingPageContent::getContent($clinic->id);
-        return view('clinic.comprehensive-landing', compact('content', 'clinic'));
+        $view = $themeManager->getTemplateView($content->theme_template ?? 'default');
+        
+        return view($view, compact('content', 'clinic'));
     }
 
-    public function publicLanding($slug)
+    public function publicLanding($slug, \App\Services\ThemeManagerService $themeManager)
     {
         $clinic = Clinic::where('slug', $slug)->firstOrFail();
         $content = \App\Models\LandingPageContent::getContent($clinic->id);
-        return view('clinic.comprehensive-landing', compact('content', 'clinic'));
+        $view = $themeManager->getTemplateView($content->theme_template ?? 'default');
+
+        return view($view, compact('content', 'clinic'));
+    }
+
+    public function tenantLanding(\App\Services\ThemeManagerService $themeManager)
+    {
+        $tenant = tenant();
+        if (!$tenant || !$tenant->clinic_id) {
+            // Fallback for central domain access to '/' if needed
+            return $this->welcome();
+        }
+
+        $clinic = Clinic::findOrFail($tenant->clinic_id);
+        $content = \App\Models\LandingPageContent::getContent($clinic->id);
+        $view = $themeManager->getTemplateView($content->theme_template ?? 'default');
+
+        return view($view, compact('content', 'clinic'));
     }
 
     public function landing($slug)
@@ -176,9 +216,16 @@ class ClinicController extends Controller
 
     public function update(Request $request, Clinic $clinic)
     {
+        // First find the primary admin user to exclude their ID from the users table unique check
+        $admin = \App\Models\User::where('clinic_id', $clinic->id)
+            ->where('email', $clinic->email)
+            ->first();
+
+        $userUniqueRule = $admin ? '|unique:users,email,' . $admin->id : '|unique:users,email';
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:clinics,email,' . $clinic->id,
+            'email' => 'required|email|unique:clinics,email,' . $clinic->id . $userUniqueRule,
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
             'city' => 'nullable|string',
@@ -187,21 +234,25 @@ class ClinicController extends Controller
             'admin_password' => 'nullable|string|min:8|confirmed',
         ]);
 
+        $oldEmail = $clinic->email;
         $clinic->update($validated);
 
-        // Handle Password Reset
-        if ($request->filled('admin_password')) {
-            $admin = \App\Models\User::where('clinic_id', $clinic->id)
-                ->where('email', $clinic->email)
-                ->first();
+        // Sync to primary admin user if found
+        if ($admin) {
+            $adminUpdates = [];
+            
+            // If clinic email changed, sync the admin email
+            if ($oldEmail !== $validated['email']) {
+                $adminUpdates['email'] = $validated['email'];
+            }
+            
+            if ($request->filled('admin_password')) {
+                $adminUpdates['password'] = \Illuminate\Support\Facades\Hash::make($request->admin_password);
+            }
 
-            if ($admin) {
-                $admin->update([
-                    'password' => \Illuminate\Support\Facades\Hash::make($request->admin_password)
-                ]);
-                return redirect()->route('clinics.index')->with('success', 'Clinic updated and admin password reset successfully.');
-            } else {
-                return redirect()->route('clinics.index')->with('warning', 'Clinic updated but admin user not found for password reset.');
+            if (!empty($adminUpdates)) {
+                $admin->update($adminUpdates);
+                return redirect()->route('clinics.index')->with('success', 'Clinic and Admin Credentials updated successfully.');
             }
         }
 
@@ -210,8 +261,44 @@ class ClinicController extends Controller
 
     public function destroy(Clinic $clinic)
     {
-        $clinic->delete();
-        return redirect()->route('clinics.index')->with('success', 'Clinic deleted successfully.');
+        // Security check for superadmin is handled by middleware but we can be explicit
+        if (!auth()->user()->hasRole('superadmin')) {
+            abort(403);
+        }
+
+        try {
+            // 1. Prepare Backup Data
+            $backupData = [
+                'clinic' => $clinic->toArray(),
+                'landing_content' => LandingPageContent::where('clinic_id', $clinic->id)->get()->toArray(),
+                'users' => \App\Models\User::where('clinic_id', $clinic->id)->get()->toArray(),
+                'tenant' => \App\Models\Tenant::where('clinic_id', $clinic->id)->first()?->toArray(),
+                'deleted_at' => now()->toDateTimeString(),
+                'deleted_by' => auth()->id()
+            ];
+
+            // 2. Save Backup to Disk
+            $backupDir = 'backups';
+            if (!\Illuminate\Support\Facades\Storage::disk('local')->exists($backupDir)) {
+                \Illuminate\Support\Facades\Storage::disk('local')->makeDirectory($backupDir);
+            }
+            
+            $filename = $backupDir . '/clinic_deletion_' . $clinic->id . '_' . now()->format('Y_m_d_His') . '.json';
+            \Illuminate\Support\Facades\Storage::disk('local')->put($filename, json_encode($backupData, JSON_PRETTY_PRINT));
+
+            // 3. Perform Deletion (Cascade delete should be handled by DB or manually)
+            // Manually deleting related records to be safe before clinic
+            LandingPageContent::where('clinic_id', $clinic->id)->delete();
+            \App\Models\User::where('clinic_id', $clinic->id)->delete();
+            \App\Models\Tenant::where('clinic_id', $clinic->id)->delete();
+            
+            $clinic->delete();
+
+            return redirect()->route('clinics.index')
+                ->with('success', 'Clinic deleted successfully. A backup has been stored in ' . $filename);
+        } catch (\Exception $e) {
+            return redirect()->route('clinics.index')->with('error', 'Deletion failed: ' . $e->getMessage());
+        }
     }
 
     public function testSimple($id)

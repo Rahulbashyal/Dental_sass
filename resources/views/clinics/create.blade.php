@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(request()->has('iframe') ? 'layouts.iframe' : 'layouts.app')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -18,6 +18,10 @@
     </div>
 
     <form method="POST" action="{{ route('clinics.store') }}" class="space-y-8">
+    @if(request()->has('iframe'))
+        <input type="hidden" name="iframe" value="1">
+    @endif
+
         @csrf
         
         <!-- Plan & Theme Configuration -->
@@ -450,3 +454,13 @@ function toggleModules(planType) {
 }
 </script>
 @endsection
+
+
+{{-- Auto-close modal script on success --}}
+@if(session('success') && request()->has('iframe'))
+    <script>
+        setTimeout(() => {
+            window.parent.location.reload();
+        }, 1500);
+    </script>
+@endif

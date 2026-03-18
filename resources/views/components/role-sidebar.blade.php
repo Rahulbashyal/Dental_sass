@@ -17,7 +17,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('clinic.appointments.create') }}">
+            <a class="nav-link" href="{{ route('clinic.appointments.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.appointments.create', ['iframe' => 1]) }}" data-modal-title="Form">
                 <i class="fas fa-plus-circle"></i> Book Appointment
             </a>
         </li>
@@ -27,7 +27,17 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('clinic.patients.create') }}">
+            <a class="nav-link" href="{{ route('clinic.patients.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.appointments.create') }}">
+                <i class="fas fa-plus-circle"></i> Book Appointment
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('clinic.patients.*') ? 'active' : '' }}" href="{{ route('clinic.patients.index') }}">
+                <i class="fas fa-users"></i> Patients
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('clinic.patients.create', ['iframe' => 1]) }}" data-modal-title="Add Patient">
                 <i class="fas fa-user-plus"></i> Add Patient
             </a>
         </li>
@@ -66,7 +76,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('clinic.invoices.create') }}">
+            <a class="nav-link" href="{{ route('clinic.invoices.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.invoices.create', ['iframe' => 1]) }}" data-modal-title="Create Invoice">
                 <i class="fas fa-plus-circle"></i> Create Invoice
             </a>
         </li>

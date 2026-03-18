@@ -154,7 +154,7 @@
                                 </div>
                                 <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest">No Appointments Scheduled</h3>
                                 <p class="text-xs text-slate-400 mt-1 font-medium">There are no patient visits in the calendar for today.</p>
-                                <a href="{{ route('clinic.appointments.create') }}" class="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20">
+                                <a href="{{ route('clinic.appointments.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.appointments.create', ['iframe' => 1]) }}" data-modal-title="New" class="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20">
                                     <i class="fas fa-plus"></i> New Appointment
                                 </a>
                             </td>

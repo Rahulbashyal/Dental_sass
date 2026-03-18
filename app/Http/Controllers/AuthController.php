@@ -29,7 +29,7 @@ class AuthController extends Controller
         $this->ensureIsNotRateLimited($request);
         
         $credentials = $request->validate([
-            'email' => 'required|email:rfc,dns|max:255',
+            'email' => 'required|email|max:255',
             'password' => 'required|string|min:1|max:255'
         ]);
         
@@ -40,12 +40,6 @@ class AuthController extends Controller
             $user = Auth::user();
             $request->session()->regenerate();
             RateLimiter::clear($this->throttleKey($request));
-            
-            // Auto-verify all users for development ease
-            if (is_null($user->email_verified_at)) {
-                $user->email_verified_at = now();
-                $user->save();
-            }
 
             // Check if user is active
             if (!$user->is_active) {
@@ -71,7 +65,7 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
-            'email' => 'required|email:rfc,dns|unique:users|max:255',
+            'email' => 'required|email|unique:users|max:255',
             'password' => [
                 'required',
                 'string',
@@ -90,7 +84,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => $validated['password'],
             'is_active' => true,
         ]);
 

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(request()->has('iframe') ? 'layouts.iframe' : 'layouts.app')
 
 @section('page-title', 'Refine Team Profile')
 
@@ -17,6 +17,10 @@
 
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
         <form action="{{ route('clinic.staff.update', $staff) }}" method="POST" class="p-8 lg:p-12">
+    @if(request()->has('iframe'))
+        <input type="hidden" name="iframe" value="1">
+    @endif
+
             @csrf
             @method('PUT')
             
@@ -96,3 +100,12 @@
     </div>
 </div>
 @endsection
+
+{{-- Auto-close modal script on success --}}
+@if(session('success') && request()->has('iframe'))
+    <script>
+        setTimeout(() => {
+            window.parent.location.reload();
+        }, 1500);
+    </script>
+@endif

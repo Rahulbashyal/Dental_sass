@@ -279,6 +279,7 @@ class SystemSettingsController extends Controller
             'services' => 'nullable|array',
             'testimonials' => 'nullable|array',
             'faq' => 'nullable|array',
+            'custom_sections' => 'nullable|array',
             
             // Status
             'is_active' => 'nullable|boolean',

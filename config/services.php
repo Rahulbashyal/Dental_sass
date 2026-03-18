@@ -53,4 +53,19 @@ return [
         'from' => env('SPARROW_SMS_FROM', 'DentalCare'),
     ],
 
+    'twilio' => [
+        'sid' => env('TWILIO_SID'),
+        'token' => env('TWILIO_AUTH_TOKEN'),
+        'from' => env('TWILIO_PHONE_NUMBER'),
+    ],
+
+    'akash' => [
+        'api_key' => env('AKASH_SMS_API_KEY'),
+        'sender_id' => env('AKASH_SMS_SENDER_ID', 'DentalCare'),
+    ],
+
+    'sms' => [
+        'default' => env('SMS_PROVIDER', 'log'), // Options: log, sparrow, twilio
+    ],
+
 ];

@@ -20,16 +20,19 @@
                 <div class="relative group">
                     <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-3xl overflow-hidden ring-8 ring-white shadow-xl transition-transform duration-500 group-hover:scale-[1.02]">
                         @if($user->photo)
-                            <img id="avatar-preview" src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="{{ $user->name }}">
+                            <img id="avatar-preview" src="{{ asset('storage/' . $user->photo) }}" class="w-full h-full object-cover" alt="{{ $user->name }}">
                         @else
                             <div id="avatar-placeholder" class="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                                <span class="text-4xl font-black text-slate-400 opacity-50">{{ substr($user->name, 0, 1) }}</span>
+                                <span id="avatar-initial" class="text-4xl font-black text-slate-400 opacity-50">{{ substr($user->name, 0, 1) }}</span>
                             </div>
                         @endif
                     </div>
                     <label for="photo-upload" class="absolute -bottom-2 -right-2 p-3 bg-blue-600 text-white rounded-2xl shadow-lg cursor-pointer hover:bg-blue-700 hover:scale-110 transition-all duration-300">
                         <i class="fas fa-camera text-sm"></i>
                     </label>
+                    @error('photo')
+                        <p class="text-rose-500 text-[10px] font-black uppercase tracking-widest mt-3 text-center">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Basic Info Summary -->
@@ -209,7 +212,7 @@
                         <i class="fas fa-save text-blue-600"></i>
                         Update My Profile
                     </button>
-                    <a href="{{ route('password.edit') }}" class="w-full flex items-center justify-center gap-2 py-4 bg-slate-700/50 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-slate-700 transition-all duration-200">
+                    <a href="{{ route('password.edit', ['iframe' => 1]) }}" data-modal-url="{{ route('password.edit', ['iframe' => 1]) }}" data-modal-title="Form" class="w-full flex items-center justify-center gap-2 py-4 bg-slate-700/50 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-slate-700 transition-all duration-200">
                         <i class="fas fa-key opacity-50"></i>
                         Change Password
                     </a>

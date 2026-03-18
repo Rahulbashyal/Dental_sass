@@ -13,6 +13,9 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Seed all platform modules first (ensures is_active = true for all)
+        $this->call(ModuleSeeder::class);
+
         // Create roles
         $superadmin = Role::firstOrCreate(['name' => 'superadmin']);
         $clinicAdmin = Role::firstOrCreate(['name' => 'clinic_admin']);

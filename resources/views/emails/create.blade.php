@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(request()->has('iframe') ? 'layouts.iframe' : 'layouts.app')
 
 @section('page-title', 'Compose Email')
 
@@ -22,6 +22,10 @@
         </div>
         
         <form action="{{ route('emails.store') }}" method="POST" class="p-6 space-y-6">
+    @if(request()->has('iframe'))
+        <input type="hidden" name="iframe" value="1">
+    @endif
+
             @csrf
             
             <div>
@@ -62,3 +66,12 @@
     </div>
 </div>
 @endsection
+
+{{-- Auto-close modal script on success --}}
+@if(session('success') && request()->has('iframe'))
+    <script>
+        setTimeout(() => {
+            window.parent.location.reload();
+        }, 1500);
+    </script>
+@endif

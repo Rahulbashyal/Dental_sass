@@ -47,6 +47,7 @@
                 <li><a href="{{ route('superadmin.content.landing') }}" class="group nav-link {{ request()->routeIs('superadmin.content.landing*') ? 'active' : '' }}"><i class="fas fa-pager text-violet-400"></i><span>Editor</span></a></li>
                 <li><a href="{{ route('superadmin.content.blog') }}" class="group nav-link {{ request()->routeIs('superadmin.content.blog*') ? 'active' : '' }}"><i class="fas fa-blog text-teal-400"></i><span>Blog</span></a></li>
                 <li><a href="{{ route('superadmin.content.testimonials') }}" class="group nav-link {{ request()->routeIs('superadmin.content.testimonials*') ? 'active' : '' }}"><i class="fas fa-quote-left text-yellow-400"></i><span>Reviews</span></a></li>
+                <li><a href="{{ route('superadmin.templates.index') }}" class="group nav-link {{ request()->routeIs('superadmin.templates.*') ? 'active' : '' }}"><i class="fas fa-layer-group text-blue-400"></i><span>Themes (Lego)</span></a></li>
             </ul>
         </li>
 

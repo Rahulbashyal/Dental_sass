@@ -18,6 +18,7 @@ class CommunicationService
             return Notification::create([
                 'notifiable_id' => $notifiable->id,
                 'notifiable_type' => get_class($notifiable),
+                'user_id' => $notifiable instanceof \App\Models\User ? $notifiable->id : null,
                 'title' => $title,
                 'message' => $message,
                 'type' => $type,
@@ -36,12 +37,17 @@ class CommunicationService
     {
         $clinic = $notifiable->clinic ?? null;
         
+        // Inject Nepali date if appointment is present
+        if (isset($viewData['appointment']) && !isset($viewData['nepaliDate'])) {
+            $viewData['nepaliDate'] = \App\Services\NepaliCalendarService::englishToNepali($viewData['appointment']->appointment_date);
+        }
+
         try {
             Mail::send($view, array_merge($viewData, [
                 'notifiable' => $notifiable,
                 'clinic' => $clinic
             ]), function ($message) use ($notifiable, $subject) {
-                $message->to($notifiable->email, $notifiable->name)
+                $message->to($notifiable->email, $notifiable->name ?? ($notifiable->full_name ?? 'Subject'))
                        ->subject($subject);
             });
 

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(request()->has('iframe') ? 'layouts.iframe' : 'layouts.app')
 
 @section('page-title', 'Patient Onboarding Hub')
 
@@ -25,6 +25,10 @@
     </div>
 
     <form method="POST" action="{{ route('clinic.patients.store') }}" class="space-y-6">
+    @if(request()->has('iframe'))
+        <input type="hidden" name="iframe" value="1">
+    @endif
+
         @csrf
         
         <!-- Subject Demographics Section -->
@@ -66,7 +70,7 @@
                 <div class="space-y-2">
                     <x-nepali-date-input 
                         name="date_of_birth"
-                        label="Natal Date (जन्म मितi)"
+                        label="Natal Date (जन्म मिति)"
                         :value="old('date_of_birth')"
                         :maxDate="date('Y-m-d')"
                         help="Subject's date of birth in BS"
@@ -94,7 +98,7 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label for="email" class="block font-bold text-slate-700 tracking-tight">Electronic Mail Adress</label>
+                    <label for="email" class="block font-bold text-slate-700 tracking-tight">Electronic Mail Address</label>
                     <input type="email" name="email" id="email" 
                         class="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-700 placeholder-slate-400" 
                         placeholder="patient@medical-hub.com" value="{{ old('email') }}">
@@ -103,8 +107,28 @@
             </div>
         </div>
 
-        <!-- Clinical Context Section (Added modern medical history field) -->
+        <!-- Location Intel Section -->
         <div class="stagger-in bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm" style="--delay: 3">
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900 tracking-tight">Geospatial Residence</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-8 text-sm">
+                <div class="space-y-2">
+                    <label for="address" class="block font-bold text-slate-700 tracking-tight">Geographic Address <span class="text-blue-500">*</span></label>
+                    <textarea name="address" id="address" rows="3" 
+                        class="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-700 placeholder-slate-400" 
+                        placeholder="Complete civic address..." required>{{ old('address') }}</textarea>
+                    @error('address') <p class="text-red-500 text-xs font-bold mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+        </div>
+
+        <!-- Clinical Context Section -->
+        <div class="stagger-in bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm" style="--delay: 4">
             <div class="flex items-center space-x-3 mb-8">
                 <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
@@ -122,7 +146,7 @@
         </div>
 
         <!-- Onboarding Submission -->
-        <div class="stagger-in flex flex-col md:flex-row md:items-center justify-end gap-3 pt-4" style="--delay: 4">
+        <div class="stagger-in flex flex-col md:flex-row md:items-center justify-end gap-3 pt-4" style="--delay: 5">
             <a href="{{ route('clinic.patients.index') }}" class="px-8 py-4 bg-slate-50 text-slate-500 rounded-2xl font-bold hover:bg-slate-100 transition-all text-center">
                 Abort Onboarding
             </a>
@@ -134,3 +158,12 @@
     </form>
 </div>
 @endsection
+
+{{-- Auto-close modal script on success --}}
+@if(session('success') && request()->has('iframe'))
+    <script>
+        setTimeout(() => {
+            window.parent.location.reload();
+        }, 1500);
+    </script>
+@endif

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(request()->has('iframe') ? 'layouts.iframe' : 'layouts.app')
 
 @section('title', 'Record Expense')
 @section('page-title', 'Record Expense')
@@ -12,6 +12,10 @@
         </div>
         
         <form action="{{ route('clinic.expenses.store') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-8">
+    @if(request()->has('iframe'))
+        <input type="hidden" name="iframe" value="1">
+    @endif
+
             @csrf
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
@@ -111,3 +115,13 @@
     </div>
 </div>
 @endsection
+
+
+{{-- Auto-close modal script on success --}}
+@if(session('success') && request()->has('iframe'))
+    <script>
+        setTimeout(() => {
+            window.parent.location.reload();
+        }, 1500);
+    </script>
+@endif

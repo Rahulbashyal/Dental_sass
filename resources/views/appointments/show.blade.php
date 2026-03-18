@@ -10,7 +10,10 @@
             <p class="text-gray-600">{{ $appointment->appointment_date->format('M d, Y') }} at {{ $appointment->appointment_time->format('g:i A') }}</p>
         </div>
         <div class="space-x-4">
-            <a href="{{ route('clinic.appointments.edit', $appointment) }}" class="btn-primary">Edit Appointment</a>
+            <a href="{{ route('clinic.appointments.edit', ['appointment' => $appointment, 'iframe' => 1]) }}"
+               data-modal-url="{{ route('clinic.appointments.edit', ['appointment' => $appointment, 'iframe' => 1]) }}"
+               data-modal-title="Edit Appointment"
+               class="btn-primary">Edit Appointment</a>
             <a href="{{ route('clinic.appointments.index') }}" class="btn-secondary">Back to List</a>
         </div>
     </div>
@@ -83,7 +86,10 @@
                             <button type="submit" class="block w-full btn-primary text-center">Mark as Completed</button>
                         </form>
                     @endif
-                    <a href="{{ route('clinic.appointments.edit', $appointment) }}" class="block w-full btn-secondary text-center">Edit Appointment</a>
+                    <a href="{{ route('clinic.appointments.edit', ['appointment' => $appointment, 'iframe' => 1]) }}"
+                       data-modal-url="{{ route('clinic.appointments.edit', ['appointment' => $appointment, 'iframe' => 1]) }}"
+                       data-modal-title="Edit Appointment"
+                       class="block w-full btn-secondary text-center">Edit Appointment</a>
                     <a href="{{ route('clinic.patients.show', $appointment->patient) }}" class="block w-full btn-secondary text-center">View Patient</a>
                 </div>
             </div>

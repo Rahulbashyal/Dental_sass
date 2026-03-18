@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(request()->has('iframe') ? 'layouts.iframe' : 'layouts.app')
 
 @section('page-title', 'Issue New Prescription')
 
@@ -16,6 +16,10 @@
     </div>
 
     <form action="{{ route('clinic.prescriptions.store') }}" method="POST" id="prescription-form" class="space-y-8">
+    @if(request()->has('iframe'))
+        <input type="hidden" name="iframe" value="1">
+    @endif
+
         @csrf
         
         <!-- Section 1: Clinical Subject -->
@@ -316,3 +320,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
+
+
+{{-- Auto-close modal script on success --}}
+@if(session('success') && request()->has('iframe'))
+    <script>
+        setTimeout(() => {
+            window.parent.location.reload();
+        }, 1500);
+    </script>
+@endif

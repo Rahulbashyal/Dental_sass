@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Notification extends Model
 {
     protected $fillable = [
-        'notifiable_id', 'notifiable_type', 'title', 'message', 'type', 'data', 'read_at'
+        'notifiable_id', 'notifiable_type', 'user_id', 'title', 'message', 'type', 'data', 'read_at'
     ];
 
     protected $casts = [

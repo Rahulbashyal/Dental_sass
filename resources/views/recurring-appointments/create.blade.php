@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(request()->has('iframe') ? 'layouts.iframe' : 'layouts.app')
 
 @section('title', 'Create Recurring Appointment')
 @section('page-title', 'Create Recurring Appointment')
@@ -12,6 +12,10 @@
         </div>
         
         <form action="{{ route('clinic.recurring-appointments.store') }}" method="POST" class="p-8 space-y-8" id="recurringForm">
+    @if(request()->has('iframe'))
+        <input type="hidden" name="iframe" value="1">
+    @endif
+
             @csrf
             
             <!-- Basic Info -->
@@ -146,3 +150,12 @@
 </script>
 @endpush
 @endsection
+
+{{-- Auto-close modal script on success --}}
+@if(session('success') && request()->has('iframe'))
+    <script>
+        setTimeout(() => {
+            window.parent.location.reload();
+        }, 1500);
+    </script>
+@endif

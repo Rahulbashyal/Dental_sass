@@ -24,6 +24,8 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
 
+    Route::get('/', [\App\Http\Controllers\ClinicController::class, 'tenantLanding'])->name('tenant.landing');
+
     Route::middleware(['auth'])->group(function () {
         Route::resource('branches', \App\Http\Controllers\Tenant\BranchController::class)->names('tenant.branches');
         Route::resource('users', \App\Http\Controllers\Tenant\UserController::class)->names('tenant.users');

@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="badge" style="background-color: #ecfdf5; color: #059669;">✓ Session Confirmed</div>
-    <div class="greeting">Excellent News, {{ $patient->first_name ?? $patient->name }}!</div>
+    <div class="greeting">Excellent News, {{ $notifiable->first_name ?? ($notifiable->name ?? 'Subject') }}!</div>
     
     <div class="message">
         Your clinical session at <strong>{{ $clinic->name }}</strong> has been successfully verified and locked into our schedule.

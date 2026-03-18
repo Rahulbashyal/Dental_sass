@@ -13,6 +13,7 @@ Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])-
 Route::post('/email/verification-notification', [AuthController::class, 'resendVerificationNotification'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // 2FA routes
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/2fa/setup', [\App\Http\Controllers\TwoFactorController::class, 'setup'])->name('2fa.setup');
     Route::post('/2fa/enable', [\App\Http\Controllers\TwoFactorController::class, 'enable'])->name('2fa.enable');
@@ -97,10 +98,19 @@ Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('superadmin')
     Route::post('/tenants/{id}/reprovision', [\App\Http\Controllers\SuperAdmin\TenantProvisionController::class, 'reprovision'])->name('superadmin.tenants.reprovision');
     Route::get('/tenants/{id}/logs', [\App\Http\Controllers\SuperAdmin\TenantProvisionController::class, 'logs'])->name('superadmin.tenants.logs');
     
-    // Module Management
+    // Module Management (superadmin only - no module check needed here)
     Route::get('/modules', [\App\Http\Controllers\SuperAdmin\ModuleController::class, 'index'])->name('superadmin.modules.index');
     Route::patch('/modules/{module}/toggle', [\App\Http\Controllers\SuperAdmin\ModuleController::class, 'toggle'])->name('superadmin.modules.toggle');
     Route::put('/modules/{module}', [\App\Http\Controllers\SuperAdmin\ModuleController::class, 'update'])->name('superadmin.modules.update');
+    Route::patch('/modules/{module}/status', [\App\Http\Controllers\SuperAdmin\ModuleController::class, 'setStatus'])->name('superadmin.modules.setStatus');
+    
+    // UI Template Management
+    Route::get('/templates', [\App\Http\Controllers\SuperAdmin\TemplateController::class, 'index'])->name('superadmin.templates.index');
+    Route::post('/templates/sync', [\App\Http\Controllers\SuperAdmin\TemplateController::class, 'sync'])->name('superadmin.templates.sync');
+    Route::get('/templates/download-sample', [\App\Http\Controllers\SuperAdmin\TemplateController::class, 'downloadSample'])->name('superadmin.templates.download-sample');
+    Route::post('/templates/upload', [\App\Http\Controllers\SuperAdmin\TemplateController::class, 'upload'])->name('superadmin.templates.upload');
+    Route::post('/templates/{id}/toggle', [\App\Http\Controllers\SuperAdmin\TemplateController::class, 'toggle'])->name('superadmin.templates.toggle');
+    Route::get('/templates/preview/{slug}', [\App\Http\Controllers\SuperAdmin\TemplateController::class, 'preview'])->name('superadmin.templates.preview');
 
     Route::get('/users', [\App\Http\Controllers\SuperAdminController::class, 'users'])->name('superadmin.users');
     Route::get('/users/clinic/{clinic:id}', [\App\Http\Controllers\SuperAdminController::class, 'clinicUsers'])->name('superadmin.users.clinic');
@@ -160,8 +170,8 @@ Route::get('/invoices/create', [\App\Http\Controllers\InvoiceController::class, 
 Route::middleware(['auth', 'verified', 'clinic.access', 'resource.owner'])->prefix('clinic')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'clinic'])->name('clinic.dashboard');
     
-    // Receptionist & Dentist routes - Appointment and Patient Management
-    Route::middleware(['role:receptionist|dentist|clinic_admin'])->group(function () {
+    // Patients Module
+    Route::middleware(['role:receptionist|dentist|clinic_admin', 'module.enabled:Patients'])->group(function () {
         Route::resource('patients', PatientController::class)->names([
             'index' => 'clinic.patients.index',
             'create' => 'clinic.patients.create',
@@ -171,6 +181,10 @@ Route::middleware(['auth', 'verified', 'clinic.access', 'resource.owner'])->pref
             'update' => 'clinic.patients.update',
             'destroy' => 'clinic.patients.destroy'
         ]);
+    });
+
+    // Appointments Module
+    Route::middleware(['role:receptionist|dentist|clinic_admin', 'module.enabled:Appointments'])->group(function () {
         Route::resource('appointments', AppointmentController::class)->names([
             'index' => 'clinic.appointments.index',
             'create' => 'clinic.appointments.create',
@@ -180,12 +194,12 @@ Route::middleware(['auth', 'verified', 'clinic.access', 'resource.owner'])->pref
             'update' => 'clinic.appointments.update',
             'destroy' => 'clinic.appointments.destroy'
         ]);
-
         // Additional appointment actions
         Route::put('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('clinic.appointments.cancel');
-        
-        // Prescription routes (dentist only)
-        Route::middleware('role:dentist|clinic_admin')->group(function () {
+    });
+
+    // Prescription routes (Treatments Module - dentist only)
+    Route::middleware(['role:dentist|clinic_admin', 'module.enabled:Treatments'])->group(function () {
             Route::resource('prescriptions', \App\Http\Controllers\PrescriptionController::class)->names([
                 'index' => 'clinic.prescriptions.index',
                 'create' => 'clinic.prescriptions.create',
@@ -252,9 +266,8 @@ Route::middleware(['auth', 'verified', 'clinic.access', 'resource.owner'])->pref
         Route::get('/today-schedule', [\App\Http\Controllers\ReceptionistController::class, 'todaySchedule'])->name('clinic.today-schedule');
         Route::get('/patient-search', [\App\Http\Controllers\ReceptionistController::class, 'quickSearch'])->name('clinic.patient-search');
         Route::get('/print-schedule', [\App\Http\Controllers\ReceptionistController::class, 'printSchedule'])->name('clinic.print-schedule');
-    });
-    
-    // Financial data - read access for dentists, full access for accountants/admins
+
+// Financial data - read access for dentists, full access for accountants/admins
     Route::middleware(['role:dentist|accountant|clinic_admin'])->group(function () {
         Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])->name('clinic.invoices.index');
         Route::get('/invoices/create', [\App\Http\Controllers\InvoiceController::class, 'create'])->name('clinic.invoices.create');

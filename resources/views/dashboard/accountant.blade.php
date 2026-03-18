@@ -82,7 +82,7 @@
     <div class="card">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900">Recent Invoices</h2>
-            <a href="{{ route('clinic.invoices.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+            <a href="{{ route('clinic.invoices.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.invoices.create', ['iframe' => 1]) }}" data-modal-title="Create Invoice" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -148,7 +148,7 @@
                 <h3 class="mt-4 text-lg font-medium text-gray-900">No invoices yet</h3>
                 <p class="mt-2 text-gray-500">Get started by creating your first invoice.</p>
                 <div class="mt-6">
-                    <a href="{{ route('clinic.invoices.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    <a href="{{ route('clinic.invoices.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.invoices.create', ['iframe' => 1]) }}" data-modal-title="Create" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>

@@ -1,0 +1,30 @@
+{
+    "name": "Modern Blue Elite",
+    "description": "A high-end, futuristic healthcare landing page with glassmorphism and deep blue accents.",
+    "preview_image": "preview.png",
+    "config": {
+        "animations_enabled": true,
+        "glassmorphism": true,
+        "dark_mode_ready": true,
+        "cms_fields": [
+            {
+                "name": "vanta_bg_color",
+                "label": "3D Network Background Color",
+                "type": "color",
+                "default": "#0ea5e9"
+            },
+            {
+                "name": "enable_3d_bg",
+                "label": "Enable 3D Living Background",
+                "type": "boolean",
+                "default": true
+            },
+            {
+                "name": "team_section_title",
+                "label": "Team Section Tagline",
+                "type": "text",
+                "default": "Meet the Experts"
+            }
+        ]
+    }
+}

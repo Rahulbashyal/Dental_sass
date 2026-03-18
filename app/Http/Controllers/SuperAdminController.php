@@ -190,9 +190,10 @@ class SuperAdminController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'password' => $request->password, // Model handles hashing via cast
             'clinic_id' => $request->clinic_id,
-            'is_active' => true
+            'is_active' => true,
+            'email_verified_at' => now() // Auto-verify manually added users
         ]);
         
         $user->assignRole($request->role);
@@ -233,7 +234,7 @@ class SuperAdminController extends Controller
         ]);
         
         if ($request->password) {
-            $user->update(['password' => bcrypt($request->password)]);
+            $user->update(['password' => $request->password]);
         }
         
         $user->syncRoles([$request->role]);
@@ -314,7 +315,8 @@ class SuperAdminController extends Controller
 
     public function testimonials()
     {
-        return view('superadmin.content.testimonials');
+        $testimonials = \App\Models\Testimonial::orderBy('created_at', 'desc')->get();
+        return view('superadmin.content.testimonials', compact('testimonials'));
     }
 
     public function updateLanding(Request $request)
@@ -448,8 +450,14 @@ class SuperAdminController extends Controller
             'rating' => 'required|integer|min:1|max:5'
         ]);
         
-        // In a real app, save to database
-        // For now, just return success message
+        // Save testimonial to database
+        \App\Models\Testimonial::create([
+            'doctor_name' => $validated['doctor_name'],
+            'clinic_name' => $validated['clinic_name'],
+            'testimonial' => $validated['testimonial'],
+            'rating' => $validated['rating']
+        ]);
+        
         return back()->with('success', 'Testimonial added successfully!');
     }
     public function debug()

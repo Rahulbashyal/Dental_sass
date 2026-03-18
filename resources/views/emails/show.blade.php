@@ -55,12 +55,10 @@
             <div>
                 <h4 class="text-sm font-medium text-slate-700 mb-2">Recipients ({{ count($email->recipients) }})</h4>
                 <div class="flex flex-wrap gap-2">
-                    @foreach($email->recipients as $recipientId)
-                        @if($recipient)
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-                                {{ $recipient->name }}
-                            </span>
-                        @endif
+                    @foreach($email->recipients as $recipientEmail)
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                            {{ $recipientEmail }}
+                        </span>
                     @endforeach
                 </div>
             </div>

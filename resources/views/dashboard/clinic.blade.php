@@ -227,7 +227,7 @@
                                         </svg>
                                     </div>
                                     <p class="text-slate-500 font-medium">No appointments found.</p>
-                                    <a href="{{ route('clinic.appointments.create') }}" class="mt-4 inline-block text-blue-600 font-bold hover:underline">Schedule First Appointment</a>
+                                    <a href="{{ route('clinic.appointments.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.appointments.create', ['iframe' => 1]) }}" data-modal-title="Form" class="mt-4 inline-block text-blue-600 font-bold hover:underline">Schedule First Appointment</a>
                                 </td>
                             </tr>
                             @endforelse
@@ -273,25 +273,43 @@
             <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-8">
                 <h2 class="text-xl font-black text-slate-900 mb-6 tracking-tight">Quick Actions</h2>
                 <div class="grid grid-cols-2 gap-4">
-                    <a href="{{ route('clinic.patients.create') }}" class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-2xl border border-blue-100 group hover:bg-blue-100 transition-all">
+                    <a href="{{ route('clinic.patients.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.patients.create', ['iframe' => 1]) }}" data-modal-title="Add" class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-2xl border border-blue-100 group hover:bg-blue-100 transition-all">
                         <div class="p-3 bg-white rounded-xl shadow-sm text-blue-600 mb-2 group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         </div>
                         <span class="text-xs font-bold text-blue-900 group-hover:text-blue-700">Add Patient</span>
                     </a>
-                    <a href="{{ route('clinic.appointments.create') }}" class="flex flex-col items-center justify-center p-4 bg-sky-50 rounded-2xl border border-sky-100 group hover:bg-sky-100 transition-all">
+                    <a href="{{ route('clinic.appointments.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.appointments.create', ['iframe' => 1]) }}" data-modal-title="New" class="flex flex-col items-center justify-center p-4 bg-sky-50 rounded-2xl border border-sky-100 group hover:bg-sky-100 transition-all">
                         <div class="p-3 bg-white rounded-xl shadow-sm text-sky-600 mb-2 group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
                         <span class="text-xs font-bold text-sky-900 group-hover:text-sky-700">New Visit</span>
                     </a>
-                    <a href="{{ route('clinic.invoices.create') }}" class="flex flex-col items-center justify-center p-4 bg-cyan-50 rounded-2xl border border-cyan-100 group hover:bg-cyan-100 transition-all">
+                    <a href="{{ route('clinic.invoices.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.patients.create') }}" class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-2xl border border-blue-100 group hover:bg-blue-100 transition-all">
+                        <div class="p-3 bg-white rounded-xl shadow-sm text-blue-600 mb-2 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-blue-900 group-hover:text-blue-700">Add Patient</span>
+                    </a>
+                    <a href="{{ route('clinic.appointments.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.appointments.create', ['iframe' => 1]) }}" data-modal-title="New" class="flex flex-col items-center justify-center p-4 bg-sky-50 rounded-2xl border border-sky-100 group hover:bg-sky-100 transition-all">
+                        <div class="p-3 bg-white rounded-xl shadow-sm text-sky-600 mb-2 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-sky-900 group-hover:text-sky-700">New Visit</span>
+                    </a>
+                    <a href="{{ route('clinic.invoices.create', ['iframe' => 1]) }}" data-modal-title="Bill Invoice
+                    
+                    
+                        
+                            
+                        
+                        Hire Staff" class="flex flex-col items-center justify-center p-4 bg-cyan-50 rounded-2xl border border-cyan-100 group hover:bg-cyan-100 transition-all">
                         <div class="p-3 bg-white rounded-xl shadow-sm text-cyan-600 mb-2 group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                         </div>
                         <span class="text-xs font-bold text-cyan-900 group-hover:text-cyan-700">Bill Invoice</span>
                     </a>
-                    <a href="{{ route('clinic.staff.create') }}" class="flex flex-col items-center justify-center p-4 bg-indigo-50 rounded-2xl border border-indigo-100 group hover:bg-indigo-100 transition-all">
+                    <a href="{{ route('clinic.staff.create', ['iframe' => 1]) }}" data-modal-url="{{ route('clinic.staff.create', ['iframe' => 1]) }}" data-modal-title="Form" class="flex flex-col items-center justify-center p-4 bg-indigo-50 rounded-2xl border border-indigo-100 group hover:bg-indigo-100 transition-all">
                         <div class="p-3 bg-white rounded-xl shadow-sm text-indigo-600 mb-2 group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path></svg>
                         </div>

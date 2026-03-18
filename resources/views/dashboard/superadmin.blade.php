@@ -1,139 +1,208 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Welcome Section - Full Width -->
-<div class="mb-8">
-    <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-8 border border-blue-100 shadow-sm">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <div class="mb-4 lg:mb-0">
-                <h1 class="text-3xl lg:text-4xl font-bold text-slate-900 mb-2">
-                    Good morning, {{ auth()->user()->name }} 👋
-                </h1>
-                <p class="text-slate-600 text-lg">Here's what's happening with your platform today.</p>
-            </div>
-            <div class="flex flex-col sm:flex-row gap-4">
-                <div class="flex items-center space-x-2 px-4 py-2 bg-blue-100 rounded-full border border-blue-200">
-                    <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <span class="text-blue-700 font-medium text-sm">All systems operational</span>
+<!-- Premium Welcome Section -->
+<!-- Clean Light Premium Welcome Section -->
+<div class="mb-10 page-fade-in">
+    <div class="relative overflow-hidden bg-white rounded-[2.5rem] p-10 lg:p-12 shadow-sm border border-slate-200">
+        <!-- Subtle Decorative Blobs -->
+        <div class="absolute top-0 right-0 -mt-24 -mr-24 w-96 h-96 bg-blue-50/50 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-0 left-0 -mb-24 -ml-24 w-96 h-96 bg-indigo-50/30 rounded-full blur-[100px]"></div>
+        
+        <div class="relative flex flex-col lg:flex-row items-center justify-between gap-12">
+            <!-- Left: Identity & Authority -->
+            <div class="flex flex-col md:flex-row items-center gap-10">
+                <div class="relative group">
+                    <div class="w-24 h-24 rounded-3xl bg-gradient-to-tr from-blue-600 to-indigo-600 p-1 shadow-xl transition-all duration-500 group-hover:scale-105">
+                        <img class="w-full h-full rounded-[1.4rem] object-cover border-4 border-white" 
+                             src="{{ auth()->user()->photo ? asset('storage/' . auth()->user()->photo) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&color=FFFFFF&background=3B82F6' }}" 
+                             alt="">
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 bg-emerald-500 w-7 h-7 rounded-2xl border-4 border-white shadow-lg flex items-center justify-center">
+                        <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-2 px-4 py-2 bg-blue-100 rounded-full border border-blue-200">
-                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    @php
-                        $nepaliDate = \App\Helpers\NepaliDateHelper::getCurrentNepaliDate();
-                    @endphp
-                    <span class="text-blue-700 font-medium text-sm">{{ $nepaliDate['formatted'] ?? '१ मंसिर २०८२' }}</span>
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-4 py-1.5 bg-blue-50 text-blue-600 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl border border-blue-100 shadow-sm">
+                            Super Administration
+                        </span>
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                            v0.1.0 stable
+                        </span>
+                    </div>
+                    <h1 class="text-3xl lg:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight leading-tight">
+                        Good Morning, <span class="text-blue-600">{{ explode(' ', auth()->user()->name)[0] }}</span>
+                    </h1>
+                    <p class="text-slate-600 text-lg font-medium max-w-xl leading-relaxed">
+                        Platform status is <span class="text-blue-600 font-bold underline decoration-blue-200 underline-offset-4">optimal</span>. 
+                        Managing <span class="text-slate-900 font-bold">{{ \App\Models\Clinic::count() }} active clinic nodes</span> across the ecosystem.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: Elegant Utility -->
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+                <!-- Platform Time Card -->
+                <div class="flex-1 w-full relative overflow-hidden bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm group hover:shadow-xl transition-all duration-500 min-w-[280px]">
+                    <!-- Subtle Decorative Background -->
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-50/30 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                    
+                    <div class="relative flex items-center gap-6">
+                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-blue-50,to-blue-100/50 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm border border-blue-100 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+
+                        <div class="space-y-1.5 flex-1 min-w-0">
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] leading-none">Platform Time</p>
+                            <h3 id="live-time" class="text-3xl font-black text-slate-900 tracking-tight whitespace-nowrap tabular-nums leading-none">
+                                {{ now('Asia/Kathmandu')->format('h:i A') }}
+                            </h3>
+                            <div class="flex items-center gap-1.5 text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded-lg w-fit mt-1.5 border border-blue-100">
+                                <span class="relative flex h-1.5 w-1.5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
+                                </span>
+                                Good Day
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nepali Segment Card -->
+                <div class="flex-1 w-full relative overflow-hidden bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm group hover:shadow-xl transition-all duration-500 min-w-[280px]">
+                    <!-- Subtle Decorative Background -->
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-50/30 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+
+                    @php $nepaliDate = \App\Helpers\NepaliDateHelper::getCurrentNepaliDate(); @endphp
+                    <div class="relative flex items-center gap-6">
+                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-50 to-indigo-100/50 rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-100 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+
+                        <div class="space-y-1.5 flex-1 min-w-0">
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] leading-none">Platform Date</p>
+                            <h3 class="text-xl font-black text-slate-900 tracking-tight leading-none">
+                                {{ $nepaliDate['formatted'] ?? '२६ फाल्गुन २०८२' }}
+                            </h3>
+                            <div class="flex items-center gap-1.5 text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2 py-1 rounded-lg w-fit mt-1.5 border border-indigo-100">
+                                <i class="fas fa-calendar-day text-[8px]"></i>
+                                {{ $nepaliDate['day'] ?? 'सोमबार' }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Platform Overview - Full Width -->
-<div class="mb-8">
-    <h2 class="text-2xl font-bold text-slate-900 mb-6">Platform Overview</h2>
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 stagger-in">
-        <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 animate-card-hover hover:border-blue-300">
-            <div class="p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
+<script>
+    function updateLiveTime() {
+        const now = new Date();
+        const options = {
+            timeZone: 'Asia/Kathmandu',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        };
+        const formatter = new Intl.DateTimeFormat('en-US', options);
+        const parts = formatter.formatToParts(now);
+        
+        const h = parts.find(p => p.type === 'hour').value;
+        const m = parts.find(p => p.type === 'minute').value;
+        const p = parts.find(p => p.type === 'dayPeriod').value;
+        
+        const timeElem = document.getElementById('live-time');
+        if (timeElem) {
+            // Simplified display: hh:mm AM/PM without line breaks
+            timeElem.textContent = `${h}:${m} ${p.toUpperCase()}`;
+        }
+    }
+    updateLiveTime();
+    setInterval(updateLiveTime, 1000);
+</script>
+
+<!-- Stats Perspective Section -->
+<div class="mb-12">
+    <div class="flex items-center gap-3 mb-8 px-2">
+        <div class="w-1.5 h-8 bg-blue-600 rounded-full shadow-lg shadow-blue-500/50"></div>
+        <h2 class="text-2xl font-black text-slate-900 tracking-tight uppercase text-[11px] tracking-[0.3em]">Platform Landscape</h2>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 stagger-in">
+        <!-- Clinics Node -->
+        <div class="relative group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:border-blue-200 overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 -mr-16 -mt-16 rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+            <div class="relative flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Health Centers</p>
+                    <p class="text-5xl font-black text-slate-900 leading-none mb-3">{{ \App\Models\Clinic::count() }}</p>
+                    <div class="flex items-center text-[11px] font-black text-blue-600 uppercase">
+                        <i class="fas fa-arrow-up mr-1 text-[8px]"></i> 12% Uptrend
                     </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-slate-500 truncate">Total Clinics</dt>
-                            <dd class="text-3xl font-bold text-slate-900">{{ \App\Models\Clinic::count() }}</dd>
-                            <dd class="flex items-baseline text-sm font-semibold text-blue-600 mt-1">
-                                <svg class="self-center flex-shrink-0 h-4 w-4 text-blue-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                </svg>
-                                +12% from last month
-                            </dd>
-                        </dl>
-                    </div>
+                </div>
+                <div class="p-5 bg-gradient-to-br from-blue-500 to-blue-700 rounded-[1.8rem] shadow-xl shadow-blue-500/30 text-white transform group-hover:rotate-6 transition-transform">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 hover:shadow-lg transition-all duration-200 hover:border-emerald-300">
-            <div class="p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                            </svg>
-                        </div>
+        <!-- Global Users -->
+        <div class="relative group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:border-emerald-200 overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 -mr-16 -mt-16 rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+            <div class="relative flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3">Total Identities</p>
+                    <p class="text-5xl font-black text-slate-900 leading-none mb-3">{{ \App\Models\User::count() }}</p>
+                    <div class="flex items-center text-[11px] font-black text-emerald-600 uppercase">
+                        <i class="fas fa-shield-alt mr-1 text-[8px]"></i> 100% Authorized
                     </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-slate-500 truncate">Total Users</dt>
-                            <dd class="text-3xl font-bold text-slate-900">{{ \App\Models\User::count() }}</dd>
-                            <dd class="flex items-baseline text-sm font-semibold text-sky-600 mt-1">
-                                <svg class="self-center flex-shrink-0 h-4 w-4 text-sky-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                </svg>
-                                +18% from last month
-                            </dd>
-                        </dl>
-                    </div>
+                </div>
+                <div class="p-5 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-[1.8rem] shadow-xl shadow-emerald-500/30 text-white transform group-hover:rotate-6 transition-transform">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 hover:shadow-lg transition-all duration-200 hover:border-amber-300">
-            <div class="p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <div class="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                            </svg>
-                        </div>
+        <!-- Platform Yield -->
+        <div class="relative group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:border-amber-200 overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 -mr-16 -mt-16 rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+            <div class="relative flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Monthly Yield</p>
+                    <p class="text-3xl font-black text-slate-900 leading-none mb-3">NPR {{ number_format(\App\Models\Subscription::where('status', 'active')->sum('amount'), 0) }}</p>
+                    <div class="flex items-center text-[10px] font-black text-amber-600 uppercase">
+                        <i class="fas fa-chart-line mr-1 text-[8px]"></i> 24% Growth
                     </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-slate-500 truncate">Monthly Revenue</dt>
-                            <dd class="text-3xl font-bold text-slate-900">NPR {{ number_format(\App\Models\Subscription::where('status', 'active')->sum('amount'), 0) }}</dd>
-                            <dd class="flex items-baseline text-sm font-semibold text-cyan-600 mt-1">
-                                <svg class="self-center flex-shrink-0 h-4 w-4 text-cyan-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                </svg>
-                                +24% from last month
-                            </dd>
-                        </dl>
-                    </div>
+                </div>
+                <div class="p-5 bg-gradient-to-br from-amber-500 to-orange-600 rounded-[1.8rem] shadow-xl shadow-amber-500/30 text-white transform group-hover:rotate-6 transition-transform">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 hover:shadow-lg transition-all duration-200 hover:border-purple-300">
-            <div class="p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
+        <!-- Active Licenses -->
+        <div class="relative group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:border-indigo-200 overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 -mr-16 -mt-16 rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+            <div class="relative flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Active Licenses</p>
+                    <p class="text-5xl font-black text-slate-900 leading-none mb-3">{{ \App\Models\Subscription::where('status', 'active')->count() }}</p>
+                    <div class="flex items-center text-[10px] font-black text-indigo-600 uppercase">
+                        <i class="fas fa-star mr-1 text-[8px]"></i> Premium Tier
                     </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-slate-500 truncate">Active Subscriptions</dt>
-                            <dd class="text-3xl font-bold text-slate-900">{{ \App\Models\Subscription::where('status', 'active')->count() }}</dd>
-                            <dd class="flex items-baseline text-sm font-semibold text-indigo-600 mt-1">
-                                <svg class="self-center flex-shrink-0 h-4 w-4 text-indigo-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                </svg>
-                                +8% from last month
-                            </dd>
-                        </dl>
-                    </div>
+                </div>
+                <div class="p-5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[1.8rem] shadow-xl shadow-indigo-500/30 text-white transform group-hover:rotate-6 transition-transform">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                 </div>
             </div>
         </div>
@@ -141,316 +210,278 @@
 </div>
 
 <!-- Charts Section with Date Filter -->
-<div class="mb-8">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h2 class="text-2xl font-bold text-slate-900 mb-4 sm:mb-0">Analytics & Trends</h2>
-        <div class="relative">
-            <select id="dateFilter" class="appearance-none bg-white border border-slate-300 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+<div class="mb-12">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 px-2">
+        <div class="flex items-center gap-3">
+            <div class="w-1.5 h-8 bg-indigo-600 rounded-full shadow-lg shadow-indigo-500/50"></div>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight uppercase text-xs tracking-[0.3em]">Analytics & Trends</h2>
+        </div>
+        <div class="relative mt-4 md:mt-0">
+            <select id="dateFilter" class="appearance-none bg-white border border-slate-100 rounded-2xl px-6 py-3 pr-12 text-[10px] font-black uppercase tracking-widest text-slate-700 hover:border-blue-200 focus:outline-none focus:ring-4 focus:ring-blue-500/5 shadow-sm transition-all cursor-pointer">
                 <option value="7">Last 7 days</option>
                 <option value="30">Last 30 days</option>
                 <option value="90">Last 3 months</option>
                 <option value="180" selected>Last 6 months</option>
                 <option value="365">Last year</option>
             </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
-                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                </svg>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-blue-500">
+                <i class="fas fa-chevron-down text-[10px]"></i>
             </div>
         </div>
     </div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <!-- Growth Chart -->
-        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow duration-200">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-semibold text-slate-900">Growth Trends</h3>
-                <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <span class="text-sm text-slate-600">Clinics</span>
-                    <div class="w-3 h-3 bg-sky-500 rounded-full ml-4"></div>
-                    <span class="text-sm text-slate-600">Users</span>
+        <div class="relative group bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-48 h-48 bg-blue-50/50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+            
+            <div class="relative flex items-center justify-between mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm">
+                        <i class="fas fa-chart-area"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 tracking-tight">Growth Trends</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Ecosystem Expansion</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-2">
+                        <div class="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Clinics</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-1.5 h-1.5 bg-sky-400 rounded-full"></div>
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Users</span>
+                    </div>
                 </div>
             </div>
-            <div class="h-80">
+            
+            <div class="h-80 relative z-10">
                 <canvas id="growthChart"></canvas>
             </div>
         </div>
 
         <!-- Revenue Chart -->
-        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow duration-200">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-semibold text-slate-900">Revenue Trends</h3>
-                <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 bg-indigo-500 rounded-full"></div>
-                    <span class="text-sm text-slate-600">Revenue (NPR)</span>
+        <div class="relative group bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl overflow-hidden">
+            <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-indigo-50/50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+            
+            <div class="relative flex items-center justify-between mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center border border-indigo-100 shadow-sm">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 tracking-tight">Revenue Trends</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Fiscal Performance</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 bg-indigo-600 rounded-full"></div>
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Revenue (NPR)</span>
                 </div>
             </div>
-            <div class="h-80">
+            
+            <div class="h-80 relative z-10">
                 <canvas id="revenueChart"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Two Column Layout -->
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-    <!-- Left Column - Quick Actions -->
-    <div class="xl:col-span-2 space-y-8">
-
-        <!-- Quick Actions -->
-        <div>
-            <h2 class="text-2xl font-bold text-slate-900 mb-6">Quick Actions</h2>
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <!-- CRM Management -->
-                <div class="relative group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-blue-300 transition-all duration-300 cursor-pointer">
-                    <a href="{{ route('superadmin.crm.leads') }}" class="absolute inset-0"></a>
-                    <div class="flex items-center space-x-5">
-                        <div class="flex-shrink-0">
-                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-sky-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                            </div>
+<!-- Main Content Grid -->
+<div class="space-y-8">
+    <!-- Two Column Layout for Stats and Actions -->
+    <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+        <!-- Quick Actions (Spans 3 columns) -->
+        <div class="xl:col-span-3">
+            <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3 uppercase text-[11px] tracking-[0.3em]">
+                <i class="fas fa-bolt text-amber-500"></i>
+                Operational Hub
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- CRM & Pipeline -->
+                <div class="relative group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:border-blue-200 overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 -mr-12 -mt-12 rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+                    <div class="relative flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Platform CRM</p>
+                            <h3 class="text-2xl font-black text-slate-900 leading-tight mb-4">Pipeline Hub</h3>
+                            <a href="{{ route('superadmin.crm.leads') }}" class="btn-premium-ghost py-2 !rounded-xl !text-[11px]">
+                                Open CRM <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                            </a>
                         </div>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">CRM & Leads</h3>
-                            <p class="text-slate-600 mt-2">Manage leads, sales pipeline, and customer relationships</p>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <span class="inline-flex items-center text-blue-600 font-medium group-hover:text-blue-700">
-                            Manage CRM 
-                            <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        <div class="w-16 h-16 rounded-2xl shadow-xl flex items-center justify-center text-white transform group-hover:rotate-6 transition-transform" style="background: linear-gradient(135deg, #2563eb, #4f46e5);">
+                            <svg class="w-8 h-8" fill="none" stroke="white" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                             </svg>
-                        </span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Content Management -->
-                <div class="relative group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-blue-300 transition-all duration-300 cursor-pointer">
-                    <a href="{{ route('superadmin.content.landing') }}" class="absolute inset-0"></a>
-                    <div class="flex items-center space-x-5">
-                        <div class="flex-shrink-0">
-                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                </svg>
-                            </div>
+                <div class="relative group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:border-purple-200 overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 -mr-12 -mt-12 rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+                    <div class="relative flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">World System</p>
+                            <h3 class="text-2xl font-black text-slate-900 leading-tight mb-4">Content Kit</h3>
+                            <a href="{{ route('superadmin.content.landing') }}" class="btn-premium-outline py-2 !rounded-xl !text-[11px] !bg-white">
+                                Edit Web <i class="fas fa-edit ml-2"></i>
+                            </a>
                         </div>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">Content Management</h3>
-                            <p class="text-slate-600 mt-2">Manage landing page, blog posts, and testimonials</p>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <span class="inline-flex items-center text-blue-600 font-medium group-hover:text-blue-700">
-                            Manage content 
-                            <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        <div class="w-16 h-16 rounded-2xl shadow-xl flex items-center justify-center text-white transform group-hover:-rotate-6 transition-transform" style="background: linear-gradient(135deg, #9333ea, #db2777);">
+                            <svg class="w-8 h-8" fill="none" stroke="white" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                             </svg>
-                        </span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Platform Management -->
-                <div class="relative group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-sky-300 transition-all duration-300 cursor-pointer">
-                    <a href="{{ route('clinics.index') }}" class="absolute inset-0"></a>
-                    <div class="flex items-center space-x-5">
-                        <div class="flex-shrink-0">
-                            <div class="w-16 h-16 bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                            </div>
+                <!-- Platform Core Management -->
+                <div class="relative group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:border-sky-200 overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-sky-50/50 -mr-12 -mt-12 rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+                    <div class="relative flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Cloud Infrastructure</p>
+                            <h3 class="text-xl font-black text-slate-900 leading-tight mb-4">Core Nodes</h3>
+                            <a href="{{ route('clinics.index') }}" class="btn-premium-outline py-2 !rounded-xl !text-[10px] !bg-white">
+                                Global Config <i class="fas fa-server ml-2"></i>
+                            </a>
                         </div>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-semibold text-slate-900 group-hover:text-sky-600 transition-colors">Platform Management</h3>
-                            <p class="text-slate-600 mt-2">Manage clinics, users, and system settings</p>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <span class="inline-flex items-center text-sky-600 font-medium group-hover:text-sky-700">
-                            Manage platform 
-                            <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        <div class="w-16 h-16 rounded-2xl shadow-xl flex items-center justify-center text-white transform group-hover:scale-110 transition-transform" style="background: linear-gradient(135deg, #0ea5e9, #2563eb);">
+                            <svg class="w-8 h-8" fill="none" stroke="white" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
                             </svg>
-                        </span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Analytics & Reports -->
-                <div class="relative group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-indigo-300 transition-all duration-300 cursor-pointer">
-                    <a href="{{ route('superadmin.analytics') }}" class="absolute inset-0"></a>
-                    <div class="flex items-center space-x-5">
-                        <div class="flex-shrink-0">
-                            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                </svg>
-                            </div>
+                <!-- Intelligence -->
+                <div class="relative group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:border-emerald-200 overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50/50 -mr-12 -mt-12 rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+                    <div class="relative flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Analytical Kernel</p>
+                            <h3 class="text-xl font-black text-slate-900 leading-tight mb-4">Data Stream</h3>
+                            <a href="{{ route('superadmin.analytics') }}" class="btn-premium-outline py-2 !rounded-xl !text-[10px] !bg-white">
+                                Audit Stats <i class="fas fa-chart-line ml-2"></i>
+                            </a>
                         </div>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">Analytics & Reports</h3>
-                            <p class="text-slate-600 mt-2">View detailed analytics and generate reports</p>
+                        <div class="w-16 h-16 rounded-2xl shadow-xl flex items-center justify-center text-white transform group-hover:-rotate-12 transition-transform" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <svg class="w-8 h-8" fill="none" stroke="white" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
                         </div>
                     </div>
-                    <div class="mt-6">
-                        <span class="inline-flex items-center text-indigo-600 font-medium group-hover:text-indigo-700">
-                            View analytics 
-                            <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CRM Snapshot (Side column on XL, Full width below) -->
+        <div class="xl:col-span-1">
+            <div class="flex items-center gap-3 mb-6 px-2">
+                <div class="w-1 h-6 bg-blue-600 rounded-full"></div>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight uppercase text-[10px] tracking-[0.3em]">CRM Snapshot</h2>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- Total Leads -->
+                <div class="relative group bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-xl overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 -mr-12 -mt-12 rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+                    <div class="relative flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Incoming Leads</p>
+                            <h4 class="text-3xl font-black text-slate-900 leading-none">{{ \App\Models\Lead::count() ?? 0 }}</h4>
+                            <div class="mt-2 text-[10px] font-black text-blue-600 uppercase">
+                                <span class="px-2 py-0.5 bg-blue-50 rounded-lg">Realtime Feed</span>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg flex items-center justify-center text-white transform group-hover:rotate-12 transition-transform">
+                            <i class="fas fa-user-plus text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversion -->
+                <div class="relative group bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-xl overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 -mr-12 -mt-12 rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+                    <div class="relative flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Yield Performance</p>
+                            <h4 class="text-3xl font-black text-slate-900 leading-none">
+                                {{ \App\Models\Lead::count() > 0 ? round((\App\Models\Lead::where('status', 'converted')->count() / \App\Models\Lead::count()) * 100, 1) : 0 }}%
+                            </h4>
+                            <div class="mt-2 text-[10px] font-black text-emerald-600 uppercase">
+                                <span class="px-2 py-0.5 bg-emerald-50 rounded-lg">High Conversion</span>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg flex items-center justify-center text-white transform group-hover:-rotate-12 transition-transform">
+                            <i class="fas fa-bullseye text-lg"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Right Column - CRM Stats and Recent Activity -->
-    <div class="space-y-8">
-        <!-- CRM Overview -->
-        <div>
-            <h2 class="text-2xl font-bold text-slate-900 mb-6">CRM Overview</h2>
-            <div class="space-y-4">
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 hover:shadow-md transition-shadow duration-200">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-slate-500 truncate">Total Leads</dt>
-                                    <dd class="text-3xl font-bold text-slate-900">{{ \App\Models\Lead::count() ?? 0 }}</dd>
-                                    <dd class="text-sm text-slate-600 mt-1">+5 this week</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Recent Activity - Moved to Bottom -->
+    <div class="mt-12">
+        <div class="flex items-end justify-between mb-8 px-2">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-1.5 h-8 bg-indigo-600 rounded-full shadow-lg shadow-indigo-500/50"></div>
+                    <h2 class="text-2xl font-black text-slate-900 tracking-tight uppercase text-xs tracking-[0.3em]">Network Pulse</h2>
                 </div>
-
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 hover:shadow-md transition-shadow duration-200">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-sky-600 rounded-xl flex items-center justify-center shadow-lg">
-                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-slate-500 truncate">Converted Leads</dt>
-                                    <dd class="text-3xl font-bold text-slate-900">{{ \App\Models\Lead::where('status', 'converted')->count() ?? 0 }}</dd>
-                                    <dd class="text-sm text-slate-600 mt-1">{{ \App\Models\Lead::count() > 0 ? round((\App\Models\Lead::where('status', 'converted')->count() / \App\Models\Lead::count()) * 100, 1) : 0 }}% conversion rate</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 hover:shadow-md transition-shadow duration-200">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-slate-500 truncate">Active Campaigns</dt>
-                                    <dd class="text-3xl font-bold text-slate-900">{{ \App\Models\Campaign::where('status', 'active')->count() ?? 0 }}</dd>
-                                    <dd class="text-sm text-slate-600 mt-1">Running campaigns</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 hover:shadow-md transition-shadow duration-200">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-sky-600 rounded-xl flex items-center justify-center shadow-lg">
-                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-slate-500 truncate">Emails Sent</dt>
-                                    <dd class="text-3xl font-bold text-slate-900">{{ \App\Models\EmailLog::count() ?? 0 }}</dd>
-                                    <dd class="text-sm text-slate-600 mt-1">Total sent</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <p class="text-sm text-slate-500 font-medium">Real-time ecosystem updates</p>
             </div>
+            <button class="btn-premium-ghost !rounded-2xl !px-6">Archive Explorer <i class="fas fa-history ml-2"></i></button>
         </div>
-
-        <!-- Recent Activity -->
-        <div class="bg-white shadow-sm rounded-xl border border-slate-200 hover:shadow-md transition-shadow duration-200">
-            <div class="px-6 py-5 border-b border-slate-200">
-                <h3 class="text-xl font-semibold text-slate-900">Recent Activity</h3>
-                <p class="text-sm text-slate-600 mt-1">Latest updates from your platform</p>
-            </div>
-            <div class="p-4 lg:p-6">
+        
+        <div class="bg-white rounded-[2.5rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div class="p-8">
                 <div class="flow-root">
                     <ul role="list" class="-mb-8">
                         @forelse($recentClinics as $clinic)
                         <li>
                             <div class="relative pb-8">
                                 @if(!$loop->last)
-                                <span class="absolute left-5 top-5 -ml-px h-full w-0.5 bg-slate-200" aria-hidden="true"></span>
+                                <span class="absolute left-6 top-6 -ml-px h-full w-0.5 bg-slate-100" aria-hidden="true"></span>
                                 @endif
-                                <div class="relative flex items-start space-x-3">
+                                <div class="relative flex items-start space-x-4">
                                     <div class="relative">
-                                        <img class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 ring-8 ring-white" src="https://ui-avatars.com/api/?name={{ urlencode($clinic->name) }}&color=3B82F6&background=DBEAFE" alt="">
-                                        <span class="absolute -bottom-0.5 -right-1 bg-white rounded-tl px-0.5 py-px">
-                                            <svg class="h-3 w-3 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L7.53 10.53a.75.75 0 00-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                                            </svg>
+                                        <div class="h-12 w-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center ring-4 ring-white shadow-sm overflow-hidden">
+                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($clinic->name) }}&color=3B82F6&background=DBEAFE" alt="">
+                                        </div>
+                                        <span class="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm">
+                                            <div class="w-3 h-3 bg-emerald-500 rounded-full border-2 border-white"></div>
                                         </span>
                                     </div>
-                                    <div class="min-w-0 flex-1">
-                                        <div>
-                                            <div class="text-sm">
-                                                <a href="#" class="font-medium text-slate-900 hover:text-blue-600">{{ $clinic->name }}</a>
+                                    <div class="min-w-0 flex-1 pt-1">
+                                        <div class="flex justify-between">
+                                            <div>
+                                                <p class="text-sm font-black text-slate-900">{{ $clinic->name }}</p>
+                                                <p class="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-wider">New Site Provisioned • {{ $clinic->city ?? 'Unknown' }}</p>
                                             </div>
-                                            <p class="mt-0.5 text-sm text-slate-500">New clinic registered</p>
+                                            <time class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ $clinic->created_at->diffForHumans() }}</time>
                                         </div>
-                                        <div class="mt-2 text-sm text-slate-700">
-                                            <p>{{ $clinic->address }}</p>
+                                        <div class="mt-3 p-5 bg-slate-50 rounded-2xl border border-slate-100/50">
+                                            <p class="text-base text-slate-600 font-medium leading-relaxed">
+                                                Physical site established at <span class="text-slate-900 font-bold">{{ $clinic->address }}</span>. 
+                                                Initial licensing and multi-tenancy nodes have been initialized successfully.
+                                            </p>
                                         </div>
-                                    </div>
-                                    <div class="flex-shrink-0 self-center">
-                                        <time class="text-sm text-slate-500" datetime="{{ $clinic->created_at->toISOString() }}">{{ $clinic->created_at->diffForHumans() }}</time>
                                     </div>
                                 </div>
                             </div>
                         </li>
                         @empty
-                        <li class="text-center py-8">
-                            <div class="text-slate-400">
-                                <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                </svg>
-                                <h3 class="mt-2 text-sm font-medium text-slate-900">No recent activity</h3>
-                                <p class="mt-1 text-sm text-slate-500">Get started by adding your first clinic.</p>
+                        <div class="py-12 text-center">
+                            <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                                <i class="fas fa-satellite-dish text-slate-300"></i>
                             </div>
-                        </li>
+                            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">No recent platform pings</p>
+                        </div>
                         @endforelse
                     </ul>
                 </div>
@@ -553,13 +584,16 @@ function initializeCharts() {
 
     // Revenue Chart
     const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    const revenueValues = chartData.map(d => d.revenue);
+    const hasRevenueData = revenueValues.some(v => v > 0);
+
     revenueChart = new Chart(revenueCtx, {
         type: 'bar',
         data: {
             labels: chartData.map(d => d.month),
             datasets: [{
                 label: 'Revenue (NPR)',
-                data: chartData.map(d => d.revenue),
+                data: revenueValues,
                 backgroundColor: 'rgba(79, 70, 229, 0.8)',
                 borderColor: 'rgb(79, 70, 229)',
                 borderWidth: 2,
@@ -577,6 +611,7 @@ function initializeCharts() {
                     display: false
                 },
                 tooltip: {
+                    enabled: hasRevenueData,
                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
                     titleColor: '#fff',
                     bodyColor: '#fff',
@@ -594,6 +629,7 @@ function initializeCharts() {
             scales: {
                 y: {
                     beginAtZero: true,
+                    suggestedMax: 1000,
                     grid: {
                         color: 'rgba(148, 163, 184, 0.1)',
                         drawBorder: false
@@ -626,6 +662,14 @@ function initializeCharts() {
             }
         }
     });
+
+    if (!hasRevenueData) {
+        // Add a "No Data" message overlay if chart is empty
+        revenueCtx.font = "14px Inter, sans-serif";
+        revenueCtx.fillStyle = "#94a3b8";
+        revenueCtx.textAlign = "center";
+        revenueCtx.fillText("No subscription revenue data recorded for this period", revenueCtx.canvas.width/2, revenueCtx.canvas.height/2);
+    }
 }
 
 // Date filter functionality

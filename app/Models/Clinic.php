@@ -10,6 +10,8 @@ class Clinic extends Model
 {
     use HasFactory;
     
+    protected $connection = 'mysql';
+    
     protected static function booted()
     {
         static::created(function ($clinic) {

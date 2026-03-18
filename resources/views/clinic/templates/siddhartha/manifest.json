@@ -1,0 +1,76 @@
+{
+    "name": "Siddhartha 3D Storytelling",
+    "description": "A high-end, immersive 3D and video-scrubbing theme designed for premium clinics. Features specialist spotlight and cinematic storytelling.",
+    "preview_image": "preview.png",
+    "config": {
+        "version": "1.0.0",
+        "author": "Antigravity SaaS Architect",
+        "features": [
+            "3D Hero",
+            "Video Scrubbing",
+            "Parallax Specialists",
+            "Dynamic Curative Board"
+        ],
+        "cms_fields": [
+            {
+                "name": "hero_3d_model",
+                "label": "Hero 3D Model (GLB)",
+                "type": "file",
+                "default": "/themes/siddhartha/assets/models/hero_tooth.glb"
+            },
+            {
+                "name": "vision_hook",
+                "label": "Vision Story Hook",
+                "type": "text",
+                "default": "Precision is our Practice. Your Smile is our Story."
+            },
+            {
+                "name": "video_implant",
+                "label": "Implant Scrub Video",
+                "type": "file",
+                "default": "/themes/siddhartha/assets/videos/implant-scrub.mp4"
+            },
+            {
+                "name": "video_ortho",
+                "label": "Ortho Scrub Video",
+                "type": "file",
+                "default": "/themes/siddhartha/assets/videos/ortho-scrub.mp4"
+            },
+            {
+                "name": "video_endo",
+                "label": "Endo Scrub Video",
+                "type": "file",
+                "default": "/themes/siddhartha/assets/videos/endo-scrub.mp4"
+            },
+            {
+                "name": "video_prostho",
+                "label": "Prostho Scrub Video",
+                "type": "file",
+                "default": "/themes/siddhartha/assets/videos/prostho-scrub.mp4"
+            },
+            {
+                "name": "specialist_spotlight",
+                "label": "Featured Specialists",
+                "type": "repeater",
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "text"
+                    },
+                    {
+                        "name": "title",
+                        "type": "text"
+                    },
+                    {
+                        "name": "description",
+                        "type": "textarea"
+                    },
+                    {
+                        "name": "photo",
+                        "type": "image"
+                    }
+                ]
+            }
+        ]
+    }
+}

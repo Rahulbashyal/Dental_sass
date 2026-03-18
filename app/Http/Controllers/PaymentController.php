@@ -9,6 +9,7 @@ use App\Services\KhaltiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Notifications\PaymentReceived;
 use Illuminate\Support\Facades\Notification;
 
@@ -321,27 +322,29 @@ class PaymentController extends Controller
      */
     private function recordPayment(array $intent, string $transactionId): void
     {
-        $payment = Payment::create([
-            'invoice_id' => $intent['invoice_id'],
-            'patient_id' => $intent['patient_id'],
-            'clinic_id' => $intent['clinic_id'],
-            'amount' => $intent['amount'],
-            'payment_method' => $intent['method'],
-            'status' => 'completed',
-            'transaction_id' => $transactionId,
-            'paid_at' => now(),
-        ]);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($intent, $transactionId) {
+            $payment = Payment::create([
+                'invoice_id' => $intent['invoice_id'],
+                'patient_id' => $intent['patient_id'],
+                'clinic_id' => $intent['clinic_id'],
+                'amount' => $intent['amount'],
+                'payment_method' => $intent['method'],
+                'status' => 'completed',
+                'transaction_id' => $transactionId,
+                'paid_at' => now(),
+            ]);
 
-        $invoice = Invoice::find($intent['invoice_id']);
-        if ($invoice) {
-            $this->updateInvoiceStatus($invoice, $intent['amount']);
+            $invoice = Invoice::find($intent['invoice_id']);
+            if ($invoice) {
+                $this->updateInvoiceStatus($invoice, $intent['amount']);
 
-            // Notify clinic admins
-            $clinic = $invoice->clinic;
-            if ($clinic) {
-                Notification::send($clinic->admins, new PaymentReceived($payment));
+                // Notify clinic admins
+                $clinic = $invoice->clinic;
+                if ($clinic) {
+                    Notification::send($clinic->admins, new PaymentReceived($payment));
+                }
             }
-        }
+        });
     }
 
     /**

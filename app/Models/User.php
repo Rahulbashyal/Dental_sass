@@ -31,6 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'website',
         'social_links',
         'is_active',
+        'email_verified_at',
     ];
 
     public function branch()
